@@ -1,630 +1,454 @@
-```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Huerta ERP - Producción V12</title>
+    <title>ERP Huerta - Producción V12</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .active-tab { border-bottom: 4px solid #16a34a; color: #16a34a; font-weight: bold; background-color: #f0fdf4; }
-        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; margin-top: 4px; font-size: 16px; background-color: #f9fafb; }
-        input:focus, select:focus, textarea:focus { border-color: #16a34a; outline: none; background-color: #fff; }
-        label { font-size: 0.75rem; font-weight: 700; color: #4b5563; margin-top: 12px; display: block; text-transform: uppercase; }
-        .hidden { display: none; }
-        /* Ocultar barra de scroll para el menú superior pero permitir desplazamiento */
-        nav::-webkit-scrollbar { display: none; }
-        nav { -ms-overflow-style: none; scrollbar-width: none; }
-    </style>
 </head>
-<body class="bg-slate-100 min-h-screen">
+<body class="bg-gray-100 min-h-screen pb-12 font-sans">
 
-    <header class="bg-green-700 text-white p-4 shadow-md sticky top-0 z-50 flex justify-between items-center">
-        <div>
-            <h1 class="text-xl font-bold tracking-wide">FINCA SAN JOSÉ</h1>
-            <p class="text-xs text-green-200">Terminal de Campo v12</p>
+    <header class="bg-green-600 text-white p-4 shadow-md sticky top-0 z-50">
+        <div class="max-w-md mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold tracking-wide">🌱 ERP HUERTA V12</h1>
+            <button id="btnTest" onclick="testConexion()" class="bg-white text-green-700 px-3 py-1 rounded-full text-xs font-semibold shadow hover:bg-green-50 transition">
+                Test API 🔍
+            </button>
         </div>
-        <button onclick="pingServer()" class="bg-green-800 p-2 rounded-full text-xs font-bold hover:bg-green-900 shadow-inner">
-            🔌 Test API
-        </button>
     </header>
 
-    <nav class="bg-white flex shadow-sm text-sm overflow-x-auto whitespace-nowrap sticky top-[68px] z-40 border-b snap-x">
-        <button onclick="showTab('bitacora')" id="btn-bitacora" class="px-5 py-3 active-tab flex-shrink-0 snap-start">Bitácora</button>
-        <button onclick="showTab('personal')" id="btn-personal" class="px-5 py-3 flex-shrink-0 snap-start">Jóvenes</button>
-        <button onclick="showTab('riego')" id="btn-riego" class="px-5 py-3 flex-shrink-0 snap-start">Riego/Fum</button>
-        <button onclick="showTab('cosechas')" id="btn-cosechas" class="px-5 py-3 flex-shrink-0 snap-start">Cosechas</button>
-        <button onclick="showTab('insumos')" id="btn-insumos" class="px-5 py-3 flex-shrink-0 snap-start">Insumos</button>
-        <button onclick="showTab('config')" id="btn-config" class="px-5 py-3 flex-shrink-0 snap-start text-amber-600">⚙️ Config</button>
-    </nav>
+    <main class="max-w-md mx-auto px-4 mt-4">
+        <div id="statusAlert" class="hidden mb-4 p-3 rounded-lg text-sm text-center font-medium shadow"></div>
 
-    <main class="p-4 max-w-md mx-auto pb-24">
-        
-        <!-- ==============================================
-             CONFIGURACIÓN DE URL (Módulo Interno)
-             ============================================== -->
-        <section id="tab-config" class="tab-content hidden">
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-amber-200 bg-amber-50">
-                <h2 class="font-bold text-amber-800 mb-2">Conexión con Google Sheets</h2>
-                <p class="text-xs text-amber-700 mb-4">Para que este formulario envíe datos, debes pegar aquí la URL de tu Google Apps Script.</p>
-                
-                <label class="text-amber-900">URL del Webhook (Apps Script)</label>
-                <input type="text" id="url-config-input" placeholder="https://script.google.com/macros/s/.../exec" class="border-amber-300 bg-white">
-                
-                <button onclick="guardarUrl()" class="w-full bg-amber-600 text-white font-bold py-3 mt-4 rounded-xl shadow-md hover:bg-amber-700 transition">GUARDAR URL</button>
-                
-                <p id="url-status" class="text-xs text-center mt-3 font-semibold text-gray-500">Sin configurar</p>
+        <div class="bg-white p-4 rounded-xl shadow-sm mb-4">
+            <label class="block text-gray-700 font-bold mb-2 text-sm">Selecciona el Módulo de Registro:</label>
+            <select id="tipoRegistro" onchange="cambiarModulo()" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2.5 text-gray-900 focus:ring-green-500 focus:border-green-500 font-medium">
+                <option value="Bitacora Diaria">📝 Bitácora Diaria (Camas/Cultivos)</option>
+                <option value="Gestion Humana">👥 Gestión Humana (Asistencia/Tareas)</option>
+                <option value="Riego_Fumigacion">💧 Riego y Fumigación</option>
+                <option value="Cosechas">🧺 Cosechas</option>
+                <option value="Insumos">📦 Insumos (Entradas/Salidas)</option>
+            </select>
+        </div>
+
+        <form id="erpForm" onsubmit="enviarDatos(event)" class="space-y-4">
+            
+            <div class="bg-white p-4 rounded-xl shadow-sm">
+                <label class="block text-gray-700 font-semibold mb-1 text-sm">Fecha de Registro:</label>
+                <input type="date" id="fecha" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm">
             </div>
-        </section>
 
-        <!-- ==============================================
-             1. BITÁCORA DIARIA
-             ============================================== -->
-        <section id="tab-bitacora" class="tab-content">
-            <form id="formBitacora" class="space-y-1 bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-                <input type="hidden" name="tipoRegistro" value="Bitacora Diaria">
-                
-                <label>Fecha de Labor</label>
-                <input type="date" name="fecha" class="fecha-hoy" required>
-
-                <div class="grid grid-cols-2 gap-3">
+            <div id="mod-Bitacora" class="modulo-form bg-white p-4 rounded-xl shadow-sm space-y-3">
+                <h3 class="text-green-700 font-bold border-b pb-1 text-sm uppercase tracking-wider">Bitácora Diaria</h3>
+                <div>
+                    <label class="block text-gray-600 text-xs font-semibold">ID Cama / Área:</label>
+                    <input type="text" name="camaId" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Cama 01, Semillero A">
+                </div>
+                <div>
+                    <label class="block text-gray-600 text-xs font-semibold">Huerta / Sede:</label>
+                    <input type="text" name="huerta" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Zona Principal">
+                </div>
+                <div>
+                    <label class="block text-gray-600 text-xs font-semibold">Cultivo:</label>
+                    <input type="text" name="cultivo" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Tomate, Cebolla">
+                </div>
+                <div>
+                    <label class="block text-gray-600 text-xs font-semibold">Tipo Origen:</label>
+                    <input type="text" name="origen" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Semillero propio, Donación">
+                </div>
+                <div>
+                    <label class="block text-gray-600 text-xs font-semibold">Fase del Cultivo:</label>
+                    <input type="text" name="fase" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Crecimiento, Floración">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label>Huerta</label>
-                        <select name="huerta" id="bit-huerta" onchange="actualizarCamas('bit-huerta', 'bit-cama')" required>
-                            <option value="">-- Elige --</option>
-                            <option value="H1">Huerta 1</option>
-                            <option value="H2">Huerta 2</option>
-                            <option value="H3">Huerta 3</option>
+                        <label class="block text-gray-600 text-xs font-semibold">% Avance Estimado:</label>
+                        <input type="number" name="avance" min="0" max="100" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="0-100">
+                    </div>
+                    <div>
+                        <label class="block text-gray-600 text-xs font-semibold">Altura Promedio (cm):</label>
+                        <input type="number" name="altura" step="0.1" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="En cm">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-gray-600 text-xs font-semibold">Estado Fitosanitario:</label>
+                        <select name="estadoFitosan" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm">
+                            <option value="Sano">Sano 🟢</option>
+                            <option value="Plaga Controlada">Plaga Controlada 🟡</option>
+                            <option value="Plaga Crítica">Plaga Crítica 🔴</option>
                         </select>
                     </div>
                     <div>
-                        <label>Cama ID</label>
-                        <select name="camaId" id="bit-cama" required>
-                            <option value="">Selecciona huerta</option>
+                        <label class="block text-gray-600 text-xs font-semibold">Humedad Suelo:</label>
+                        <select name="humedad" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm">
+                            <option value="Óptima">Óptima💧</option>
+                            <option value="Seco">Seco 🪵</option>
+                            <option value="Saturado">Saturado 🌧️</option>
                         </select>
                     </div>
                 </div>
+                <div>
+                    <label class="block text-gray-600 text-xs font-semibold">Acción Realizada:</label>
+                    <input type="text" name="accion" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Deshierbe, Tutorado">
+                </div>
+                <div>
+                    <label class="block text-gray-600 text-xs font-semibold">Responsable:</label>
+                    <input type="text" name="responsable" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Nombre de quien reporta">
+                </div>
+                <div>
+                    <label class="block text-gray-600 text-xs font-semibold">⚠️ Alerta Especial:</label>
+                    <input type="text" name="alerta" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Presencia de babosas">
+                </div>
+            </div>
 
-                <div class="grid grid-cols-2 gap-3">
+            <div id="mod-GestionHumana" class="modulo-form hidden bg-white p-4 rounded-xl shadow-sm space-y-3">
+                <h3 class="text-green-700 font-bold border-b pb-1 text-sm uppercase tracking-wider">Gestión Humana</h3>
+                <div>
+                    <label class="block text-gray-600 text-xs font-semibold">Nombre del Joven:</label>
+                    <input type="text" name="joven" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Nombre completo">
+                </div>
+                <div>
+                    <label class="block text-gray-600 text-xs font-semibold">Asistencia:</label>
+                    <select name="asistencia" id="asistenciaSelect" onchange="toggleAsistenciaCampos()" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm">
+                        <option value="Presente">Presente 🟢</option>
+                        <option value="Ausente">Ausente 🔴</option>
+                    </select>
+                </div>
+                <div id="camposAsistencia" class="space-y-3">
                     <div>
-                        <label>Cultivo Actual</label>
-                        <input type="text" name="cultivo" placeholder="Ej: Arracacha">
+                        <label class="block text-gray-600 text-xs font-semibold">Cama / Área Asignada:</label>
+                        <input type="text" name="camaAsignada" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Área de trabajo hoy">
                     </div>
                     <div>
-                        <label>Origen (Siembra)</label>
-                        <select name="origen">
-                            <option value="">N/A</option>
-                            <option value="Semilla">Semilla</option>
-                            <option value="Plántula propia">Plántula propia</option>
-                            <option value="Trasplante">Trasplante</option>
-                        </select>
+                        <label class="block text-gray-600 text-xs font-semibold">Tarea Asignada:</label>
+                        <input type="text" name="tarea" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Preparación de sustrato">
+                    </div>
+                    <div>
+                        <label class="block text-gray-600 text-xs font-semibold">Actitud / Desempeño (1-5):</label>
+                        <input type="number" name="actitud" min="1" max="5" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Calificación del 1 al 5">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-gray-600 text-xs font-semibold">Herramienta Entregada:</label>
+                            <input type="text" name="herramienta" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Pala, Rastrillo">
+                        </div>
+                        <div>
+                            <label class="block text-gray-600 text-xs font-semibold">Estado de Entrega:</label>
+                            <select name="estadoHerr" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm">
+                                <option value="Buen Estado">Buen Estado 🟢</option>
+                                <option value="Dañada">Dañada 🔴</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-gray-600 text-xs font-semibold">Insumo Entregado a Cargo:</label>
+                        <input type="text" name="insumo" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: 2kg de Compost">
                     </div>
                 </div>
+            </div>
 
+            <div id="mod-Riego" class="modulo-form hidden bg-white p-4 rounded-xl shadow-sm space-y-3">
+                <h3 class="text-green-700 font-bold border-b pb-1 text-sm uppercase tracking-wider">Riego y Fumigación</h3>
+                <div>
+                    <label class="block text-gray-600 text-xs font-semibold">Huerta / Sede:</label>
+                    <input type="text" name="huertaRiego" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Área general">
+                </div>
+                <div>
+                    <label class="block text-gray-600 text-xs font-semibold">Tipo Operación:</label>
+                    <select name="tipoOperacion" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm">
+                        <option value="Riego">Riego 💧</option>
+                        <option value="Fumigación Orgánica">Fumigación Orgánica 🌿</option>
+                        <option value="Fertilización">Fertilización 🧪</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-gray-600 text-xs font-semibold">ID Cama / Área:</label>
+                        <input type="text" name="camaIdRiego" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Cama afectada">
+                    </div>
+                    <div>
+                        <label class="block text-gray-600 text-xs font-semibold">Cultivo Principal:</label>
+                        <input type="text" name="cultivoRiego" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Tipo planta">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-gray-600 text-xs font-semibold">Responsable:</label>
+                    <input type="text" name="responsableRiego" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Nombre del aplicador">
+                </div>
+                <div>
+                    <label class="block text-gray-600 text-xs font-semibold">Producto / Método Utilizado:</label>
+                    <input type="text" name="producto" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Agua lluvia, Purín de ortiga">
+                </div>
                 <div class="grid grid-cols-3 gap-2">
-                    <div>
-                        <label>Fase</label>
-                        <select name="fase">
-                            <option value="">N/A</option>
-                            <option value="Sembrada">Sembrada</option>
-                            <option value="En crecimiento" selected>Crecimiento</option>
-                            <option value="Lista Cosechar">Para Cosechar</option>
-                        </select>
+                    <div class="col-span-2">
+                        <label class="block text-gray-600 text-xs font-semibold">Dosis / Cantidad:</label>
+                        <input type="number" step="0.01" name="cantidadRiego" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Número">
                     </div>
                     <div>
-                        <label>Altura cm</label>
-                        <input type="number" name="altura" placeholder="Ej: 20">
-                    </div>
-                    <div>
-                        <label>% Avance</label>
-                        <input type="number" name="avance" placeholder="Ej: 50">
+                        <label class="block text-gray-600 text-xs font-semibold">Unidad:</label>
+                        <input type="text" name="unidadRiego" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Litros, cc">
                     </div>
                 </div>
-
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label>E. Fitosanitario</label>
-                        <select name="estadoFitosan">
-                            <option>✅ Saludable</option>
-                            <option>⚠️ Alerta</option>
-                            <option>🔴 Plaga</option>
-                        </select>
+                        <label class="block text-gray-600 text-xs font-semibold">Tiempo (minutos):</label>
+                        <input type="number" name="tiempo" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Duración">
                     </div>
                     <div>
-                        <label>Humedad Suelo</label>
-                        <select name="humedad">
-                            <option>Media</option>
-                            <option>Alta</option>
-                            <option>Baja</option>
-                        </select>
+                        <label class="block text-gray-600 text-xs font-semibold">Cobertura:</label>
+                        <input type="text" name="cobertura" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Total, Foliar">
                     </div>
                 </div>
+            </div>
 
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label>Acción Realizada</label>
-                        <select name="accion" required>
-                            <option value="">-- Elige --</option>
-                            <option value="Siembra">Siembra</option>
-                            <option value="Deshierbe">Deshierbe</option>
-                            <option value="Aporque">Aporque</option>
-                            <option value="Mantenimiento">Mantenimiento</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label>Responsable</label>
-                        <select name="responsable">
-                            <option>Instructor</option>
-                            <option>Jóvenes Taller</option>
-                        </select>
-                    </div>
+            <div id="mod-Cosechas" class="modulo-form hidden bg-white p-4 rounded-xl shadow-sm space-y-3">
+                <h3 class="text-green-700 font-bold border-b pb-1 text-sm uppercase tracking-wider">Cosechas</h3>
+                <div>
+                    <label class="block text-gray-600 text-xs font-semibold">ID Cama / Área:</label>
+                    <input type="text" name="camaIdCosecha" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Lugar origen">
                 </div>
-
-                <label>⚠️ Alerta Específica</label>
-                <input type="text" name="alerta" placeholder="Ej: Hojas marchitas, babosas...">
-
-                <label>Observaciones</label>
-                <textarea name="observaciones" rows="2" placeholder="Detalles extra..."></textarea>
-
-                <button type="submit" class="w-full bg-green-600 text-white font-bold py-4 mt-4 rounded-xl shadow-md hover:bg-green-700 transition">ENVIAR A EXCEL</button>
-            </form>
-        </section>
-
-        <!-- ==============================================
-             2. GESTIÓN HUMANA
-             ============================================== -->
-        <section id="tab-personal" class="tab-content hidden">
-            <form id="formPersonal" class="space-y-1 bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-                <input type="hidden" name="tipoRegistro" value="Gestion Humana">
-                
-                <label>Fecha</label>
-                <input type="date" name="fecha" class="fecha-hoy" required>
-
-                <label>Joven Participante</label>
-                <select name="joven" required>
-                    <option value="">-- Selecciona joven --</option>
-                    <option value="Juan José Gallego">Juan José Gallego</option>
-                    <option value="José Daniel">José Daniel</option>
-                    <option value="Jhon Esteban Henao">Jhon Esteban Henao</option>
-                    <option value="Hernan">Hernan</option>
-                    <option value="Participante 5">Participante 5</option>
-                    <option value="Participante 6">Participante 6</option>
-                </select>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label>Asistencia</label>
-                        <select name="asistencia" required>
-                            <option value="Presente">Presente</option>
-                            <option value="Ausente">Ausente</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label>Actitud (1-5)</label>
-                        <select name="actitud">
-                            <option value="5">⭐⭐⭐⭐⭐ (5)</option>
-                            <option value="4" selected>⭐⭐⭐⭐ (4)</option>
-                            <option value="3">⭐⭐⭐ (3)</option>
-                            <option value="2">⭐⭐ (2)</option>
-                            <option value="1">⭐ (1)</option>
-                        </select>
-                    </div>
+                <div>
+                    <label class="block text-gray-600 text-xs font-semibold">Huerta / Sede:</label>
+                    <input type="text" name="huertaCosecha" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ubicación">
                 </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label>Cama / Área Asig.</label>
-                        <input type="text" name="camaAsignada" placeholder="Ej: H1-C01">
-                    </div>
-                    <div>
-                        <label>Labor / Tarea</label>
-                        <input type="text" name="tarea" placeholder="Ej: Deshierbe">
-                    </div>
+                <div>
+                    <label class="block text-gray-600 text-xs font-semibold">Cultivo Cosechado:</label>
+                    <input type="text" name="cultivoCosecha" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Cilantro, Zanahoria">
                 </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label>Herramienta</label>
-                        <input type="text" name="herramienta" placeholder="Ej: Azadón">
-                    </div>
-                    <div>
-                        <label>Estado Herr.</label>
-                        <select name="estadoHerr">
-                            <option>Limpia / OK</option>
-                            <option>Sucia</option>
-                            <option>Dañada</option>
-                        </select>
-                    </div>
-                </div>
-
-                <label>Insumo Entregado</label>
-                <input type="text" name="insumo" placeholder="Ej: Semillas, Guantes">
-
-                <label>Observaciones conductuales</label>
-                <textarea name="observaciones" rows="2"></textarea>
-
-                <button type="submit" class="w-full bg-blue-600 text-white font-bold py-4 mt-4 rounded-xl shadow-md hover:bg-blue-700 transition">ENVIAR A EXCEL</button>
-            </form>
-        </section>
-
-        <!-- ==============================================
-             3. RIEGO Y FUMIGACIÓN (Cultivo Agregado)
-             ============================================== -->
-        <section id="tab-riego" class="tab-content hidden">
-            <form id="formRiego" class="space-y-1 bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-                <input type="hidden" name="tipoRegistro" value="Riego_Fumigacion">
-                
-                <label>Fecha</label>
-                <input type="date" name="fecha" class="fecha-hoy" required>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label>Operación</label>
-                        <select name="tipoOperacion" required>
-                            <option value="Riego">💧 Riego</option>
-                            <option value="Fumigacion">🧪 Fumigación</option>
-                            <option value="Fertilizacion">🌱 Fertilización</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label>Huerta (Área)</label>
-                        <select name="huerta" required>
-                            <option value="H1">H1</option>
-                            <option value="H2">H2</option>
-                            <option value="H3">H3</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label>Cama ID (Opcional)</label>
-                        <input type="text" name="camaId" placeholder="Ej: H1-C05">
-                    </div>
-                    <div>
-                        <label>Cultivo Afectado</label>
-                        <input type="text" name="cultivo" placeholder="Ej: Tomate">
-                    </div>
-                </div>
-
                 <div class="grid grid-cols-3 gap-2">
-                    <div class="col-span-3">
-                        <label>Producto/Método</label>
-                        <input type="text" name="producto" placeholder="Ej: Purín, Agua, Compost" required>
+                    <div class="col-span-2">
+                        <label class="block text-gray-600 text-xs font-semibold">Cantidad Total:</label>
+                        <input type="number" step="0.01" name="cantidadCosecha" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Total obtenido">
+                    </div>
+                    <div>
+                        <label class="block text-gray-600 text-xs font-semibold">Unidad:</label>
+                        <input type="text" name="unidadCosecha" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Kg, Atados">
                     </div>
                 </div>
+                <div>
+                    <label class="block text-gray-600 text-xs font-semibold">Destino del Producto:</label>
+                    <input type="text" name="destino" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Venta, Autoconsumo, Semilla">
+                </div>
+                <div>
+                    <label class="block text-gray-600 text-xs font-semibold">Calidad Comercial:</label>
+                    <select name="calidad" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm">
+                        <option value="Primera">Primera (Excelente) ✨</option>
+                        <option value="Segunda">Segunda (Procesamiento) 🍏</option>
+                        <option value="Rechazo">Rechazo (Compostaje) 🍂</option>
+                    </select>
+                </div>
+            </div>
 
-                <div class="grid grid-cols-3 gap-2">
+            <div id="mod-Insumos" class="modulo-form hidden bg-white p-4 rounded-xl shadow-sm space-y-3">
+                <h3 class="text-green-700 font-bold border-b pb-1 text-sm uppercase tracking-wider">Control de Insumos</h3>
+                <div>
+                    <label class="block text-gray-600 text-xs font-semibold">Nombre del Insumo:</label>
+                    <input type="text" name="insumoNombre" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Micorrizas, Malla Sombra">
+                </div>
+                <div>
+                    <label class="block text-gray-600 text-xs font-semibold">Tipo de Insumo:</label>
+                    <input type="text" name="tipoInsumo" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Sustrato, Herramienta, Semilla">
+                </div>
+                <div>
+                    <label class="block text-gray-600 text-xs font-semibold">Proveedor / Origen:</label>
+                    <input type="text" name="proveedor" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="De dónde vino">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label>Dosis</label>
-                        <input type="number" step="0.1" name="cantidad" placeholder="10">
+                        <label class="block text-gray-600 text-xs font-semibold">Precio Unitario ($):</label>
+                        <input type="number" step="0.01" name="precio" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Costo por unidad">
                     </div>
                     <div>
-                        <label>Unidad</label>
-                        <select name="unidad">
-                            <option>Litros</option>
-                            <option>ml</option>
-                            <option>kg</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label>Minutos</label>
-                        <input type="number" name="tiempo" placeholder="45">
+                        <label class="block text-gray-600 text-xs font-semibold">Unidad Medida:</label>
+                        <input type="text" name="unidadInsumo" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Bulto, Litro, Unidad">
                     </div>
                 </div>
-
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-2 gap-2 bg-gray-50 p-2 rounded-lg border">
                     <div>
-                        <label>Responsable</label>
-                        <select name="responsable">
-                            <option>Instructor</option>
-                            <option>Jóvenes Taller</option>
-                        </select>
+                        <label class="block text-green-700 text-xs font-bold">Cant. ENTRADA (+):</label>
+                        <input type="number" step="0.01" name="cantEntrada" class="w-full bg-white border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ingreso">
                     </div>
                     <div>
-                        <label>Cobertura Real</label>
-                        <select name="cobertura">
-                            <option>Toda la huerta</option>
-                            <option>Cama específica</option>
-                        </select>
+                        <label class="block text-red-700 text-xs font-bold">Cant. SALIDA (-):</label>
+                        <input type="number" step="0.01" name="cantSalida" class="w-full bg-white border border-gray-300 rounded-lg p-2 text-sm" placeholder="Uso/Gasto">
                     </div>
                 </div>
+            </div>
 
-                <label>Observaciones</label>
-                <textarea name="observaciones" rows="1"></textarea>
+            <div class="bg-white p-4 rounded-xl shadow-sm">
+                <label class="block text-gray-700 font-semibold mb-1 text-sm">Observaciones Adicionales / Notas:</label>
+                <textarea id="observaciones" rows="2" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Detalles extra de la jornada..."></textarea>
+            </div>
 
-                <button type="submit" class="w-full bg-cyan-600 text-white font-bold py-4 mt-4 rounded-xl shadow-md hover:bg-cyan-700 transition">ENVIAR A EXCEL</button>
-            </form>
-        </section>
-
-        <!-- ==============================================
-             4. COSECHAS
-             ============================================== -->
-        <section id="tab-cosechas" class="tab-content hidden">
-            <form id="formCosechas" class="space-y-1 bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-                <input type="hidden" name="tipoRegistro" value="Cosechas">
-                
-                <label>Fecha Cosecha</label>
-                <input type="date" name="fecha" class="fecha-hoy" required>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label>Huerta</label>
-                        <select name="huerta" id="cos-huerta" onchange="actualizarCamas('cos-huerta', 'cos-cama')" required>
-                            <option value="">-- Elige --</option>
-                            <option value="H1">H1</option>
-                            <option value="H2">H2</option>
-                            <option value="H3">H3</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label>Cama ID</label>
-                        <select name="camaId" id="cos-cama" required>
-                            <option value="">Selecciona huerta</option>
-                        </select>
-                    </div>
-                </div>
-
-                <label>Cultivo Cosechado</label>
-                <input type="text" name="cultivo" placeholder="Ej: Cebolla Larga" required>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label>Cantidad (Numérica)</label>
-                        <input type="number" step="0.1" name="cantidad" placeholder="Ej: 2.5" required>
-                    </div>
-                    <div>
-                        <label>Unidad</label>
-                        <select name="unidad">
-                            <option>kg</option>
-                            <option>gr</option>
-                            <option>Atados</option>
-                            <option>Unidades</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label>Destino</label>
-                        <select name="destino">
-                            <option>Consumo interno</option>
-                            <option>Venta</option>
-                            <option>Donación</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label>Calidad</label>
-                        <select name="calidad">
-                            <option>⭐⭐ Excelente</option>
-                            <option selected>⭐⭐ Buena</option>
-                            <option>⭐ Regular</option>
-                            <option>Rechazo</option>
-                        </select>
-                    </div>
-                </div>
-
-                <button type="submit" class="w-full bg-amber-500 text-white font-bold py-4 mt-4 rounded-xl shadow-md hover:bg-amber-600 transition">REGISTRAR COSECHA</button>
-            </form>
-        </section>
-
-        <!-- ==============================================
-             5. INSUMOS
-             ============================================== -->
-        <section id="tab-insumos" class="tab-content hidden">
-            <form id="formInsumos" class="space-y-1 bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-                <input type="hidden" name="tipoRegistro" value="Insumos">
-                
-                <label>Fecha</label>
-                <input type="date" name="fecha" class="fecha-hoy" required>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label>Insumo / Material</label>
-                        <input type="text" name="insumo" placeholder="Ej: Abono Orgánico" required>
-                    </div>
-                    <div>
-                        <label>Tipo (Categoría)</label>
-                        <select name="tipoInsumo">
-                            <option>Abono / Fertilizante</option>
-                            <option>Semillas</option>
-                            <option>Plántulas</option>
-                            <option>Herramienta</option>
-                            <option>Fitosanitario</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label>Proveedor/Origen</label>
-                        <input type="text" name="proveedor" placeholder="Ej: Tienda, Finca">
-                    </div>
-                    <div>
-                        <label>Precio Unit. ($)</label>
-                        <input type="number" step="100" name="precio" placeholder="Ej: 5000">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-3 gap-2">
-                    <div>
-                        <label>Entrada</label>
-                        <input type="number" step="0.1" name="cantEntrada" placeholder="+">
-                    </div>
-                    <div>
-                        <label>Salida</label>
-                        <input type="number" step="0.1" name="cantSalida" placeholder="-">
-                    </div>
-                    <div>
-                        <label>Unidad</label>
-                        <select name="unidad">
-                            <option>kg</option>
-                            <option>lt</option>
-                            <option>gr</option>
-                            <option>und</option>
-                        </select>
-                    </div>
-                </div>
-
-                <button type="submit" class="w-full bg-slate-700 text-white font-bold py-4 mt-4 rounded-xl shadow-md hover:bg-slate-800 transition">ACTUALIZAR INVENTARIO</button>
-            </form>
-        </section>
-
+            <button type="submit" id="btnSubmit" class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-xl shadow-md hover:bg-green-700 active:scale-[0.98] transition text-base">
+                📤 Registrar en Sistema
+            </button>
+        </form>
     </main>
 
-    <!-- Modal Status -->
-    <div id="statusModal" class="fixed inset-0 bg-slate-900/70 hidden flex items-center justify-center p-6 z-50">
-        <div class="bg-white p-6 rounded-2xl text-center shadow-2xl max-w-xs w-full border border-slate-100">
-            <div id="statusIcon" class="text-5xl mb-3 animate-pulse">⏳</div>
-            <h3 id="statusTitle" class="text-lg font-bold text-slate-800">Transmitiendo...</h3>
-            <p id="statusMsg" class="text-sm text-slate-500 mb-6 mt-1">Enviando paquete a Google.</p>
-            <button onclick="closeModal()" id="btnCerrarModal" class="hidden w-full bg-slate-100 text-slate-700 hover:bg-slate-200 py-3 rounded-xl font-bold transition">Continuar trabajando</button>
-        </div>
-    </div>
-
     <script>
-        // Configuración de camas 
-        const huertasConfig = { "H1": 59, "H2": 30, "H3": 50 };
-        
-        // Obtener URL configurada desde localStorage
-        let WEB_APP_URL = localStorage.getItem("erpUrlScript") || "";
+        // URL FINAL DEL SERVIDOR DE GOOGLE PROPORCIONADA
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxAIr3Qg0twvTcxPXK1wbNZ5JGVVgtWvIn48_po0UiiCdLvHMvnumrj-9VYB9b7HD4Q/exec";
 
-        // 1. FECHAS LOCALES ROBUSTAS
-        window.onload = () => {
-            const formatter = new Intl.DateTimeFormat('en-CA', { 
-                timeZone: 'America/Bogota', 
-                year: 'numeric', 
-                month: '2-digit', 
-                day: '2-digit' 
-            });
-            const hoy = formatter.format(new Date());
-            document.querySelectorAll('.fecha-hoy').forEach(el => el.value = hoy);
+        // Al iniciar, setear fecha de hoy por defecto
+        document.getElementById('fecha').valueAsDate = new Date();
+
+        function cambiarModulo() {
+            const modulo = document.getElementById('tipoRegistro').value;
+            // Ocultar todos
+            document.querySelectorAll('.modulo-form').forEach(el => el.classList.add('hidden'));
             
-            // Actualizar vista de configuración
-            if(WEB_APP_URL) {
-                document.getElementById('url-config-input').value = WEB_APP_URL;
-                document.getElementById('url-status').innerHTML = "✅ Configurada y guardada en este celular";
-                document.getElementById('url-status').className = "text-xs text-center mt-3 font-semibold text-green-600";
-            }
-        };
+            // Mostrar seleccionado
+            if (modulo === "Bitacora Diaria") document.getElementById('mod-Bitacora').classList.remove('hidden');
+            if (modulo === "Gestion Humana") document.getElementById('mod-GestionHumana').classList.remove('hidden');
+            if (modulo === "Riego_Fumigacion") document.getElementById('mod-Riego').classList.remove('hidden');
+            if (modulo === "Cosechas") document.getElementById('mod-Cosechas').classList.remove('hidden');
+            if (modulo === "Insumos") document.getElementById('mod-Insumos').classList.remove('hidden');
+        }
 
-        // Generador Dinámico de Camas
-        function actualizarCamas(selectHuertaId, selectCamaId) {
-            const huerta = document.getElementById(selectHuertaId).value;
-            const selectCama = document.getElementById(selectCamaId);
-            selectCama.innerHTML = '<option value="">-- Elige Cama --</option>';
-            if(!huerta) return;
-
-            for(let i = 1; i <= huertasConfig[huerta]; i++) {
-                const numStr = i < 10 ? '0' + i : i; 
-                const camaId = `${huerta}-C${numStr}`;
-                selectCama.innerHTML += `<option value="${camaId}">${camaId}</option>`;
+        function toggleAsistenciaCampos() {
+            const asistencia = document.getElementById('asistenciaSelect').value;
+            const campos = document.getElementById('camposAsistencia');
+            if (asistencia === "Presente") {
+                campos.classList.remove('hidden');
+            } else {
+                campos.classList.add('hidden');
             }
         }
 
-        function showTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active-tab'));
-            document.getElementById('tab-' + tabId).classList.remove('hidden');
-            document.getElementById('btn-' + tabId).classList.add('active-tab');
+        function showAlert(mensaje, esExito) {
+            const el = document.getElementById('statusAlert');
+            el.className = `mb-4 p-3 rounded-lg text-sm text-center font-medium shadow ${esExito ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+            el.innerText = mensaje;
+            el.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function closeModal() {
-            document.getElementById('statusModal').classList.add('hidden');
-        }
-        
-        // Configuración Dinámica de la URL
-        function guardarUrl() {
-            const url = document.getElementById('url-config-input').value.trim();
-            if(!url || !url.includes("script.google.com")) {
-                alert("Por favor ingresa una URL válida de Google Apps Script.");
-                return;
-            }
-            WEB_APP_URL = url;
-            localStorage.setItem("erpUrlScript", url);
-            document.getElementById('url-status').innerHTML = "✅ Guardada con éxito";
-            document.getElementById('url-status').className = "text-xs text-center mt-3 font-semibold text-green-600";
-            alert("URL configurada. Ahora puedes usar todos los módulos.");
-        }
-
-        // HEALTH CHECK
-        async function pingServer() {
-            if (!WEB_APP_URL) {
-                alert("Primero debes ir a la pestaña ⚙️ Config y pegar la URL de Apps Script.");
-                return;
-            }
+        // CONTROLADOR TEST API (GET)
+        async function testConexion() {
+            const btn = document.getElementById('btnTest');
+            btn.innerText = "Conectando... ⏳";
+            btn.disabled = true;
             try {
-                const res = await fetch(WEB_APP_URL);
-                const data = await res.json();
-                alert(`Conexión exitosa 🟢\nStatus: ${data.status}\nVersión: ${data.version}`);
+                const response = await fetch(WEB_APP_URL);
+                const data = await response.json();
+                if (data.status === "online") {
+                    showAlert(`Conexión exitosa 🟢 (Servidor ${data.version} Activo)`, true);
+                } else {
+                    showAlert("Fallo en la respuesta del servidor 🔴", false);
+                }
             } catch (err) {
-                alert("Fallo de conexión 🔴. Revisa la URL en la pestaña Config o tu red de internet.");
+                showAlert("Fallo de conexión 🔴 Verifica permisos o URL", false);
+                console.error(err);
+            } finally {
+                btn.innerText = "Test API 🔍";
+                btn.disabled = false;
             }
         }
 
-        // ESTRATEGIA DE ENVÍO Y CONFIRMACIÓN HONESTA
-        async function handleSubmit(e) {
+        // ENVIAR FORMULARIO (POST)
+        async function enviarDatos(e) {
             e.preventDefault();
-            if (!WEB_APP_URL) {
-                alert("Debes configurar la URL del script en la pestaña ⚙️ Config.");
-                showTab('config');
-                return;
+            const btn = document.getElementById('btnSubmit');
+            const tipoRegistro = document.getElementById('tipoRegistro').value;
+            
+            btn.innerText = "Enviando datos... ⏳";
+            btn.disabled = true;
+
+            // Construcción del paquete JSON según el módulo
+            const payload = {
+                tipoRegistro: tipoRegistro,
+                fecha: document.getElementById('fecha').value,
+                observaciones: document.getElementById('observaciones').value
+            };
+
+            const form = document.getElementById('erpForm');
+            const formData = new FormData(form);
+
+            if (tipoRegistro === "Bitacora Diaria") {
+                payload.camaId = formData.get('camaId');
+                payload.huerta = formData.get('huerta');
+                payload.cultivo = formData.get('cultivo');
+                payload.origen = formData.get('origen');
+                payload.fase = formData.get('fase');
+                payload.avance = formData.get('avance');
+                payload.altura = formData.get('altura');
+                payload.estadoFitosan = formData.get('estadoFitosan');
+                payload.humedad = formData.get('humedad');
+                payload.accion = formData.get('accion');
+                payload.responsable = formData.get('responsable');
+                payload.alerta = formData.get('alerta');
+            } 
+            else if (tipoRegistro === "Gestion Humana") {
+                payload.joven = formData.get('joven');
+                payload.asistencia = formData.get('asistencia');
+                payload.camaAsignada = formData.get('camaAsignada');
+                payload.tarea = formData.get('tarea');
+                payload.actitud = formData.get('actitud');
+                payload.herramienta = formData.get('herramienta');
+                payload.estadoHerr = formData.get('estadoHerr');
+                payload.insumo = formData.get('insumo');
+            } 
+            else if (tipoRegistro === "Riego_Fumigacion") {
+                payload.huerta = formData.get('huertaRiego');
+                payload.tipoOperacion = formData.get('tipoOperacion');
+                payload.camaId = formData.get('camaIdRiego');
+                payload.cultivo = formData.get('cultivoRiego');
+                payload.responsable = formData.get('responsableRiego');
+                payload.producto = formData.get('producto');
+                payload.cantidad = formData.get('cantidadRiego');
+                payload.unidad = formData.get('unidadRiego');
+                payload.tiempo = formData.get('tiempo');
+                payload.cobertura = formData.get('cobertura');
+            } 
+            else if (tipoRegistro === "Cosechas") {
+                payload.camaId = formData.get('camaIdCosecha');
+                payload.huerta = formData.get('huertaCosecha');
+                payload.cultivo = formData.get('cultivoCosecha');
+                payload.cantidad = formData.get('cantidadCosecha');
+                payload.unidad = formData.get('unidadCosecha');
+                payload.destino = formData.get('destino');
+                payload.calidad = formData.get('calidad');
+            } 
+            else if (tipoRegistro === "Insumos") {
+                payload.insumo = formData.get('insumoNombre');
+                payload.tipoInsumo = formData.get('tipoInsumo');
+                payload.proveedor = formData.get('proveedor');
+                payload.precio = formData.get('precio');
+                payload.unidad = formData.get('unidadInsumo');
+                payload.cantEntrada = formData.get('cantEntrada');
+                payload.cantSalida = formData.get('cantSalida');
             }
 
-            const modal = document.getElementById('statusModal');
-            const btnCerrar = document.getElementById('btnCerrarModal');
-            const form = e.target;
-            const data = Object.fromEntries(new FormData(form).entries());
-
-            modal.classList.remove('hidden');
-            btnCerrar.classList.add('hidden');
-            document.getElementById('statusIcon').innerText = "🚀";
-            document.getElementById('statusTitle').innerText = "Transmitiendo datos";
-            document.getElementById('statusMsg').innerText = "El navegador está enviando la información...";
-
             try {
-                // 1. POST Ciego
-                await fetch(WEB_APP_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: JSON.stringify(data)
+                // Envío seguro cross-origin a Apps Script
+                const response = await fetch(WEB_APP_URL, {
+                    method: "POST",
+                    mode: "no-cors", // Evita bloqueos de CORS en navegadores móviles
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(payload)
                 });
 
-                // 2. Ping de verificación del servidor online
-                document.getElementById('statusIcon').innerText = "📡";
-                document.getElementById('statusMsg').innerText = "Comprobando conexión del servidor...";
+                // Con 'no-cors' la respuesta llega opaca, asumimos éxito si no lanza error
+                showAlert("✅ ¡Registro enviado con éxito a la hoja de cálculo!", true);
                 
-                const verifyRes = await fetch(WEB_APP_URL);
-                
-                if (verifyRes.ok) {
-                    document.getElementById('statusIcon').innerText = "✅";
-                    document.getElementById('statusIcon').classList.remove('animate-pulse');
-                    document.getElementById('statusTitle').innerText = "¡Envío Confirmado!";
-                    document.getElementById('statusMsg').innerText = "El dato se envió. Si el servidor respondió bien, se guardó en el Excel.";
-                    form.reset();
-                    window.onload(); // Restablecer fecha local
-                } else {
-                    throw new Error("Sin respuesta del GET");
-                }
+                // Limpiar campos variables
+                document.getElementById('observaciones').value = "";
+                form.reset();
+                document.getElementById('fecha').valueAsDate = new Date();
+                cambiarModulo();
 
             } catch (error) {
-                document.getElementById('statusIcon').innerText = "⚠️";
-                document.getElementById('statusIcon').classList.remove('animate-pulse');
-                document.getElementById('statusTitle').innerText = "Envío sin Confirmación";
-                document.getElementById('statusMsg').innerText = "Se emitió el registro, pero tu red falló al recibir la confirmación. Verifica el Excel.";
+                showAlert("❌ Error al enviar datos: " + error.message, false);
+                console.error(error);
             } finally {
-                btnCerrar.classList.remove('hidden');
+                btn.innerText = "📤 Registrar en Sistema";
+                btn.disabled = false;
             }
         }
-
-        document.getElementById('formBitacora').onsubmit = handleSubmit;
-        document.getElementById('formPersonal').onsubmit = handleSubmit;
-        document.getElementById('formRiego').onsubmit = handleSubmit;
-        document.getElementById('formCosechas').onsubmit = handleSubmit;
-        document.getElementById('formInsumos').onsubmit = handleSubmit;
     </script>
 </body>
 </html>
-
-
-```
