@@ -288,10 +288,10 @@
     </main>
 
     <script>
-        // URL ACTUALIZADA Y AUTORIZADA DE TU GOOGLE APPS SCRIPT
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyMUFqHWaWgWuV4zgtBkudJeRcdk9rId9duIe1rWKvkz3UhYS147vjbw7m92aIhk7XE/exec";
+        // URL NUEVA SUMINISTRADA
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyRekXi7zp8inyBNIWAC3B_7tRnC01xFAvalVx3QgEYwEtand0Xjmbp4A1xRwGva66Y/exec";
 
-        // Inicializar fecha
+        // Inicializar fecha actual de manera automática
         document.getElementById('fecha').valueAsDate = new Date();
 
         function cambiarModulo() {
@@ -334,10 +334,10 @@
                 if (data.status === "online") {
                     showAlert(`Conexión exitosa 🟢 (Servidor ${data.version} Activo)`, true);
                 } else {
-                    showAlert("Fallo en la respuesta del servidor 🔴", false);
+                    showAlert("Respuesta inesperada del servidor 🔴", false);
                 }
             } catch (err) {
-                showAlert("Fallo de conexión 🔴 Verifica la URL o historial de caché", false);
+                showAlert("Fallo de conexión en lectura 🔴 (Prueba enviar un registro directo)", false);
                 console.error(err);
             } finally {
                 btn.innerText = "Test API 🔍";
@@ -354,14 +354,14 @@
             btn.innerText = "Enviando datos... ⏳";
             btn.disabled = true;
 
-            // Estructura limpia del Payload base
+            // Construcción del Payload base
             const payload = {
                 tipoRegistro: tipoRegistro,
                 fecha: document.getElementById('fecha').value,
                 observaciones: document.getElementById('observaciones').value
             };
 
-            // Mapeos explícitos usando selectores de ID únicos para evitar errores de sintaxis
+            // Mapeo detallado según el módulo activo
             if (tipoRegistro === "Bitacora Diaria") {
                 payload.camaId = document.getElementById('bit_camaId').value;
                 payload.huerta = document.getElementById('bit_huerta').value;
@@ -418,6 +418,7 @@
             }
 
             try {
+                // Envío seguro a través de no-cors para evitar bloqueos perimetrales del navegador móvil
                 await fetch(WEB_APP_URL, {
                     method: "POST",
                     mode: "no-cors",
@@ -427,16 +428,16 @@
                     body: JSON.stringify(payload)
                 });
 
-                showAlert("✅ ¡Registro enviado con éxito a la hoja de cálculo!", true);
+                showAlert("✅ ¡Registro enviado con éxito al Excel de la Huerta!", true);
                 
-                // Resetear campos de texto de manera limpia
+                // Limpieza estructural post-envío
                 document.getElementById('observaciones').value = "";
                 document.getElementById('erpForm').reset();
                 document.getElementById('fecha').valueAsDate = new Date();
                 cambiarModulo();
 
             } catch (error) {
-                showAlert("❌ Error al enviar datos: " + error.message, false);
+                showAlert("❌ Error al procesar envío: " + error.message, false);
                 console.error(error);
             } finally {
                 btn.innerText = "📤 Registrar en Sistema";
