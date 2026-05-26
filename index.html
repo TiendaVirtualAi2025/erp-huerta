@@ -42,38 +42,38 @@
                 <h3 class="text-green-700 font-bold border-b pb-1 text-sm uppercase tracking-wider">Bitácora Diaria</h3>
                 <div>
                     <label class="block text-gray-600 text-xs font-semibold">ID Cama / Área:</label>
-                    <input type="text" name="camaId" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Cama 01, Semillero A">
+                    <input type="text" id="bit_camaId" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Cama 01">
                 </div>
                 <div>
                     <label class="block text-gray-600 text-xs font-semibold">Huerta / Sede:</label>
-                    <input type="text" name="huerta" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Zona Principal">
+                    <input type="text" id="bit_huerta" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Zona Principal">
                 </div>
                 <div>
                     <label class="block text-gray-600 text-xs font-semibold">Cultivo:</label>
-                    <input type="text" name="cultivo" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Tomate, Cebolla">
+                    <input type="text" id="bit_cultivo" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Tomate">
                 </div>
                 <div>
                     <label class="block text-gray-600 text-xs font-semibold">Tipo Origen:</label>
-                    <input type="text" name="origen" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Semillero propio, Donación">
+                    <input type="text" id="bit_origen" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Semillero propio">
                 </div>
                 <div>
                     <label class="block text-gray-600 text-xs font-semibold">Fase del Cultivo:</label>
-                    <input type="text" name="fase" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Crecimiento, Floración">
+                    <input type="text" id="bit_fase" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Crecimiento">
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-gray-600 text-xs font-semibold">% Avance Estimado:</label>
-                        <input type="number" name="avance" min="0" max="100" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="0-100">
+                        <input type="number" id="bit_avance" min="0" max="100" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="0-100">
                     </div>
                     <div>
                         <label class="block text-gray-600 text-xs font-semibold">Altura Promedio (cm):</label>
-                        <input type="number" name="altura" step="0.1" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="En cm">
+                        <input type="number" id="bit_altura" step="0.1" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="En cm">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-gray-600 text-xs font-semibold">Estado Fitosanitario:</label>
-                        <select name="estadoFitosan" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm">
+                        <select id="bit_estadoFitosan" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm">
                             <option value="Sano">Sano 🟢</option>
                             <option value="Plaga Controlada">Plaga Controlada 🟡</option>
                             <option value="Plaga Crítica">Plaga Crítica 🔴</option>
@@ -81,7 +81,7 @@
                     </div>
                     <div>
                         <label class="block text-gray-600 text-xs font-semibold">Humedad Suelo:</label>
-                        <select name="humedad" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm">
+                        <select id="bit_humedad" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm">
                             <option value="Óptima">Óptima💧</option>
                             <option value="Seco">Seco 🪵</option>
                             <option value="Saturado">Saturado 🌧️</option>
@@ -90,15 +90,15 @@
                 </div>
                 <div>
                     <label class="block text-gray-600 text-xs font-semibold">Acción Realizada:</label>
-                    <input type="text" name="accion" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Deshierbe, Tutorado">
+                    <input type="text" id="bit_accion" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Deshierbe">
                 </div>
                 <div>
                     <label class="block text-gray-600 text-xs font-semibold">Responsable:</label>
-                    <input type="text" name="responsable" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Nombre de quien reporta">
+                    <input type="text" id="bit_responsable" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Nombre del operador">
                 </div>
                 <div>
                     <label class="block text-gray-600 text-xs font-semibold">⚠️ Alerta Especial:</label>
-                    <input type="text" name="alerta" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Presencia de babosas">
+                    <input type="text" id="bit_alerta" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Presencia de babosas">
                 </div>
             </div>
 
@@ -106,11 +106,11 @@
                 <h3 class="text-green-700 font-bold border-b pb-1 text-sm uppercase tracking-wider">Gestión Humana</h3>
                 <div>
                     <label class="block text-gray-600 text-xs font-semibold">Nombre del Joven:</label>
-                    <input type="text" name="joven" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Nombre completo">
+                    <input type="text" id="gh_joven" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Nombre completo">
                 </div>
                 <div>
                     <label class="block text-gray-600 text-xs font-semibold">Asistencia:</label>
-                    <select name="asistencia" id="asistenciaSelect" onchange="toggleAsistenciaCampos()" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm">
+                    <select id="gh_asistencia" onchange="toggleAsistenciaCampos()" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm">
                         <option value="Presente">Presente 🟢</option>
                         <option value="Ausente">Ausente 🔴</option>
                     </select>
@@ -118,24 +118,24 @@
                 <div id="camposAsistencia" class="space-y-3">
                     <div>
                         <label class="block text-gray-600 text-xs font-semibold">Cama / Área Asignada:</label>
-                        <input type="text" name="camaAsignada" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Área de trabajo hoy">
+                        <input type="text" id="gh_camaAsignada" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Área de trabajo hoy">
                     </div>
                     <div>
                         <label class="block text-gray-600 text-xs font-semibold">Tarea Asignada:</label>
-                        <input type="text" name="tarea" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Preparación de sustrato">
+                        <input type="text" id="gh_tarea" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Preparación de sustrato">
                     </div>
                     <div>
                         <label class="block text-gray-600 text-xs font-semibold">Actitud / Desempeño (1-5):</label>
-                        <input type="number" name="actitud" min="1" max="5" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Calificación del 1 al 5">
+                        <input type="number" id="gh_actitud" min="1" max="5" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Calificación 1 al 5">
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="block text-gray-600 text-xs font-semibold">Herramienta Entregada:</label>
-                            <input type="text" name="herramienta" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Pala, Rastrillo">
+                            <input type="text" id="gh_herramienta" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Pala">
                         </div>
                         <div>
                             <label class="block text-gray-600 text-xs font-semibold">Estado de Entrega:</label>
-                            <select name="estadoHerr" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm">
+                            <select id="gh_estadoHerr" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm">
                                 <option value="Buen Estado">Buen Estado 🟢</option>
                                 <option value="Dañada">Dañada 🔴</option>
                             </select>
@@ -143,7 +143,7 @@
                     </div>
                     <div>
                         <label class="block text-gray-600 text-xs font-semibold">Insumo Entregado a Cargo:</label>
-                        <input type="text" name="insumo" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: 2kg de Compost">
+                        <input type="text" id="gh_insumo" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: 2kg de Compost">
                     </div>
                 </div>
             </div>
@@ -152,11 +152,11 @@
                 <h3 class="text-green-700 font-bold border-b pb-1 text-sm uppercase tracking-wider">Riego y Fumigación</h3>
                 <div>
                     <label class="block text-gray-600 text-xs font-semibold">Huerta / Sede:</label>
-                    <input type="text" name="huertaRiego" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Área general">
+                    <input type="text" id="rf_huerta" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Área general">
                 </div>
                 <div>
                     <label class="block text-gray-600 text-xs font-semibold">Tipo Operación:</label>
-                    <select name="tipoOperacion" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm">
+                    <select id="rf_tipoOperacion" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm">
                         <option value="Riego">Riego 💧</option>
                         <option value="Fumigación Orgánica">Fumigación Orgánica 🌿</option>
                         <option value="Fertilización">Fertilización 🧪</option>
@@ -165,39 +165,39 @@
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-gray-600 text-xs font-semibold">ID Cama / Área:</label>
-                        <input type="text" name="camaIdRiego" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Cama afectada">
+                        <input type="text" id="rf_camaId" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Cama afectada">
                     </div>
                     <div>
                         <label class="block text-gray-600 text-xs font-semibold">Cultivo Principal:</label>
-                        <input type="text" name="cultivoRiego" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Tipo planta">
+                        <input type="text" id="rf_cultivo" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Tipo planta">
                     </div>
                 </div>
                 <div>
                     <label class="block text-gray-600 text-xs font-semibold">Responsable:</label>
-                    <input type="text" name="responsableRiego" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Nombre del aplicador">
+                    <input type="text" id="rf_responsable" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Nombre del aplicador">
                 </div>
                 <div>
                     <label class="block text-gray-600 text-xs font-semibold">Producto / Método Utilizado:</label>
-                    <input type="text" name="producto" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Agua lluvia, Purín de ortiga">
+                    <input type="text" id="rf_producto" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Purín de ortiga">
                 </div>
                 <div class="grid grid-cols-3 gap-2">
                     <div class="col-span-2">
                         <label class="block text-gray-600 text-xs font-semibold">Dosis / Cantidad:</label>
-                        <input type="number" step="0.01" name="cantidadRiego" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Número">
+                        <input type="number" step="0.01" id="rf_cantidad" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Número">
                     </div>
                     <div>
                         <label class="block text-gray-600 text-xs font-semibold">Unidad:</label>
-                        <input type="text" name="unidadRiego" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Litros, cc">
+                        <input type="text" id="rf_unidad" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Litros">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-gray-600 text-xs font-semibold">Tiempo (minutos):</label>
-                        <input type="number" name="tiempo" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Duración">
+                        <input type="number" id="rf_tiempo" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Duración">
                     </div>
                     <div>
                         <label class="block text-gray-600 text-xs font-semibold">Cobertura:</label>
-                        <input type="text" name="cobertura" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Total, Foliar">
+                        <input type="text" id="rf_cobertura" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Total, Foliar">
                     </div>
                 </div>
             </div>
@@ -206,33 +206,33 @@
                 <h3 class="text-green-700 font-bold border-b pb-1 text-sm uppercase tracking-wider">Cosechas</h3>
                 <div>
                     <label class="block text-gray-600 text-xs font-semibold">ID Cama / Área:</label>
-                    <input type="text" name="camaIdCosecha" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Lugar origen">
+                    <input type="text" id="cos_camaId" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Lugar origen">
                 </div>
                 <div>
                     <label class="block text-gray-600 text-xs font-semibold">Huerta / Sede:</label>
-                    <input type="text" name="huertaCosecha" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ubicación">
+                    <input type="text" id="cos_huerta" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ubicación">
                 </div>
                 <div>
                     <label class="block text-gray-600 text-xs font-semibold">Cultivo Cosechado:</label>
-                    <input type="text" name="cultivoCosecha" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Cilantro, Zanahoria">
+                    <input type="text" id="cos_cultivo" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Cilantro">
                 </div>
                 <div class="grid grid-cols-3 gap-2">
                     <div class="col-span-2">
                         <label class="block text-gray-600 text-xs font-semibold">Cantidad Total:</label>
-                        <input type="number" step="0.01" name="cantidadCosecha" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Total obtenido">
+                        <input type="number" step="0.01" id="cos_cantidad" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Total obtenido">
                     </div>
                     <div>
                         <label class="block text-gray-600 text-xs font-semibold">Unidad:</label>
-                        <input type="text" name="unidadCosecha" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Kg, Atados">
+                        <input type="text" id="cos_unidad" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Kg">
                     </div>
                 </div>
                 <div>
                     <label class="block text-gray-600 text-xs font-semibold">Destino del Producto:</label>
-                    <input type="text" name="destino" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Venta, Autoconsumo, Semilla">
+                    <input type="text" id="cos_destino" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Venta, Autoconsumo">
                 </div>
                 <div>
                     <label class="block text-gray-600 text-xs font-semibold">Calidad Comercial:</label>
-                    <select name="calidad" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm">
+                    <select id="cos_calidad" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm">
                         <option value="Primera">Primera (Excelente) ✨</option>
                         <option value="Segunda">Segunda (Procesamiento) 🍏</option>
                         <option value="Rechazo">Rechazo (Compostaje) 🍂</option>
@@ -244,34 +244,34 @@
                 <h3 class="text-green-700 font-bold border-b pb-1 text-sm uppercase tracking-wider">Control de Insumos</h3>
                 <div>
                     <label class="block text-gray-600 text-xs font-semibold">Nombre del Insumo:</label>
-                    <input type="text" name="insumoNombre" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Micorrizas, Malla Sombra">
+                    <input type="text" id="ins_insumoNombre" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Micorrizas">
                 </div>
                 <div>
                     <label class="block text-gray-600 text-xs font-semibold">Tipo de Insumo:</label>
-                    <input type="text" name="tipoInsumo" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Sustrato, Herramienta, Semilla">
+                    <input type="text" id="ins_tipoInsumo" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Sustrato, Semilla">
                 </div>
                 <div>
                     <label class="block text-gray-600 text-xs font-semibold">Proveedor / Origen:</label>
-                    <input type="text" name="proveedor" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="De dónde vino">
+                    <input type="text" id="ins_proveedor" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="De dónde vino">
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-gray-600 text-xs font-semibold">Precio Unitario ($):</label>
-                        <input type="number" step="0.01" name="precio" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Costo por unidad">
+                        <input type="number" step="0.01" id="ins_precio" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Costo unidad">
                     </div>
                     <div>
                         <label class="block text-gray-600 text-xs font-semibold">Unidad Medida:</label>
-                        <input type="text" name="unidadInsumo" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Bulto, Litro, Unidad">
+                        <input type="text" id="ins_unidadInsumo" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Bulto, Litro">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-2 bg-gray-50 p-2 rounded-lg border">
                     <div>
                         <label class="block text-green-700 text-xs font-bold">Cant. ENTRADA (+):</label>
-                        <input type="number" step="0.01" name="cantEntrada" class="w-full bg-white border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ingreso">
+                        <input type="number" step="0.01" id="ins_cantEntrada" class="w-full bg-white border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ingreso">
                     </div>
                     <div>
                         <label class="block text-red-700 text-xs font-bold">Cant. SALIDA (-):</label>
-                        <input type="number" step="0.01" name="cantSalida" class="w-full bg-white border border-gray-300 rounded-lg p-2 text-sm" placeholder="Uso/Gasto">
+                        <input type="number" step="0.01" id="ins_cantSalida" class="w-full bg-white border border-gray-300 rounded-lg p-2 text-sm" placeholder="Uso/Gasto">
                     </div>
                 </div>
             </div>
@@ -288,18 +288,16 @@
     </main>
 
     <script>
-        // URL FINAL DEL SERVIDOR DE GOOGLE PROPORCIONADA
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxAIr3Qg0twvTcxPXK1wbNZ5JGVVgtWvIn48_po0UiiCdLvHMvnumrj-9VYB9b7HD4Q/exec";
+        // URL ACTUALIZADA Y AUTORIZADA DE TU GOOGLE APPS SCRIPT
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyMUFqHWaWgWuV4zgtBkudJeRcdk9rId9duIe1rWKvkz3UhYS147vjbw7m92aIhk7XE/exec";
 
-        // Al iniciar, setear fecha de hoy por defecto
+        // Inicializar fecha
         document.getElementById('fecha').valueAsDate = new Date();
 
         function cambiarModulo() {
             const modulo = document.getElementById('tipoRegistro').value;
-            // Ocultar todos
             document.querySelectorAll('.modulo-form').forEach(el => el.classList.add('hidden'));
             
-            // Mostrar seleccionado
             if (modulo === "Bitacora Diaria") document.getElementById('mod-Bitacora').classList.remove('hidden');
             if (modulo === "Gestion Humana") document.getElementById('mod-GestionHumana').classList.remove('hidden');
             if (modulo === "Riego_Fumigacion") document.getElementById('mod-Riego').classList.remove('hidden');
@@ -308,7 +306,7 @@
         }
 
         function toggleAsistenciaCampos() {
-            const asistencia = document.getElementById('asistenciaSelect').value;
+            const asistencia = document.getElementById('gh_asistencia').value;
             const campos = document.getElementById('camposAsistencia');
             if (asistencia === "Presente") {
                 campos.classList.remove('hidden');
@@ -339,7 +337,7 @@
                     showAlert("Fallo en la respuesta del servidor 🔴", false);
                 }
             } catch (err) {
-                showAlert("Fallo de conexión 🔴 Verifica permisos o URL", false);
+                showAlert("Fallo de conexión 🔴 Verifica la URL o historial de caché", false);
                 console.error(err);
             } finally {
                 btn.innerText = "Test API 🔍";
@@ -356,88 +354,84 @@
             btn.innerText = "Enviando datos... ⏳";
             btn.disabled = true;
 
-            // Construcción del paquete JSON según el módulo
+            // Estructura limpia del Payload base
             const payload = {
                 tipoRegistro: tipoRegistro,
                 fecha: document.getElementById('fecha').value,
                 observaciones: document.getElementById('observaciones').value
             };
 
-            const form = document.getElementById('erpForm');
-            const formData = new FormData(form);
-
+            // Mapeos explícitos usando selectores de ID únicos para evitar errores de sintaxis
             if (tipoRegistro === "Bitacora Diaria") {
-                payload.camaId = formData.get('camaId');
-                payload.huerta = formData.get('huerta');
-                payload.cultivo = formData.get('cultivo');
-                payload.origen = formData.get('origen');
-                payload.fase = formData.get('fase');
-                payload.avance = formData.get('avance');
-                payload.altura = formData.get('altura');
-                payload.estadoFitosan = formData.get('estadoFitosan');
-                payload.humedad = formData.get('humedad');
-                payload.accion = formData.get('accion');
-                payload.responsable = formData.get('responsable');
-                payload.alerta = formData.get('alerta');
+                payload.camaId = document.getElementById('bit_camaId').value;
+                payload.huerta = document.getElementById('bit_huerta').value;
+                payload.cultivo = document.getElementById('bit_cultivo').value;
+                payload.origen = document.getElementById('bit_origen').value;
+                payload.fase = document.getElementById('bit_fase').value;
+                payload.avance = document.getElementById('bit_avance').value;
+                payload.altura = document.getElementById('bit_altura').value;
+                payload.estadoFitosan = document.getElementById('bit_estadoFitosan').value;
+                payload.humedad = document.getElementById('bit_humedad').value;
+                payload.accion = document.getElementById('bit_accion').value;
+                payload.responsable = document.getElementById('bit_responsable').value;
+                payload.alerta = document.getElementById('bit_alerta').value;
             } 
             else if (tipoRegistro === "Gestion Humana") {
-                payload.joven = formData.get('joven');
-                payload.asistencia = formData.get('asistencia');
-                payload.camaAsignada = formData.get('camaAsignada');
-                payload.tarea = formData.get('tarea');
-                payload.actitud = formData.get('actitud');
-                payload.herramienta = formData.get('herramienta');
-                payload.estadoHerr = formData.get('estadoHerr');
-                payload.insumo = formData.get('insumo');
+                payload.joven = document.getElementById('gh_joven').value;
+                payload.asistencia = document.getElementById('gh_asistencia').value;
+                payload.camaAsignada = document.getElementById('gh_camaAsignada').value;
+                payload.tarea = document.getElementById('gh_tarea').value;
+                payload.actitud = document.getElementById('gh_actitud').value;
+                payload.herramienta = document.getElementById('gh_herramienta').value;
+                payload.estadoHerr = document.getElementById('gh_estadoHerr').value;
+                payload.insumo = document.getElementById('gh_insumo').value;
             } 
             else if (tipoRegistro === "Riego_Fumigacion") {
-                payload.huerta = formData.get('huertaRiego');
-                payload.tipoOperacion = formData.get('tipoOperacion');
-                payload.camaId = formData.get('camaIdRiego');
-                payload.cultivo = formData.get('cultivoRiego');
-                payload.responsable = formData.get('responsableRiego');
-                payload.producto = formData.get('producto');
-                payload.cantidad = formData.get('cantidadRiego');
-                payload.unidad = formData.get('unidadRiego');
-                payload.tiempo = formData.get('tiempo');
-                payload.cobertura = formData.get('cobertura');
+                payload.huerta = document.getElementById('rf_huerta').value;
+                payload.tipoOperacion = document.getElementById('rf_tipoOperacion').value;
+                payload.camaId = document.getElementById('rf_camaId').value;
+                payload.cultivo = document.getElementById('rf_cultivo').value;
+                payload.responsable = document.getElementById('rf_responsable').value;
+                payload.producto = document.getElementById('rf_producto').value;
+                payload.cantidad = document.getElementById('rf_cantidad').value;
+                payload.unidad = document.getElementById('rf_unidad').value;
+                payload.tiempo = document.getElementById('rf_tiempo').value;
+                payload.cobertura = document.getElementById('rf_cobertura').value;
             } 
             else if (tipoRegistro === "Cosechas") {
-                payload.camaId = formData.get('camaIdCosecha');
-                payload.huerta = formData.get('huertaCosecha');
-                payload.cultivo = formData.get('cultivoCosecha');
-                payload.cantidad = formData.get('cantidadCosecha');
-                payload.unidad = formData.get('unidadCosecha');
-                payload.destino = formData.get('destino');
-                payload.calidad = formData.get('calidad');
+                payload.camaId = document.getElementById('cos_camaId').value;
+                payload.huerta = document.getElementById('cos_huerta').value;
+                payload.cultivo = document.getElementById('cos_cultivo').value;
+                payload.cantidad = document.getElementById('cos_cantidad').value;
+                payload.unidad = document.getElementById('cos_unidad').value;
+                payload.destino = document.getElementById('cos_destino').value;
+                payload.calidad = document.getElementById('cos_calidad').value;
             } 
             else if (tipoRegistro === "Insumos") {
-                payload.insumo = formData.get('insumoNombre');
-                payload.tipoInsumo = formData.get('tipoInsumo');
-                payload.proveedor = formData.get('proveedor');
-                payload.precio = formData.get('precio');
-                payload.unidad = formData.get('unidadInsumo');
-                payload.cantEntrada = formData.get('cantEntrada');
-                payload.cantSalida = formData.get('cantSalida');
+                payload.insumo = document.getElementById('ins_insumoNombre').value;
+                payload.tipoInsumo = document.getElementById('ins_tipoInsumo').value;
+                payload.proveedor = document.getElementById('ins_proveedor').value;
+                payload.precio = document.getElementById('ins_precio').value;
+                payload.unidad = document.getElementById('ins_unidadInsumo').value;
+                payload.cantEntrada = document.getElementById('ins_cantEntrada').value;
+                payload.cantSalida = document.getElementById('ins_cantSalida').value;
             }
 
             try {
-                // Envío seguro cross-origin a Apps Script
-                const response = await fetch(WEB_APP_URL, {
+                await fetch(WEB_APP_URL, {
                     method: "POST",
-                    mode: "no-cors", // Evita bloqueos de CORS en navegadores móviles
+                    mode: "no-cors",
                     headers: {
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify(payload)
                 });
 
-                // Con 'no-cors' la respuesta llega opaca, asumimos éxito si no lanza error
                 showAlert("✅ ¡Registro enviado con éxito a la hoja de cálculo!", true);
                 
-                // Limpiar campos variables
+                // Resetear campos de texto de manera limpia
                 document.getElementById('observaciones').value = "";
-                form.reset();
+                document.getElementById('erpForm').reset();
                 document.getElementById('fecha').valueAsDate = new Date();
                 cambiarModulo();
 
