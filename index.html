@@ -3,122 +3,105 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>ERP Huerta V16 - Dashboard Profesional</title>
+<title>ERP Huerta - Sistema Integral</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!-- Chart.js opcional, se cargará solo si es necesario -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
 <style>
-:root {
-  --g1: #1a3d2b; --g2: #2d6a4f; --g3: #40916c; --g4: #52b788; --g5: #95d5b2; --g6: #d8f3dc;
-  --am: #e07a31; --am-p: #fff3e0; --rd: #c0392b; --rd-p: #fdecea;
-  --bl: #1565c0; --bl-p: #e3f2fd;
-  --bg: #f2efe8; --bg2: #e8e4db; --card: #fff;
-  --txt: #1a1a1a; --txt2: #555; --txt3: #888;
-  --bdr: #e0ddd5;
-  --r: 14px; --r2: 10px; --r3: 6px;
-  --f: 'Inter', sans-serif;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-body { font-family: var(--f); background: var(--bg); color: var(--txt); min-height: 100vh; }
-.hdr { background: var(--g1); position: sticky; top: 0; z-index: 200; }
-.hdr-top { max-width: 500px; margin: 0 auto; display: flex; align-items: center; padding: 12px 16px; gap: 8px; }
-.hdr-top h1 { flex: 1; font-size: 15px; font-weight: 700; color: #fff; }
-.hdr-top h1 span { font-size: 10px; font-weight: 400; opacity: .6; display: block; margin-top: 1px; }
-.sync-btn { background: none; border: 1px solid rgba(255,255,255,.3); color: rgba(255,255,255,.85); padding: 6px 11px; border-radius: 20px; font-family: var(--f); font-size: 11px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: background .2s; }
-.sync-btn:hover { background: rgba(255,255,255,.1); }
-.sync-btn.spin { display: inline-block; animation: giro 1s linear infinite; }
-@keyframes giro { to { transform: rotate(360deg); } }
-.cfg-btn { background: none; border: none; color: rgba(255,255,255,.7); padding: 6px; cursor: pointer; font-size: 18px; line-height: 1; }
-.nav { background: var(--g2); border-top: 1px solid rgba(255,255,255,.1); }
-.nav-inner { max-width: 500px; margin: 0 auto; display: flex; }
-.nb { flex: 1; padding: 10px 4px 9px; border: none; background: none; color: rgba(255,255,255,.55); font-family: var(--f); font-size: 9.5px; font-weight: 600; letter-spacing: .4px; text-transform: uppercase; cursor: pointer; border-bottom: 2px solid transparent; transition: all .2s; }
-.nb.on { color: #fff; border-bottom-color: var(--g4); }
-.wrap { max-width: 500px; margin: 0 auto; padding: 12px 14px 90px; }
-.view { display: none; }
-.view.on { display: block; }
-.toast { position: fixed; top: 68px; left: 50%; transform: translateX(-50%) translateY(-10px); background: var(--g1); color: #fff; padding: 10px 20px; border-radius: 30px; font-size: 13px; font-weight: 500; z-index: 999; opacity: 0; transition: all .25s; pointer-events: none; max-width: 92vw; text-align: center; }
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-.off-bar { background: var(--am); color: #fff; font-size: 12px; font-weight: 600; text-align: center; padding: 8px; display: none; }
-.off-bar.show { display: block; }
-
-/* ========== DASHBOARD PRO ========== */
-.kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
-.kpi-card { background: var(--card); border-radius: var(--r2); border: 1px solid var(--bdr); padding: 14px; position: relative; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,.02); transition: all .2s; }
-.kpi-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.05); }
-.kpi-icon { font-size: 24px; margin-bottom: 8px; }
-.kpi-value { font-size: 28px; font-weight: 800; line-height: 1.1; margin: 4px 0; color: var(--g2); }
-.kpi-label { font-size: 11px; font-weight: 600; color: var(--txt3); text-transform: uppercase; letter-spacing: .5px; }
-.kpi-trend { font-size: 10px; margin-top: 6px; color: var(--txt2); display: flex; align-items: center; gap: 4px; }
-.trend-up { color: var(--g3); }
-.trend-down { color: var(--rd); }
-.chart-container { background: var(--card); border-radius: var(--r2); border: 1px solid var(--bdr); padding: 12px; margin-bottom: 16px; }
-.chart-title { font-size: 12px; font-weight: 700; margin-bottom: 12px; color: var(--txt2); text-transform: uppercase; letter-spacing: .5px; display: flex; justify-content: space-between; align-items: center; }
-.chart-title span { font-size: 10px; font-weight: 400; background: var(--bg2); padding: 2px 8px; border-radius: 12px; }
-canvas { max-height: 180px; width: 100%; }
-.prox-cosechas { background: var(--card); border-radius: var(--r2); border: 1px solid var(--bdr); margin-bottom: 16px; overflow: hidden; }
-.prox-header { padding: 10px 14px; background: var(--bg); border-bottom: 1px solid var(--bdr); font-weight: 700; font-size: 12px; }
-.prox-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--bdr); cursor: pointer; transition: background .15s; }
-.prox-row:hover { background: var(--g6); }
-.prox-cult { font-weight: 600; font-size: 13px; }
-.prox-dias { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; background: var(--am-p); color: #9a4f1a; }
-.prox-btn { background: var(--g2); color: white; border: none; padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 600; cursor: pointer; }
-.alert-cat { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
-.alert-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; cursor: pointer; background: var(--bg2); color: var(--txt2); }
-.alert-badge.active { background: var(--g2); color: white; }
-.alert-item { background: var(--card); border-radius: var(--r2); border-left: 4px solid; margin-bottom: 8px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
-.alert-item.crit { border-left-color: var(--rd); }
-.alert-item.warn { border-left-color: var(--am); }
-.alert-item.info { border-left-color: var(--bl); }
-.alert-item.ok { border-left-color: var(--g4); }
-.export-btn { background: var(--bl); color: white; border: none; border-radius: var(--r3); padding: 8px 12px; font-size: 11px; font-weight: 600; cursor: pointer; margin-left: auto; }
-
-/* ========== FORMULARIOS (sin cambios importantes) ========== */
-.fcard { background: var(--card); border-radius: var(--r2); border: 1px solid var(--bdr); padding: 15px; margin-bottom: 9px; }
-.fcard-ttl { font-size: 11px; font-weight: 700; color: var(--g2); text-transform: uppercase; letter-spacing: .6px; border-bottom: 1px solid var(--bdr); padding-bottom: 9px; margin-bottom: 13px; }
-.fld { margin-bottom: 11px; }
-.fld label { display: block; font-size: 11px; font-weight: 600; color: var(--txt2); margin-bottom: 4px; }
-.fld input, .fld select, .fld textarea { width: 100%; padding: 10px 12px; border: 1.5px solid var(--bdr); border-radius: var(--r3); font-family: var(--f); font-size: 14px; background: var(--bg); }
-.autofill { background: #f0fff4 !important; color: var(--g2) !important; font-weight: 600 !important; border-color: #b7e4c7 !important; cursor: default; }
-.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
-.sbtn { width: 100%; background: var(--g2); color: #fff; border: none; padding: 15px; border-radius: var(--r2); font-weight: 700; cursor: pointer; }
-.mod-pick { display: grid; grid-template-columns: repeat(5,1fr); gap: 6px; margin-bottom: 10px; }
-.mpk { padding: 10px 4px; border: 1.5px solid var(--bdr); border-radius: var(--r2); background: var(--bg); font-size: 10px; font-weight: 600; text-align: center; cursor: pointer; }
-.mpk.on { background: var(--g2); color: #fff; border-color: var(--g2); }
-.in-p, .in-m { border-radius: var(--r3); padding: 10px 12px; }
-.in-p { background: rgba(82,183,136,.1); border: 1.5px solid var(--g5); }
-.in-m { background: rgba(192,57,43,.07); border: 1.5px solid #e8a0a0; }
-.hist-item { background: var(--card); border-radius: var(--r2); border: 1px solid var(--bdr); margin-bottom: 8px; }
-.hist-hdr { display: flex; justify-content: space-between; padding: 10px 13px; background: var(--bg); border-bottom: 1px solid var(--bdr); }
-.hist-mod { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 4px; }
-.hist-body { padding: 10px 13px; font-size: 13px; color: var(--txt2); }
-.sys-card { background: var(--card); border-radius: var(--r2); border: 1px solid var(--bdr); padding: 16px; margin-bottom: 9px; }
-.tbtn { width: 100%; padding: 11px; background: var(--bg); border: 1.5px solid var(--bdr); border-radius: var(--r3); font-weight: 600; cursor: pointer; margin-bottom: 7px; }
-.cdot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
-.cdot.on { background: var(--g4); box-shadow: 0 0 0 3px rgba(82,183,136,.3); }
-.cdot.off { background: var(--bdr); }
-.cdot.test { background: var(--am); animation: pulse .8s infinite; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-.eq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
-.eq-card { background: var(--card); border-radius: var(--r2); border: 1px solid var(--bdr); padding: 11px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
-.eq-ava { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; }
-.h-block { background: var(--card); border-radius: var(--r2); border: 1px solid var(--bdr); margin-bottom: 8px; }
-.h-hdr { padding: 10px 14px; background: var(--bg); display: flex; justify-content: space-between; cursor: pointer; }
-.h-chips { padding: 10px 12px; display: flex; flex-wrap: wrap; gap: 5px; }
-.chip { padding: 5px 9px; border-radius: var(--r3); font-size: 10.5px; font-weight: 600; cursor: pointer; border: 1px solid transparent; }
-.crec { background: #f0fff4; border-color: #95d5b2; color: var(--g2); }
-.clista { background: var(--am-p); border-color: #f0b070; color: #7a3d10; }
-.ccos { background: #f5f5f5; border-color: #ddd; color: #777; }
-.cvac { background: var(--bg); border-color: var(--bdr); color: var(--txt3); }
+  :root {
+    --g1: #1a3d2b; --g2: #2d6a4f; --g3: #40916c; --g4: #52b788; --g5: #95d5b2; --g6: #d8f3dc;
+    --am: #e07a31; --am-p: #fff3e0; --rd: #c0392b; --rd-p: #fdecea;
+    --bl: #1565c0; --bl-p: #e3f2fd;
+    --bg: #f2efe8; --bg2: #e8e4db; --card: #fff;
+    --txt: #1a1a1a; --txt2: #555; --txt3: #888;
+    --bdr: #e0ddd5;
+    --r: 14px; --r2: 10px; --r3: 6px;
+    --f: 'Inter', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: var(--f); background: var(--bg); color: var(--txt); min-height: 100vh; }
+  /* HEADER */
+  .hdr { background: var(--g1); position: sticky; top: 0; z-index: 200; }
+  .hdr-top { max-width: 500px; margin: 0 auto; display: flex; align-items: center; padding: 12px 16px; gap: 8px; }
+  .hdr-top h1 { flex: 1; font-size: 15px; font-weight: 700; color: #fff; }
+  .hdr-top h1 span { font-size: 10px; font-weight: 400; opacity: .6; display: block; margin-top: 1px; }
+  .sync-btn { background: none; border: 1px solid rgba(255,255,255,.3); color: rgba(255,255,255,.85); padding: 6px 11px; border-radius: 20px; font-family: var(--f); font-size: 11px; font-weight: 600; cursor: pointer; }
+  .cfg-btn { background: none; border: none; color: rgba(255,255,255,.7); padding: 6px; cursor: pointer; font-size: 18px; }
+  .nav { background: var(--g2); border-top: 1px solid rgba(255,255,255,.1); }
+  .nav-inner { max-width: 500px; margin: 0 auto; display: flex; }
+  .nb { flex: 1; padding: 10px 4px 9px; border: none; background: none; color: rgba(255,255,255,.55); font-family: var(--f); font-size: 9.5px; font-weight: 600; text-transform: uppercase; cursor: pointer; border-bottom: 2px solid transparent; }
+  .nb.on { color: #fff; border-bottom-color: var(--g4); }
+  .wrap { max-width: 500px; margin: 0 auto; padding: 12px 14px 90px; }
+  .view { display: none; }
+  .view.on { display: block; }
+  .toast { position: fixed; top: 68px; left: 50%; transform: translateX(-50%) translateY(-10px); background: var(--g1); color: #fff; padding: 10px 20px; border-radius: 30px; font-size: 13px; font-weight: 500; z-index: 999; opacity: 0; transition: all .25s; pointer-events: none; max-width: 92vw; text-align: center; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .off-bar { background: var(--am); color: #fff; font-size: 12px; font-weight: 600; text-align: center; padding: 8px; display: none; }
+  .off-bar.show { display: block; }
+  /* DASHBOARD */
+  .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
+  .kpi-card { background: var(--card); border-radius: var(--r2); border: 1px solid var(--bdr); padding: 14px; box-shadow: 0 1px 2px rgba(0,0,0,.02); }
+  .kpi-icon { font-size: 24px; margin-bottom: 8px; }
+  .kpi-value { font-size: 28px; font-weight: 800; line-height: 1.1; margin: 4px 0; color: var(--g2); }
+  .kpi-label { font-size: 11px; font-weight: 600; color: var(--txt3); text-transform: uppercase; }
+  .chart-container { background: var(--card); border-radius: var(--r2); border: 1px solid var(--bdr); padding: 12px; margin-bottom: 16px; }
+  .chart-title { font-size: 12px; font-weight: 700; margin-bottom: 12px; display: flex; justify-content: space-between; }
+  canvas { max-height: 180px; width: 100%; }
+  .prox-cosechas { background: var(--card); border-radius: var(--r2); border: 1px solid var(--bdr); margin-bottom: 16px; overflow: hidden; }
+  .prox-header { padding: 10px 14px; background: var(--bg); font-weight: 700; font-size: 12px; }
+  .prox-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--bdr); cursor: pointer; }
+  .prox-cult { font-weight: 600; font-size: 13px; }
+  .prox-dias { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; background: var(--am-p); color: #9a4f1a; }
+  .alert-item { background: var(--card); border-radius: var(--r2); border-left: 4px solid; margin-bottom: 8px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+  .alert-item.crit { border-left-color: var(--rd); }
+  .alert-item.warn { border-left-color: var(--am); }
+  .alert-item.info { border-left-color: var(--bl); }
+  /* FORMULARIOS */
+  .fcard { background: var(--card); border-radius: var(--r2); border: 1px solid var(--bdr); padding: 15px; margin-bottom: 9px; }
+  .fcard-ttl { font-size: 11px; font-weight: 700; color: var(--g2); text-transform: uppercase; border-bottom: 1px solid var(--bdr); padding-bottom: 9px; margin-bottom: 13px; }
+  .fld { margin-bottom: 11px; }
+  .fld label { display: block; font-size: 11px; font-weight: 600; color: var(--txt2); margin-bottom: 4px; }
+  .fld input, .fld select, .fld textarea { width: 100%; padding: 10px 12px; border: 1.5px solid var(--bdr); border-radius: var(--r3); font-family: var(--f); font-size: 14px; background: var(--bg); }
+  .autofill { background: #f0fff4 !important; color: var(--g2) !important; font-weight: 600 !important; border-color: #b7e4c7 !important; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+  .row3 { display: grid; grid-template-columns: 2fr 1fr; gap: 9px; }
+  .sbtn { width: 100%; background: var(--g2); color: #fff; border: none; padding: 15px; border-radius: var(--r2); font-weight: 700; cursor: pointer; margin-top: 4px; }
+  .mod-pick { display: grid; grid-template-columns: repeat(5,1fr); gap: 6px; margin-bottom: 10px; }
+  .mpk { padding: 10px 4px; border: 1.5px solid var(--bdr); border-radius: var(--r2); background: var(--bg); font-size: 10px; font-weight: 600; text-align: center; cursor: pointer; }
+  .mpk.on { background: var(--g2); color: #fff; border-color: var(--g2); }
+  .in-p, .in-m { border-radius: var(--r3); padding: 10px 12px; }
+  .in-p { background: rgba(82,183,136,.1); border: 1.5px solid var(--g5); }
+  .in-m { background: rgba(192,57,43,.07); border: 1.5px solid #e8a0a0; }
+  .hist-item { background: var(--card); border-radius: var(--r2); border: 1px solid var(--bdr); margin-bottom: 8px; }
+  .hist-hdr { display: flex; justify-content: space-between; padding: 10px 13px; background: var(--bg); border-bottom: 1px solid var(--bdr); }
+  .hist-mod { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 4px; background: var(--g6); color: var(--g2); }
+  .hist-body { padding: 10px 13px; font-size: 13px; color: var(--txt2); }
+  .sys-card { background: var(--card); border-radius: var(--r2); border: 1px solid var(--bdr); padding: 16px; margin-bottom: 9px; }
+  .tbtn { width: 100%; padding: 11px; background: var(--bg); border: 1.5px solid var(--bdr); border-radius: var(--r3); font-weight: 600; cursor: pointer; margin-bottom: 7px; }
+  .cdot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+  .cdot.on { background: var(--g4); box-shadow: 0 0 0 3px rgba(82,183,136,.3); }
+  .cdot.off { background: var(--bdr); }
+  .eq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+  .eq-card { background: var(--card); border-radius: var(--r2); border: 1px solid var(--bdr); padding: 11px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+  .eq-ava { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; }
+  .h-block { background: var(--card); border-radius: var(--r2); border: 1px solid var(--bdr); margin-bottom: 8px; }
+  .h-hdr { padding: 10px 14px; background: var(--bg); display: flex; justify-content: space-between; cursor: pointer; }
+  .h-chips { padding: 10px 12px; display: flex; flex-wrap: wrap; gap: 5px; }
+  .chip { padding: 5px 9px; border-radius: var(--r3); font-size: 10.5px; font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+  .crec { background: #f0fff4; border-color: #95d5b2; color: var(--g2); }
+  .clista { background: var(--am-p); border-color: #f0b070; color: #7a3d10; }
+  .ccos { background: #f5f5f5; border-color: #ddd; color: #777; }
+  .cvac { background: var(--bg); border-color: var(--bdr); color: var(--txt3); }
+  .empty { text-align: center; padding: 30px 20px; color: var(--txt3); font-size: 13px; }
 </style>
 </head>
 <body>
 
-<div id="offBar" class="off-bar">⚠️ Sin conexión — mostrando datos guardados localmente</div>
+<div id="offBar" class="off-bar">⚠️ Sin conexión — datos locales</div>
 
 <header class="hdr">
   <div class="hdr-top">
-    <h1>🌱 ERP Huerta <span id="hdrSub">Finca San José · Casa Restaurativa</span></h1>
+    <h1>🌱 ERP Huerta <span id="hdrSub">Finca San José</span></h1>
     <button id="syncBtn" class="sync-btn" onclick="sincronizar(true)">↻ Sync</button>
     <button class="cfg-btn" onclick="go('sistema')">⚙</button>
   </div>
@@ -136,70 +119,36 @@ canvas { max-height: 180px; width: 100%; }
 <div id="toast" class="toast"></div>
 
 <main class="wrap">
-  <!-- ==================== DASHBOARD PANEL ==================== -->
+  <!-- DASHBOARD -->
   <div id="v-panel" class="view on">
-    <div style="padding: 8px 0 12px;">
-      <div style="display: flex; justify-content: space-between; align-items: baseline;">
-        <div id="saludo" style="font-size: 20px; font-weight: 700;"></div>
-        <button class="export-btn" onclick="exportarDashboardPDF()">📄 Exportar PDF</button>
-      </div>
-      <div id="fechaTxt" style="font-size: 12px; color: var(--txt3); margin-top: 2px;"></div>
-      <div id="syncSt" style="font-size: 11px; color: var(--txt3); margin-top: 2px;"></div>
+    <div style="padding:8px 0 12px; display:flex; justify-content:space-between;">
+      <div><div id="saludo" style="font-size:20px; font-weight:700;"></div><div id="fechaTxt" style="font-size:12px; color:var(--txt3);"></div><div id="syncSt" style="font-size:11px; color:var(--txt3);"></div></div>
     </div>
-
-    <!-- KPIs mejorados -->
     <div class="kpi-grid" id="kpiGrid"></div>
-
-    <!-- Gráficos -->
-    <div class="chart-container">
-      <div class="chart-title">📈 Cosechas por semana <span>últimas 6 semanas</span></div>
-      <canvas id="cosechasChart" width="400" height="180" style="max-height: 180px;"></canvas>
-    </div>
-    <div class="chart-container">
-      <div class="chart-title">👥 Asistencia semanal <span>% de presencia</span></div>
-      <canvas id="asistenciaChart" width="400" height="180" style="max-height: 180px;"></canvas>
-    </div>
-
-    <!-- Próximas cosechas -->
-    <div class="prox-cosechas">
-      <div class="prox-header">🧺 Próximas cosechas <span style="font-weight: normal; font-size: 10px;">(clic para registrar)</span></div>
-      <div id="proxCosechasList"></div>
-    </div>
-
-    <!-- Alertas mejoradas -->
-    <div class="sec">⚠ Alertas</div>
-    <div class="alert-cat" id="alertFilters">
-      <span class="alert-badge active" data-filter="all">Todas</span>
-      <span class="alert-badge" data-filter="crit">Críticas</span>
-      <span class="alert-badge" data-filter="warn">Advertencia</span>
-      <span class="alert-badge" data-filter="info">Info</span>
-    </div>
-    <div id="alertasList"></div>
-
-    <!-- Resumen inventario -->
-    <div class="sec">📦 Stock de insumos <span class="sec-a" onclick="go('form');setMod('ins',document.querySelector('.mpk:nth-child(5)'))">Mover →</span></div>
-    <div id="stockResumen" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;"></div>
-    <div id="stockList"></div>
+    <div class="chart-container"><div class="chart-title">📈 Cosechas por semana</div><canvas id="cosechasChart" width="400" height="160"></canvas></div>
+    <div class="chart-container"><div class="chart-title">👥 Asistencia semanal</div><canvas id="asistenciaChart" width="400" height="160"></canvas></div>
+    <div class="prox-cosechas"><div class="prox-header">🧺 Próximas cosechas</div><div id="proxCosechasList"></div></div>
+    <div class="sec">⚠ Alertas</div><div id="alertasList"></div>
+    <div class="sec">📦 Stock de insumos</div><div id="stockList"></div>
   </div>
 
-  <!-- ==================== FORMULARIOS (idénticos al original, se omiten por brevedad pero se mantienen) ==================== -->
+  <!-- FORMULARIO (simplificado y estable) -->
   <div id="v-form" class="view">
     <div class="mod-pick">
-      <button class="mpk on" onclick="setMod('bit',this)"><span>📋</span>Bitácora</button>
-      <button class="mpk" onclick="setMod('gest',this)"><span>👥</span>Gestión H.</button>
-      <button class="mpk" onclick="setMod('riego',this)"><span>💧</span>Riego</button>
-      <button class="mpk" onclick="setMod('cos',this)"><span>🧺</span>Cosecha</button>
-      <button class="mpk" onclick="setMod('ins',this)"><span>📦</span>Insumos</button>
+      <button class="mpk on" onclick="setMod('bit',this)">📋 Bitácora</button>
+      <button class="mpk" onclick="setMod('gest',this)">👥 Gestión H.</button>
+      <button class="mpk" onclick="setMod('riego',this)">💧 Riego</button>
+      <button class="mpk" onclick="setMod('cos',this)">🧺 Cosecha</button>
+      <button class="mpk" onclick="setMod('ins',this)">📦 Insumos</button>
     </div>
-    <div class="date-row" style="background: var(--card); border-radius: var(--r2); border: 1px solid var(--bdr); padding: 11px 14px; margin-bottom: 9px; display: flex; align-items: center; gap: 10px;">
-      <label>📅 Fecha</label>
-      <input type="date" id="fFecha" style="flex:1;">
+    <div style="background:var(--card); border-radius:var(--r2); border:1px solid var(--bdr); padding:11px 14px; margin-bottom:9px; display:flex; gap:10px;">
+      <label>📅 Fecha</label><input type="date" id="fFecha" style="flex:1;">
     </div>
     <form id="erpForm" onsubmit="enviar(event)">
-      <!-- BITÁCORA -->
+      <!-- Bitácora -->
       <div id="fm-bit" class="fmod on">
-        <div class="fcard"><div class="fcard-ttl">📋 Bitácora Diaria</div>
-          <div class="row2"><div class="fld"><label>Cama *</label><select name="camaId" id="sCamaBit" onchange="onCamaChange(this,'aBitH','aBitC','aBitO','aBitFS')"></select></div><div class="fld"><label>Huerta</label><input id="aBitH" class="autofill" readonly></div></div>
+        <div class="fcard"><div class="fcard-ttl">Bitácora Diaria</div>
+          <div class="row2"><div class="fld"><label>Cama</label><select name="camaId" id="sCamaBit"></select></div><div class="fld"><label>Huerta</label><input id="aBitH" class="autofill" readonly></div></div>
           <div class="fld"><label>Cultivo</label><input id="aBitC" class="autofill" readonly></div>
           <div class="row2"><div class="fld"><label>Fase</label><select name="fase" id="selFase"></select></div><div class="fld"><label>% Avance</label><input type="number" name="avance" min="0" max="100"></div></div>
           <div class="row2"><div class="fld"><label>Estado Fitosanitario</label><select name="estadoFitosan" id="selEstFito"></select></div><div class="fld"><label>Humedad</label><select name="humedad"><option>Óptima</option><option>Seco</option><option>Saturado</option></select></div></div>
@@ -210,14 +159,14 @@ canvas { max-height: 180px; width: 100%; }
           <input type="hidden" id="aBitFS" name="fechaSiembra">
         </div>
       </div>
-      <!-- GESTIÓN HUMANA -->
+      <!-- Gestión Humana -->
       <div id="fm-gest" class="fmod">
-        <div class="fcard"><div class="fcard-ttl">👥 Gestión Humana</div>
-          <div class="fld"><label>Participante</label><select name="joven" id="selJoven" onchange="onJovenChange(this)"></select></div>
-          <div class="fld"><label>Asistencia</label><select name="asistencia" id="sAsist" onchange="toggleAsist()"><option>Presente</option><option>Ausente</option></select></div>
+        <div class="fcard"><div class="fcard-ttl">Gestión Humana</div>
+          <div class="fld"><label>Participante</label><select name="joven" id="selJoven"></select></div>
+          <div class="fld"><label>Asistencia</label><select name="asistencia" id="sAsist"><option>Presente</option><option>Ausente</option></select></div>
           <div id="camposP">
             <div class="fld"><label>Último registro</label><input id="aJovenUlt" class="autofill" readonly></div>
-            <div class="row2"><div class="fld"><label>Cama asignada</label><select name="camaAsignada" id="selCamaGH"></select></div><div class="fld"><label>Desempeño 1-5</label><select name="actitud"><option value="1">1</option><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5</option></select></div></div>
+            <div class="row2"><div class="fld"><label>Cama asignada</label><select name="camaAsignada" id="selCamaGH"></select></div><div class="fld"><label>Desempeño</label><select name="actitud"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select></div></div>
             <div class="fld"><label>Tarea</label><input type="text" name="tarea"></div>
             <div class="row2"><div class="fld"><label>Herramienta</label><input type="text" name="herramienta"></div><div class="fld"><label>Estado Herr.</label><select name="estadoHerr"><option>Buen Estado</option><option>Dañada</option></select></div></div>
             <div class="fld"><label>Insumo entregado</label><input type="text" name="insumoGH"></div>
@@ -225,31 +174,31 @@ canvas { max-height: 180px; width: 100%; }
           <div class="fld"><label>Motivo ausencia</label><input type="text" name="motivoAusencia" id="motivoAus" style="display:none"></div>
         </div>
       </div>
-      <!-- RIEGO -->
+      <!-- Riego -->
       <div id="fm-riego" class="fmod">
-        <div class="fcard"><div class="fcard-ttl">💧 Riego / Fumigación</div>
+        <div class="fcard"><div class="fcard-ttl">Riego / Fumigación</div>
           <div class="fld"><label>Tipo</label><select name="tipoOperacion"><option>Riego</option><option>Fumigación Orgánica</option><option>Fertilización</option></select></div>
-          <div class="row2"><div class="fld"><label>Huerta</label><select name="huertaRiego" id="selHuertaR" onchange="filtrarCamasPorHuerta()"></select></div><div class="fld"><label>Cama</label><select name="camaIdRiego" id="selCamaR"></select></div></div>
+          <div class="row2"><div class="fld"><label>Huerta</label><select name="huertaRiego" id="selHuertaR"></select></div><div class="fld"><label>Cama</label><select name="camaIdRiego" id="selCamaR"></select></div></div>
           <div class="fld"><label>Cultivo</label><input id="aRiegoCult" class="autofill" readonly></div>
           <div class="fld"><label>Responsable</label><select name="responsableRiego" id="selRespR"></select></div>
           <div class="fld"><label>Producto</label><input type="text" name="producto"></div>
-          <div class="row3" style="display: grid; grid-template-columns: 2fr 1fr; gap: 9px;"><div class="fld"><label>Cantidad</label><input type="number" step="0.01" name="cantidadRiego"></div><div class="fld"><label>Unidad</label><input type="text" name="unidadRiego"></div></div>
+          <div class="row3"><div class="fld"><label>Cantidad</label><input type="number" step="0.01" name="cantidadRiego"></div><div class="fld"><label>Unidad</label><input type="text" name="unidadRiego"></div></div>
         </div>
       </div>
-      <!-- COSECHA -->
+      <!-- Cosecha -->
       <div id="fm-cos" class="fmod">
-        <div class="fcard"><div class="fcard-ttl">🧺 Cosecha</div>
-          <div class="row2"><div class="fld"><label>Cama</label><select name="camaIdCosecha" id="sCamaCos" onchange="onCamaChange(this,'aCoH','aCoCult',null,null)"></select></div><div class="fld"><label>Huerta</label><input id="aCoH" class="autofill" readonly></div></div>
+        <div class="fcard"><div class="fcard-ttl">Cosecha</div>
+          <div class="row2"><div class="fld"><label>Cama</label><select name="camaIdCosecha" id="sCamaCos"></select></div><div class="fld"><label>Huerta</label><input id="aCoH" class="autofill" readonly></div></div>
           <div class="fld"><label>Cultivo</label><input id="aCoCult" class="autofill" readonly></div>
           <div class="row3"><div class="fld"><label>Cantidad</label><input type="number" step="0.01" name="cantidadCosecha"></div><div class="fld"><label>Unidad</label><select name="unidadCosecha"><option>Kg</option><option>gr</option><option>Unidades</option></select></div></div>
           <div class="row2"><div class="fld"><label>Destino</label><select name="destino" id="selDestino"></select></div><div class="fld"><label>Calidad</label><select name="calidad"><option>Primera</option><option>Segunda</option><option>Rechazo</option></select></div></div>
           <div class="fld"><label>Responsable</label><select name="responsableCosecha" id="selRespCos"></select></div>
         </div>
       </div>
-      <!-- INSUMOS -->
+      <!-- Insumos -->
       <div id="fm-ins" class="fmod">
-        <div class="fcard"><div class="fcard-ttl">📦 Insumos</div>
-          <div class="fld"><label>Insumo</label><select name="insumoNombre" id="selInsumo" onchange="onInsumoChange(this)"></select></div>
+        <div class="fcard"><div class="fcard-ttl">Insumos</div>
+          <div class="fld"><label>Insumo</label><select name="insumoNombre" id="selInsumo"></select></div>
           <div class="row2"><div class="fld"><label>Categoría</label><input id="aInsCat" class="autofill" readonly></div><div class="fld"><label>Stock actual</label><input id="aInsStock" class="autofill" readonly></div></div>
           <div class="row2"><div class="fld"><label>Precio unitario</label><input id="aInsPrecio" class="autofill" readonly></div><div class="fld"><label>Unidad</label><input id="aInsUnidad" class="autofill" readonly></div></div>
           <div class="fld"><label>Proveedor</label><input type="text" name="proveedor"></div>
@@ -261,13 +210,13 @@ canvas { max-height: 180px; width: 100%; }
     </form>
   </div>
 
-  <div id="v-camas" class="view"><div class="sec" style="margin-top:12px">🗺 Estado de Camas</div><div id="camaBlocks"></div></div>
+  <div id="v-camas" class="view"><div class="sec">🗺 Estado de Camas</div><div id="camaBlocks"></div></div>
   <div id="v-equipo" class="view"><div class="sec">👥 Equipo</div><div class="eq-grid" id="equipoGrid"></div></div>
-  <div id="v-historial" class="view"><div class="sec">Registros</div><div id="histList"><div class="hist-empty">Sin registros</div></div></div>
+  <div id="v-historial" class="view"><div class="sec">Registros</div><div id="histList"><div class="empty">Sin registros</div></div></div>
   <div id="v-sistema" class="view">
     <div class="sec">Configuración</div>
-    <div class="sys-card"><h3>🔗 Conexión</h3><div class="conn-box"><div id="cDot" class="cdot off"></div><span id="cTxt">Sin verificar</span></div><input id="urlIn" type="url" class="url-in" placeholder="URL del Apps Script"><button class="tbtn" onclick="probarConexion()">Probar</button><button class="tbtn" onclick="sincronizar(true)">Sincronizar</button></div>
-    <div class="sys-card"><h3>📋 Guía</h3><ul class="tip-list"><li>Configura la URL del Apps Script</li><li>Los selects se llenan automáticamente desde Excel</li><li>Registros se guardan en hojas correspondientes</li></ul></div>
+    <div class="sys-card"><h3>🔗 Conexión Google Sheets</h3><div><div id="cDot" class="cdot off"></div> <span id="cTxt">Sin verificar</span></div><input id="urlIn" type="url" class="url-in" placeholder="URL del Apps Script" style="width:100%; margin:10px 0;"><button class="tbtn" onclick="probarConexion()">Probar conexión</button><button class="tbtn" onclick="sincronizar(true)">Sincronizar datos</button></div>
+    <div class="sys-card"><h3>📋 Guía rápida</h3><ul style="padding-left:20px; font-size:12px;"><li>Configura la URL del Apps Script desplegado</li><li>Los selects se llenan automáticamente desde tu Excel</li><li>Los registros se guardan en las hojas correspondientes</li></ul></div>
   </div>
 </main>
 
@@ -284,147 +233,146 @@ const CACHE_TTL = 30 * 60 * 1000;
 let CAMA_IDX = {};
 let charts = {};
 
-const COLORES_EQ = ['#2d6a4f','#1565c0','#e65100','#6a1b9a','#880e4f','#006064'];
-const FASES_FB = ['Preparación suelo','Siembra','Germinación','Crecimiento','Floración','Producción','Cosecha'];
-const ESTFITO_FB = ['✅ Sano','⚠️ Plaga Controlada','🔴 Plaga Crítica','🟠 Enfermedad','💧 Estrés hídrico'];
-const ACCIONES_FB = ['Riego manual','Riego goteo','Fertiliz. orgánica','Control plagas','Poda','Cosecha','Abono compost'];
-const DESTINOS_FB = ['Consumo interno','Donación','Venta','Almacenamiento','Semillero'];
-const INV_FB = [{nombre:'Compost',categoria:'Fertilizante',unidad:'kg',stock:200,minimo:50,precio:1.5},{nombre:'Aceite Neem',categoria:'Biológico',unidad:'L',stock:15,minimo:5,precio:20}];
+// Datos de fallback robustos
+const FALLBACK = {
+  camas: [
+    { id:"H1-C01", huerta:"H1", num:"1", cultivo:"Arracacha", origen:"Plántula propia", fechaSiembra:"2026-05-04", estado:"En crecimiento" },
+    { id:"H1-C02", huerta:"H1", num:"2", cultivo:"Arracacha y ajo", origen:"Plántula propia", fechaSiembra:"", estado:"Cosechada" },
+    { id:"H3-C04", huerta:"H3", num:"4", cultivo:"Lechuga", origen:"", fechaSiembra:"", estado:"Lista para cosechar" }
+  ],
+  jovenes: ["Juan José Gallego", "José Daniel", "Jhon Esteban Henao", "Hernan", "Participante 5", "Participante 6"],
+  fases: ["Preparación suelo","Siembra","Germinación","Crecimiento","Floración","Producción","Cosecha"],
+  estadosFito: ["✅ Sano","⚠️ Plaga Controlada","🔴 Plaga Crítica","🟠 Enfermedad","💧 Estrés hídrico"],
+  acciones: ["Riego manual","Riego goteo","Fertiliz. orgánica","Control plagas","Poda","Cosecha","Abono compost"],
+  destinos: ["Consumo interno","Donación","Venta","Almacenamiento","Semillero"],
+  inventario: [
+    {nombre:"Compost", categoria:"Fertilizante", unidad:"kg", stock:200, minimo:50, precio:1.5},
+    {nombre:"Aceite Neem", categoria:"Biológico", unidad:"L", stock:15, minimo:5, precio:20}
+  ],
+  ciclos: { "Maíz":{min:90,max:110}, "Lechuga":{min:45,max:60} },
+  asistencia: {},
+  cosechasSemanales: [],
+  asistenciasSemanales: []
+};
 
 // ==================== INICIALIZACIÓN ====================
 function init() {
-  const h = HOY.getHours();
-  document.querySelector('#saludo').textContent = (h<12?'Buenos días':h<19?'Buenas tardes':'Buenas noches') + ', Jhon 👋';
-  const dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-  const meses = ['enero','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
-  document.querySelector('#fechaTxt').textContent = dias[HOY.getDay()] + ', ' + HOY.getDate() + ' de ' + meses[HOY.getMonth()];
-  document.querySelector('#fFecha').valueAsDate = HOY;
-  document.querySelector('#urlIn').value = API;
+  // Elementos del DOM
+  const saludo = document.getElementById('saludo');
+  const fechaTxt = document.getElementById('fechaTxt');
+  const syncSt = document.getElementById('syncSt');
+  const urlIn = document.getElementById('urlIn');
+  if(saludo) saludo.textContent = (HOY.getHours()<12?'Buenos días':HOY.getHours()<19?'Buenas tardes':'Buenas noches') + ', Jhon 👋';
+  if(fechaTxt) fechaTxt.textContent = HOY.toLocaleDateString('es-ES', { weekday:'long', day:'numeric', month:'long' });
+  if(urlIn) urlIn.value = API;
+  if(syncSt) syncSt.textContent = 'Cargando...';
+  
+  // Cargar caché o fallback
   const cache = localStorage.getItem(CACHE_KEY);
   const ts = Number(localStorage.getItem(CACHE_TS)||0);
-  if (cache && Date.now()-ts < CACHE_TTL) {
+  if(cache && Date.now()-ts < CACHE_TTL) {
     aplicarDatos(JSON.parse(cache));
-    document.querySelector('#syncSt').textContent = '📡 Caché local';
+    if(syncSt) syncSt.textContent = '📡 Caché local';
   } else {
     aplicarFallback();
+    if(syncSt) syncSt.textContent = '⚠️ Sin sincronización - datos demo';
   }
-  if (API) sincronizar(false);
-}
-
-async function sincronizar(manual) {
-  if (!API) { if(manual) toast('Configura URL',true); return; }
-  const btn = document.querySelector('#syncBtn');
-  btn.classList.add('spin');
-  try {
-    const res = await fetch(API + '?action=config', { cache: 'no-cache' });
-    if (!res.ok) throw new Error('HTTP '+res.status);
-    const data = await res.json();
-    if (data.status === 'ok' && data.camas) {
-      localStorage.setItem(CACHE_KEY, JSON.stringify(data));
-      localStorage.setItem(CACHE_TS, Date.now()+'');
-      aplicarDatos(data);
-      document.querySelector('#syncSt').textContent = '✅ Sincronizado ' + new Date().toLocaleTimeString();
-      document.querySelector('#offBar').classList.remove('show');
-      document.querySelector('#cDot').className = 'cdot on';
-      document.querySelector('#cTxt').textContent = '✅ Conectado';
-      if (manual) toast('✅ Sincronizado');
-    } else throw new Error('Respuesta inválida');
-  } catch(e) {
-    document.querySelector('#offBar').classList.add('show');
-    document.querySelector('#syncSt').textContent = '⚠️ Sin conexión';
-    if (manual) toast('⚠️ Error: '+e.message, true);
-  } finally {
-    btn.classList.remove('spin');
-  }
+  if(API) sincronizar(false);
 }
 
 function aplicarDatos(data) {
-  D = { ...D, ...data };
-  if (!D.jovenes.length) D.jovenes = ['Participante 1','Participante 2'];
-  if (!D.inventario.length) D.inventario = INV_FB;
-  if (!D.fases.length) D.fases = FASES_FB;
-  if (!D.estadosFito.length) D.estadosFito = ESTFITO_FB;
-  if (!D.acciones.length) D.acciones = ACCIONES_FB;
-  if (!D.destinos.length) D.destinos = DESTINOS_FB;
+  D.camas = data.camas || [];
+  D.jovenes = (data.jovenes && data.jovenes.length) ? data.jovenes : FALLBACK.jovenes;
+  D.fases = (data.fases && data.fases.length) ? data.fases : FALLBACK.fases;
+  D.estadosFito = (data.estadosFito && data.estadosFito.length) ? data.estadosFito : FALLBACK.estadosFito;
+  D.acciones = (data.acciones && data.acciones.length) ? data.acciones : FALLBACK.acciones;
+  D.destinos = (data.destinos && data.destinos.length) ? data.destinos : FALLBACK.destinos;
+  D.ciclos = data.ciclos || FALLBACK.ciclos;
+  D.inventario = (data.inventario && data.inventario.length) ? data.inventario : FALLBACK.inventario;
+  D.asistencia = data.asistencia || {};
+  D.cosechasSemanales = data.cosechasSemanales || [];
+  D.asistenciasSemanales = data.asistenciasSemanales || [];
   CAMA_IDX = {};
   D.camas.forEach(c => { CAMA_IDX[c.id] = c; });
   renderTodo();
 }
 
 function aplicarFallback() {
-  D.camas = [];
-  D.jovenes = ['Juan José Gallego','José Daniel','Jhon Esteban Henao','Hernan','Participante 5','Participante 6'];
-  D.fases = FASES_FB;
-  D.estadosFito = ESTFITO_FB;
-  D.acciones = ACCIONES_FB;
-  D.destinos = DESTINOS_FB;
-  D.inventario = INV_FB;
-  D.asistencia = {};
-  D.ciclos = { 'Maíz':{min:90,max:110}, 'Lechuga':{min:45,max:60} };
-  D.cosechasSemanales = [];
-  D.asistenciasSemanales = [];
+  D = JSON.parse(JSON.stringify(FALLBACK));
+  CAMA_IDX = {};
+  D.camas.forEach(c => { CAMA_IDX[c.id] = c; });
   renderTodo();
 }
 
 function renderTodo() {
   poblarSelects();
   renderDashboard();
-  buildCamaBlocks();
-  buildEquipo();
-  buildSysInfo();
+  renderCamas();
+  renderEquipo();
+  renderHistorial();
+  renderSysInfo();
 }
 
+// ==================== POBLAR SELECTORES ====================
 function poblarSelects() {
   const activas = D.camas.filter(c=>c.cultivo && c.cultivo.trim() !== "" && c.estado!=='Vacía' && c.estado!=='Cosechada');
   const todas = D.camas;
-  poblarCamaSelect('sCamaBit', activas, 'Seleccionar...');
-  poblarCamaSelect('sCamaCos', activas, 'Seleccionar...');
-  poblarCamaSelect('selCamaGH', todas, 'Ninguna');
-  poblarCamaSelect('selCamaR', todas, 'General');
-  const huertas = [...new Set(D.camas.map(c=>c.huerta))].sort();
-  rellenaSelect('selHuertaR', huertas, v=>v, v=>'Huerta '+v.replace('H',''));
+  poblarCamaSelect('sCamaBit', activas);
+  poblarCamaSelect('sCamaCos', activas);
+  poblarCamaSelect('selCamaGH', todas);
+  poblarCamaSelect('selCamaR', todas);
+  const huertas = [...new Set(D.camas.map(c=>c.huerta))].filter(Boolean).sort();
+  rellenaSelect('selHuertaR', huertas, v=>v, v=>'Huerta '+v);
   filtrarCamasPorHuerta();
-  const jovConJhon = [...D.jovenes, 'Jhon (Instructor)'];
-  ['selRespBit','selRespR','selRespCos'].forEach(id=> rellenaSelect(id, jovConJhon, v=>v, v=>v, 'Seleccionar...'));
-  rellenaSelect('selJoven', D.jovenes, v=>v, v=>v, 'Seleccionar...');
+  const todosResponsables = [...D.jovenes, 'Jhon (Instructor)'];
+  rellenaSelect('selRespBit', todosResponsables, v=>v, v=>v);
+  rellenaSelect('selRespR', todosResponsables, v=>v, v=>v);
+  rellenaSelect('selRespCos', todosResponsables, v=>v, v=>v);
+  rellenaSelect('selJoven', D.jovenes, v=>v, v=>v);
   rellenaSelect('selFase', D.fases, v=>v, v=>v);
   rellenaSelect('selEstFito', D.estadosFito, v=>v, v=>v);
   rellenaSelect('selAccion', D.acciones, v=>v, v=>v);
-  rellenaSelect('selDestino', D.destinos, v=>v, v=>v, 'Seleccionar...');
-  rellenaSelect('selInsumo', D.inventario.map(i=>i.nombre), v=>v, v=>v, 'Seleccionar...');
+  rellenaSelect('selDestino', D.destinos, v=>v, v=>v);
+  rellenaSelect('selInsumo', D.inventario.map(i=>i.nombre), v=>v, v=>v);
 }
 
-function poblarCamaSelect(id, lista, pfx) {
-  const sel = document.querySelector('#'+id);
+function poblarCamaSelect(id, lista) {
+  const sel = document.getElementById(id);
   if(!sel) return;
   const old = sel.value;
-  sel.innerHTML = `<option value="">${pfx}</option>`;
-  lista.forEach(c => sel.appendChild(new Option(c.id + (c.cultivo?' — '+c.cultivo:''), c.id)));
+  sel.innerHTML = '<option value="">Seleccionar...</option>';
+  lista.forEach(c => {
+    const label = c.id + (c.cultivo ? ' — '+c.cultivo : '');
+    sel.appendChild(new Option(label, c.id));
+  });
   if(old && Array.from(sel.options).some(opt=>opt.value===old)) sel.value = old;
 }
 
-function rellenaSelect(id, lista, valFn, txtFn, placeholder) {
-  const sel = document.querySelector('#'+id);
+function rellenaSelect(id, lista, valFn, txtFn) {
+  const sel = document.getElementById(id);
   if(!sel) return;
   const old = sel.value;
-  sel.innerHTML = placeholder ? `<option value="">${placeholder}</option>` : '';
-  lista.forEach(item => { if(item) sel.appendChild(new Option(txtFn(item), valFn(item))); });
+  sel.innerHTML = '';
+  lista.forEach(item => {
+    if(item) sel.appendChild(new Option(txtFn(item), valFn(item)));
+  });
   if(old && Array.from(sel.options).some(opt=>opt.value===old)) sel.value = old;
 }
 
 function onCamaChange(sel, idH, idC, idO, idFS) {
   const c = CAMA_IDX[sel.value];
-  if(idH) setAuto(idH, c ? 'Huerta '+c.huerta.replace('H','') : '');
-  if(idC) setAuto(idC, c ? (c.cultivo||'').trim() : '');
-  if(idO) setAuto(idO, c ? (c.origen||'').trim() : '');
-  if(idFS) { const el = document.querySelector('#'+idFS); if(el) el.value = c ? (c.fechaSiembra||'') : ''; }
-  if(sel.id === 'selCamaR') setAuto('aRiegoCult', c ? (c.cultivo||'').trim() : '');
+  const set = (id, val) => { const el = document.getElementById(id); if(el) el.value = val || ''; };
+  if(idH) set(idH, c ? 'Huerta '+c.huerta : '');
+  if(idC) set(idC, c ? (c.cultivo||'') : '');
+  if(idO) set(idO, c ? (c.origen||'') : '');
+  if(idFS && c) set(idFS, c.fechaSiembra||'');
+  if(sel.id === 'selCamaR') set('aRiegoCult', c ? (c.cultivo||'') : '');
 }
 
 function filtrarCamasPorHuerta() {
-  const hid = document.querySelector('#selHuertaR')?.value || '';
+  const hid = document.getElementById('selHuertaR')?.value || '';
   const lista = hid ? D.camas.filter(c=>c.huerta===hid) : D.camas;
-  const sel = document.querySelector('#selCamaR');
+  const sel = document.getElementById('selCamaR');
   if(!sel) return;
   const old = sel.value;
   sel.innerHTML = '<option value="General">General</option>';
@@ -432,140 +380,270 @@ function filtrarCamasPorHuerta() {
   if(old && Array.from(sel.options).some(opt=>opt.value===old)) sel.value = old;
 }
 
-function onJovenChange(sel) {
-  const nombre = sel.value;
-  const ult = D.asistencia[nombre];
-  const el = document.querySelector('#aJovenUlt');
-  el.value = ult ? `${ult.fecha} — ${ult.asistencia} · desempeño ${ult.actitud||'?'}/5` : 'Sin registros';
-}
-
-function onInsumoChange(sel) {
-  const inv = D.inventario.find(i=>i.nombre===sel.value);
-  setAuto('aInsCat', inv?.categoria || '');
-  setAuto('aInsStock', inv ? inv.stock+' '+inv.unidad : '');
-  setAuto('aInsPrecio', inv ? '$'+inv.precio : '');
-  setAuto('aInsUnidad', inv?.unidad || '');
-}
-
-function setAuto(id, val) { const el = document.querySelector('#'+id); if(el) el.value = val || ''; }
-function toggleAsist() { const v = document.querySelector('#sAsist').value; document.querySelector('#camposP').style.display = v==='Presente' ? '' : 'none'; document.querySelector('#motivoAus').style.display = v==='Ausente' ? '' : 'none'; }
-
-// ==================== DASHBOARD PROFESIONAL ====================
+// ==================== RENDER DASHBOARD ====================
 function renderDashboard() {
-  // KPIs
   const camasActivas = D.camas.filter(c=>c.cultivo && c.cultivo.trim() !== "" && c.estado!=='Vacía' && c.estado!=='Cosechada').length;
   const listasCosechar = D.camas.filter(c=>c.estado==='Lista para cosechar').length;
   const camasVacias = D.camas.filter(c=>c.estado==='Vacía').length;
-  const totalJovenes = D.jovenes.length;
-  const valorInventario = D.inventario.reduce((sum,i)=> sum + (Number(i.stock)*Number(i.precio)),0).toFixed(0);
-  const asistenciasProm = D.asistenciasSemanales.length ? D.asistenciasSemanales.slice(-1)[0]?.porcentaje || 0 : 0;
-  const kpiGrid = document.querySelector('#kpiGrid');
-  kpiGrid.innerHTML = `
-    <div class="kpi-card"><div class="kpi-icon">🌱</div><div class="kpi-value">${camasActivas}</div><div class="kpi-label">Camas activas</div><div class="kpi-trend">de ${D.camas.length} totales</div></div>
-    <div class="kpi-card"><div class="kpi-icon">🧺</div><div class="kpi-value">${listasCosechar}</div><div class="kpi-label">Listas para cosechar</div><div class="kpi-trend">${listasCosechar>0?'⚠️ atención':'✅ al día'}</div></div>
-    <div class="kpi-card"><div class="kpi-icon">📦</div><div class="kpi-value">$${valorInventario}</div><div class="kpi-label">Valor inventario</div><div class="kpi-trend">${D.inventario.filter(i=>Number(i.stock)<=Number(i.minimo)).length} insumos bajo mínimo</div></div>
-    <div class="kpi-card"><div class="kpi-icon">👥</div><div class="kpi-value">${asistenciasProm}%</div><div class="kpi-label">Asistencia semanal</div><div class="kpi-trend">última semana</div></div>
-  `;
-  
-  // Gráficos
-  if (charts.cosechas) charts.cosechas.destroy();
-  if (charts.asistencia) charts.asistencia.destroy();
-  const ctxC = document.getElementById('cosechasChart').getContext('2d');
-  const ctxA = document.getElementById('asistenciaChart').getContext('2d');
-  const semanasC = D.cosechasSemanales.map(s=>s.label);
-  const valoresC = D.cosechasSemanales.map(s=>s.total);
-  const semanasA = D.asistenciasSemanales.map(s=>s.label);
-  const valoresA = D.asistenciasSemanales.map(s=>s.porcentaje);
-  charts.cosechas = new Chart(ctxC, { type: 'bar', data: { labels: semanasC, datasets: [{ label: 'kg cosechados', data: valoresC, backgroundColor: '#52b788', borderRadius: 6 }] }, options: { responsive: true, maintainAspectRatio: true } });
-  charts.asistencia = new Chart(ctxA, { type: 'line', data: { labels: semanasA, datasets: [{ label: '% asistencia', data: valoresA, borderColor: '#e07a31', tension: 0.2, fill: false }] }, options: { responsive: true, maintainAspectRatio: true } });
-  
-  // Próximas cosechas
-  const prox = D.camas.filter(c=>c.estado==='Lista para cosechar' || (c.estado==='En crecimiento' && c.fechaSiembra)).slice(0,6);
-  const proxDiv = document.querySelector('#proxCosechasList');
-  proxDiv.innerHTML = prox.length ? prox.map(c => `<div class="prox-row" onclick="irAFormCosecha('${c.id}')"><div><span class="prox-cult">${c.cultivo}</span><br><span style="font-size:10px;color:var(--txt3)">${c.id}</span></div><div class="prox-dias">${c.estado==='Lista para cosechar'?'¡YA!':'En seguimiento'}</div><button class="prox-btn" onclick="event.stopPropagation();irAFormCosecha('${c.id}')">Registrar</button></div>`).join('') : '<div class="hist-empty">No hay cosechas próximas</div>';
-  
-  // Alertas con filtros
-  const alerts = [];
-  const listas = D.camas.filter(x=>x.estado==='Lista para cosechar');
-  if(listas.length) alerts.push({ tipo:'crit', texto: `${listas.length} camas listas para cosechar`, accion:()=>go('camas'), icono:'🧺' });
-  const criticos = D.inventario.filter(i=>Number(i.stock)<=Number(i.minimo));
-  if(criticos.length) alerts.push({ tipo:'warn', texto: `Stock bajo: ${criticos.map(i=>i.nombre).join(', ')}`, accion:()=>go('form'), icono:'📦' });
-  const vacias = D.camas.filter(c=>c.estado==='Vacía').length;
-  if(vacias) alerts.push({ tipo:'info', texto: `${vacias} camas vacías disponibles para siembra`, accion:()=>go('camas'), icono:'🌱' });
-  if(alerts.length===0) alerts.push({ tipo:'ok', texto:'Sin alertas activas', icono:'✅' });
-  const alertContainer = document.querySelector('#alertasList');
-  function renderAlerts(filter='all') {
-    const filtered = alerts.filter(a=> filter==='all' || a.tipo===filter);
-    alertContainer.innerHTML = filtered.map(a=> `<div class="alert-item ${a.tipo}" onclick="${a.accion ? '('+a.accion.toString()+')()' : 'void(0)'}"><div>${a.icono}</div><div style="flex:1"><strong>${a.texto}</strong></div><div>→</div></div>`).join('');
+  const valorInventario = D.inventario.reduce((s,i)=> s + (Number(i.stock)*Number(i.precio)), 0).toFixed(0);
+  const kpiGrid = document.getElementById('kpiGrid');
+  if(kpiGrid) {
+    kpiGrid.innerHTML = `
+      <div class="kpi-card"><div class="kpi-icon">🌱</div><div class="kpi-value">${camasActivas}</div><div class="kpi-label">Camas activas</div></div>
+      <div class="kpi-card"><div class="kpi-icon">🧺</div><div class="kpi-value">${listasCosechar}</div><div class="kpi-label">Listas para cosechar</div></div>
+      <div class="kpi-card"><div class="kpi-icon">📦</div><div class="kpi-value">$${valorInventario}</div><div class="kpi-label">Valor inventario</div></div>
+      <div class="kpi-card"><div class="kpi-icon">👥</div><div class="kpi-value">${D.jovenes.length}</div><div class="kpi-label">Equipo</div></div>
+    `;
   }
-  renderAlerts('all');
-  document.querySelectorAll('.alert-badge').forEach(badge => {
-    badge.onclick = () => { document.querySelectorAll('.alert-badge').forEach(b=>b.classList.remove('active')); badge.classList.add('active'); renderAlerts(badge.dataset.filter); };
-  });
-  
-  // Stock resumen
-  const stockRes = document.querySelector('#stockResumen');
-  const totalStock = D.inventario.reduce((s,i)=>s+Number(i.stock),0);
-  stockRes.innerHTML = `<span style="background:var(--g6);padding:4px 8px;border-radius:20px;">📦 Total unidades: ${totalStock}</span><span style="background:var(--am-p);padding:4px 8px;border-radius:20px;">⚠️ ${criticos.length} insumos críticos</span>`;
-  buildStockList();
+  // Gráficos (si Chart está disponible)
+  if(typeof Chart !== 'undefined') {
+    const ctxC = document.getElementById('cosechasChart')?.getContext('2d');
+    const ctxA = document.getElementById('asistenciaChart')?.getContext('2d');
+    if(ctxC && charts.cosechas) charts.cosechas.destroy();
+    if(ctxA && charts.asistencia) charts.asistencia.destroy();
+    if(ctxC) {
+      const labels = D.cosechasSemanales.map(s=>s.label);
+      const data = D.cosechasSemanales.map(s=>s.total);
+      charts.cosechas = new Chart(ctxC, { type:'bar', data:{ labels, datasets:[{ label:'kg cosechados', data, backgroundColor:'#52b788' }] }, options:{ responsive:true, maintainAspectRatio:true } });
+    }
+    if(ctxA) {
+      const labelsA = D.asistenciasSemanales.map(s=>s.label);
+      const dataA = D.asistenciasSemanales.map(s=>s.porcentaje);
+      charts.asistencia = new Chart(ctxA, { type:'line', data:{ labels:labelsA, datasets:[{ label:'% asistencia', data:dataA, borderColor:'#e07a31', fill:false }] }, options:{ responsive:true } });
+    }
+  }
+  // Próximas cosechas
+  const prox = D.camas.filter(c=>c.estado==='Lista para cosechar').slice(0,6);
+  const proxDiv = document.getElementById('proxCosechasList');
+  if(proxDiv) {
+    proxDiv.innerHTML = prox.length ? prox.map(c=>`<div class="prox-row" onclick="irAFormCosecha('${c.id}')"><div><span class="prox-cult">${c.cultivo}</span><br><span style="font-size:10px;">${c.id}</span></div><div class="prox-dias">¡YA!</div></div>`).join('') : '<div class="empty">No hay cosechas próximas</div>';
+  }
+  // Alertas
+  const alerts = [];
+  if(listasCosechar) alerts.push({ tipo:'crit', texto:`${listasCosechar} camas listas para cosechar`, icono:'🧺' });
+  const criticos = D.inventario.filter(i=>Number(i.stock)<=Number(i.minimo));
+  if(criticos.length) alerts.push({ tipo:'warn', texto:`Stock bajo: ${criticos.map(i=>i.nombre).join(', ')}`, icono:'📦' });
+  if(camasVacias) alerts.push({ tipo:'info', texto:`${camasVacias} camas vacías disponibles`, icono:'🌱' });
+  if(alerts.length===0) alerts.push({ tipo:'info', texto:'Sin alertas activas', icono:'✅' });
+  const alertDiv = document.getElementById('alertasList');
+  if(alertDiv) alertDiv.innerHTML = alerts.map(a=>`<div class="alert-item ${a.tipo}"><div>${a.icono}</div><div style="flex:1"><strong>${a.texto}</strong></div></div>`).join('');
+  // Stock
+  const stockDiv = document.getElementById('stockList');
+  if(stockDiv) stockDiv.innerHTML = D.inventario.map(i=>`<div class="inv-r" style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid var(--bdr);"><div><strong>${i.nombre}</strong><br><span style="font-size:10px;">${i.categoria}</span></div><div><span style="font-weight:700;">${i.stock} ${i.unidad}</span><br><span style="font-size:10px;">$${i.precio}</span></div></div>`).join('');
 }
 
-function buildStockList() {
-  const el = document.querySelector('#stockList');
-  const iconos = {Fertilizante:'🌿',Biológico:'🧴',Semilla:'🌱'};
-  el.innerHTML = D.inventario.map(i=>{ const stock=Number(i.stock); const min=Number(i.minimo); const cls = stock<=min?'slow':'sok'; return `<div class="inv-r"><div class="inv-ico">${iconos[i.categoria]||'📦'}</div><div class="inv-b"><strong>${i.nombre}</strong><span>Mín: ${min} ${i.unidad}</span><div class="sbr ${cls}"><div class="sbf" style="width:${Math.min(100,stock/min*100)}%"></div></div></div><div class="inv-s ${cls}"><div class="num">${stock}</div><div class="unit">${i.unidad}</div></div></div>`; }).join('');
-}
-
-function buildCamaBlocks() {
+function renderCamas() {
   const huertas = [...new Set(D.camas.map(c=>c.huerta))].sort();
-  const nomH = {H1:'Huerta 1',H2:'Huerta 2',H3:'Huerta 3',H4:'Huerta 4',H5:'Huerta 5'};
-  const el = document.querySelector('#camaBlocks');
-  el.innerHTML = huertas.map(hid=>{ const lista=D.camas.filter(c=>c.huerta===hid); const act=lista.filter(c=>c.cultivo && c.estado!=='Vacía' && c.estado!=='Cosechada').length; const lcos=lista.filter(c=>c.estado==='Lista para cosechar').length; return `<div class="h-block"><div class="h-hdr" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'':'none'"><strong>🌿 ${nomH[hid]||hid}</strong><span>${act} activas · ${lcos} cosechar</span></div><div class="h-chips" style="display:flex;flex-wrap:wrap;gap:5px">${lista.map(c=>`<div class="chip ${c.estado==='Lista para cosechar'?'clista':c.estado==='En crecimiento'?'crec':c.estado==='Cosechada'?'ccos':'cvac'}" onclick="irAForm('${c.id}')">${c.num}<span class="chip-txt">${c.cultivo?.slice(0,8)||'—'}</span></div>`).join('')}</div></div>`; }).join('');
+  const nomH = { H1:'Huerta 1', H2:'Huerta 2', H3:'Huerta 3', H4:'Huerta 4', H5:'Huerta 5' };
+  const container = document.getElementById('camaBlocks');
+  if(!container) return;
+  container.innerHTML = huertas.map(hid=>{
+    const lista = D.camas.filter(c=>c.huerta===hid);
+    const chips = lista.map(c=>`<div class="chip ${c.estado==='Lista para cosechar'?'clista':c.estado==='En crecimiento'||c.estado==='Sembrada'?'crec':c.estado==='Cosechada'?'ccos':'cvac'}" onclick="irAForm('${c.id}')">${c.num}<span class="chip-txt">${c.cultivo?.slice(0,8)||'—'}</span></div>`).join('');
+    return `<div class="h-block"><div class="h-hdr" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'':'none'"><strong>🌿 ${nomH[hid]||hid}</strong><span>${lista.length} camas</span></div><div class="h-chips">${chips}</div></div>`;
+  }).join('');
 }
 
-function buildEquipo() {
-  const el = document.querySelector('#equipoGrid');
-  el.innerHTML = D.jovenes.map((n,i)=>`<div class="eq-card" onclick="irAFormEquipo('${n}')"><div class="eq-ava" style="background:${COLORES_EQ[i%COLORES_EQ.length]}">${n.split(' ').map(w=>w[0]).join('').slice(0,2)}</div><div class="eq-info"><strong>${n.split(' ')[0]}</strong><span>${D.asistencia[n]?.fecha||'Sin registro'}</span></div><span style="margin-left:auto">➕</span></div>`).join('');
+function renderEquipo() {
+  const grid = document.getElementById('equipoGrid');
+  if(!grid) return;
+  const colores = ['#2d6a4f','#1565c0','#e65100','#6a1b9a','#880e4f','#006064'];
+  grid.innerHTML = D.jovenes.map((n,i)=>`<div class="eq-card" onclick="irAFormEquipo('${n}')"><div class="eq-ava" style="background:${colores[i%colores.length]}">${n.split(' ').map(w=>w[0]).join('').slice(0,2)}</div><div class="eq-info"><strong>${n.split(' ')[0]}</strong><span>${D.asistencia[n]?.fecha||'Sin registro'}</span></div><span>➕</span></div>`).join('');
 }
 
-function buildSysInfo() { document.querySelector('#sysInfo').innerHTML = `Camas: ${D.camas.length} · Activas: ${D.camas.filter(c=>c.cultivo).length}<br>Insumos: ${D.inventario.length} · Jóvenes: ${D.jovenes.length}`; }
+function renderHistorial() {
+  const container = document.getElementById('histList');
+  if(!container) return;
+  if(historial.length===0) { container.innerHTML = '<div class="empty">Sin registros en esta sesión</div>'; return; }
+  container.innerHTML = historial.slice(0,20).map(r=>`<div class="hist-item"><div class="hist-hdr"><span class="hist-mod">${r.tipoRegistro}</span><span>${r.fecha}</span></div><div class="hist-body">${JSON.stringify(r).slice(0,100)}</div></div>`).join('');
+}
 
-function go(name) { document.querySelectorAll('.view').forEach(v=>v.classList.remove('on')); document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on')); document.querySelector('#v-'+name).classList.add('on'); const idx={panel:0,form:1,camas:2,equipo:3,historial:4}[name]; const nbs=document.querySelectorAll('.nb'); if(idx!=null && nbs[idx]) nbs[idx].classList.add('on'); window.scrollTo({top:0}); }
-function setMod(m, btn) { modActual=m; document.querySelectorAll('.mpk').forEach(b=>b.classList.remove('on')); if(btn) btn.classList.add('on'); document.querySelectorAll('.fmod').forEach(f=>f.classList.remove('on')); document.querySelector('#fm-'+m).classList.add('on'); }
-function irAForm(camaId) { go('form'); setMod('bit', document.querySelectorAll('.mpk')[0]); setTimeout(()=>{ const s=document.querySelector('#sCamaBit'); if(s){ s.value=camaId; onCamaChange(s,'aBitH','aBitC','aBitO','aBitFS'); } }, 80); }
-function irAFormCosecha(camaId) { go('form'); setMod('cos', document.querySelectorAll('.mpk')[3]); setTimeout(()=>{ const s=document.querySelector('#sCamaCos'); if(s){ s.value=camaId; onCamaChange(s,'aCoH','aCoCult',null,null); } }, 80); }
-function irAFormEquipo(nombre) { go('form'); setMod('gest', document.querySelectorAll('.mpk')[1]); setTimeout(()=>{ const s=document.querySelector('#selJoven'); if(s){ s.value=nombre; onJovenChange(s); } }, 80); }
+function renderSysInfo() {
+  const infoDiv = document.getElementById('sysInfo');
+  if(!infoDiv) return;
+  infoDiv.innerHTML = `<strong>Camas:</strong> ${D.camas.length} · <strong>Activas:</strong> ${D.camas.filter(c=>c.cultivo).length}<br>
+                       <strong>Insumos:</strong> ${D.inventario.length} · <strong>Jóvenes:</strong> ${D.jovenes.length}<br>
+                       <strong>Fuente:</strong> ${API ? (D.camas.length>0?'Google Sheets ✅':'Esperando sincronización') : 'Datos de ejemplo'}`;
+}
 
+// ==================== FUNCIONES GLOBALES ====================
+function go(name) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  const target = document.getElementById('v-'+name);
+  if(target) target.classList.add('on');
+  const idx = {panel:0,form:1,camas:2,equipo:3,historial:4}[name];
+  const nbs = document.querySelectorAll('.nb');
+  if(idx!==undefined && nbs[idx]) nbs[idx].classList.add('on');
+}
+function setMod(m, btn) {
+  modActual = m;
+  document.querySelectorAll('.mpk').forEach(b=>b.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  document.querySelectorAll('.fmod').forEach(f=>f.classList.remove('on'));
+  const fm = document.getElementById('fm-'+m);
+  if(fm) fm.classList.add('on');
+}
+function irAForm(camaId) {
+  go('form');
+  setMod('bit', document.querySelector('.mpk'));
+  setTimeout(()=>{
+    const sel = document.getElementById('sCamaBit');
+    if(sel) { sel.value = camaId; onCamaChange(sel,'aBitH','aBitC','aBitO','aBitFS'); }
+  }, 100);
+}
+function irAFormCosecha(camaId) {
+  go('form');
+  setMod('cos', document.querySelectorAll('.mpk')[3]);
+  setTimeout(()=>{
+    const sel = document.getElementById('sCamaCos');
+    if(sel) { sel.value = camaId; onCamaChange(sel,'aCoH','aCoCult',null,null); }
+  }, 100);
+}
+function irAFormEquipo(nombre) {
+  go('form');
+  setMod('gest', document.querySelectorAll('.mpk')[1]);
+  setTimeout(()=>{
+    const sel = document.getElementById('selJoven');
+    if(sel) { sel.value = nombre; onJovenChange(sel); }
+  }, 100);
+}
+function onJovenChange(sel) {
+  const nombre = sel.value;
+  const ult = D.asistencia[nombre];
+  const input = document.getElementById('aJovenUlt');
+  if(input) input.value = ult ? `${ult.fecha} — ${ult.asistencia}` : 'Sin registros';
+}
+function onInsumoChange(sel) {
+  const inv = D.inventario.find(i=>i.nombre===sel.value);
+  if(!inv) return;
+  document.getElementById('aInsCat').value = inv.categoria||'';
+  document.getElementById('aInsStock').value = `${inv.stock} ${inv.unidad}`;
+  document.getElementById('aInsPrecio').value = `$${inv.precio}`;
+  document.getElementById('aInsUnidad').value = inv.unidad||'';
+}
+function toggleAsist() {
+  const asist = document.getElementById('sAsist')?.value;
+  const campos = document.getElementById('camposP');
+  const motivo = document.getElementById('motivoAus');
+  if(campos) campos.style.display = asist === 'Presente' ? '' : 'none';
+  if(motivo) motivo.style.display = asist === 'Ausente' ? '' : 'none';
+}
+async function sincronizar(manual) {
+  if(!API) { if(manual) toast('Configura la URL en Sistema', true); return; }
+  const btn = document.getElementById('syncBtn');
+  if(btn) btn.classList.add('spin');
+  try {
+    const res = await fetch(API + '?action=config', { cache: 'no-cache' });
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const data = await res.json();
+    if(data.status === 'ok' && data.camas) {
+      localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+      localStorage.setItem(CACHE_TS, Date.now()+'');
+      aplicarDatos(data);
+      const syncSt = document.getElementById('syncSt');
+      if(syncSt) syncSt.textContent = '✅ Sincronizado ' + new Date().toLocaleTimeString();
+      document.getElementById('offBar')?.classList.remove('show');
+      document.getElementById('cDot')?.classList.replace('off','on');
+      document.getElementById('cTxt')?.classList;
+      if(manual) toast('✅ Datos sincronizados');
+    } else throw new Error('Respuesta inválida');
+  } catch(e) {
+    document.getElementById('offBar')?.classList.add('show');
+    if(manual) toast('⚠️ Error de conexión: '+e.message, true);
+  } finally {
+    if(btn) btn.classList.remove('spin');
+  }
+}
+async function probarConexion() {
+  const dot = document.getElementById('cDot');
+  const txt = document.getElementById('cTxt');
+  if(dot) dot.className = 'cdot test';
+  if(txt) txt.textContent = 'Probando...';
+  const url = document.getElementById('urlIn')?.value.trim();
+  if(!url) { toast('Ingresa la URL', true); if(dot) dot.className = 'cdot off'; if(txt) txt.textContent = 'Sin URL'; return; }
+  localStorage.setItem('erp_url', url);
+  API = url;
+  try {
+    const res = await fetch(url+'?action=health', { cache: 'no-cache' });
+    const data = await res.json();
+    if(data.status === 'online') {
+      if(dot) dot.className = 'cdot on';
+      if(txt) txt.textContent = '✅ Conectado';
+      toast('Conexión exitosa, sincronizando...');
+      await sincronizar(false);
+      toast('Datos cargados');
+    } else throw new Error();
+  } catch(e) {
+    if(dot) dot.className = 'cdot off';
+    if(txt) txt.textContent = '❌ Error';
+    toast('No se pudo conectar con el servidor', true);
+  }
+}
 async function enviar(e) {
   e.preventDefault();
-  const btn = document.querySelector('#sbtn');
-  btn.textContent = 'Enviando...'; btn.disabled = true;
-  const fd = new FormData(document.querySelector('#erpForm'));
-  const fecha = document.querySelector('#fFecha').value;
-  const obs = document.querySelector('#obs').value;
-  const url = document.querySelector('#urlIn').value;
+  const btn = document.getElementById('sbtn');
+  if(btn) { btn.textContent = 'Enviando...'; btn.disabled = true; }
+  const fd = new FormData(document.getElementById('erpForm'));
+  const fecha = document.getElementById('fFecha').value;
+  const obs = document.getElementById('obs').value;
+  const url = document.getElementById('urlIn')?.value;
   let p = { tipoRegistro: '', fecha, observaciones: obs };
-  if(modActual==='bit') { p.tipoRegistro='Bitacora Diaria'; for(let k of ['camaId','huerta','cultivo','origen','fase','avance','altura','estadoFitosan','humedad','accion','responsable','alerta']) p[k]=fd.get(k)||''; }
-  else if(modActual==='gest') { p.tipoRegistro='Gestion Humana'; for(let k of ['joven','asistencia','camaAsignada','tarea','actitud','herramienta','estadoHerr','insumoGH','motivoAusencia']) p[k]=fd.get(k)||''; }
-  else if(modActual==='riego') { p.tipoRegistro='Riego_Fumigacion'; p.huerta=fd.get('huertaRiego')||''; p.camaId=fd.get('camaIdRiego')||''; p.cultivo=fd.get('cultivoRiego')||''; p.responsable=fd.get('responsableRiego')||''; for(let k of ['tipoOperacion','producto','cantidadRiego','unidadRiego','tiempo','cobertura']) p[k]=fd.get(k)||''; p.cantidad=p.cantidadRiego; p.unidad=p.unidadRiego; }
-  else if(modActual==='cos') { p.tipoRegistro='Cosechas'; p.camaId=fd.get('camaIdCosecha')||''; p.huerta=fd.get('huertaCosecha')||''; p.cultivo=fd.get('cultivoCosecha')||''; p.cantidad=fd.get('cantidadCosecha')||''; p.responsable=fd.get('responsableCosecha')||''; for(let k of ['unidadCosecha','destino','calidad']) p[k]=fd.get(k)||''; p.unidad=p.unidadCosecha; }
-  else if(modActual==='ins') { p.tipoRegistro='Insumos'; p.insumo=fd.get('insumoNombre')||''; for(let k of ['tipoInsumo','proveedor','precio','unidadInsumo','cantEntrada','cantSalida']) p[k]=fd.get(k)||''; p.unidad=p.unidadInsumo; }
+  if(modActual==='bit') {
+    p.tipoRegistro='Bitacora Diaria';
+    for(let k of ['camaId','huerta','cultivo','origen','fase','avance','altura','estadoFitosan','humedad','accion','responsable','alerta']) p[k]=fd.get(k)||'';
+  } else if(modActual==='gest') {
+    p.tipoRegistro='Gestion Humana';
+    for(let k of ['joven','asistencia','camaAsignada','tarea','actitud','herramienta','estadoHerr','insumoGH','motivoAusencia']) p[k]=fd.get(k)||'';
+  } else if(modActual==='riego') {
+    p.tipoRegistro='Riego_Fumigacion';
+    p.huerta=fd.get('huertaRiego')||''; p.camaId=fd.get('camaIdRiego')||''; p.cultivo=fd.get('cultivoRiego')||'';
+    p.responsable=fd.get('responsableRiego')||''; p.tipoOperacion=fd.get('tipoOperacion')||''; p.producto=fd.get('producto')||'';
+    p.cantidad=fd.get('cantidadRiego')||''; p.unidad=fd.get('unidadRiego')||'';
+  } else if(modActual==='cos') {
+    p.tipoRegistro='Cosechas';
+    p.camaId=fd.get('camaIdCosecha')||''; p.huerta=fd.get('huertaCosecha')||''; p.cultivo=fd.get('cultivoCosecha')||'';
+    p.cantidad=fd.get('cantidadCosecha')||''; p.unidad=fd.get('unidadCosecha')||''; p.destino=fd.get('destino')||'';
+    p.calidad=fd.get('calidad')||''; p.responsable=fd.get('responsableCosecha')||'';
+  } else if(modActual==='ins') {
+    p.tipoRegistro='Insumos';
+    p.insumo=fd.get('insumoNombre')||''; p.tipoInsumo=fd.get('tipoInsumo')||''; p.proveedor=fd.get('proveedor')||'';
+    p.precio=fd.get('precio')||''; p.unidad=fd.get('unidadInsumo')||''; p.cantEntrada=fd.get('cantEntrada')||'';
+    p.cantSalida=fd.get('cantSalida')||'';
+  }
   try {
     if(!url) throw new Error('Configura URL en Sistema');
     const response = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(p) });
     const result = await response.json();
-    if(result.status==='ok') { toast('✅ Registrado'); addHist(p); limpiar(); sincronizar(false); }
-    else throw new Error(result.message);
-  } catch(err) { toast('❌ '+err.message, true); }
-  finally { btn.textContent='📤 Registrar'; btn.disabled=false; }
+    if(result.status==='ok') {
+      toast('✅ Registro guardado');
+      historial.unshift(p);
+      renderHistorial();
+      document.getElementById('erpForm').reset();
+      document.getElementById('fFecha').valueAsDate = HOY;
+      // Limpiar autofills
+      ['aBitH','aBitC','aBitO','aCoCult','aRiegoCult','aJovenUlt','aInsCat','aInsStock','aInsPrecio','aInsUnidad'].forEach(id=>{
+        const el = document.getElementById(id); if(el) el.value = '';
+      });
+      sincronizar(false); // refrescar datos
+    } else throw new Error(result.message);
+  } catch(err) {
+    toast('❌ '+err.message, true);
+  } finally {
+    if(btn) { btn.textContent = '📤 Registrar'; btn.disabled = false; }
+  }
 }
-
-function limpiar() { document.querySelector('#erpForm').reset(); document.querySelector('#fFecha').valueAsDate=HOY; ['aBitH','aBitC','aBitO','aCoCult','aRiegoCult','aJovenUlt','aInsCat','aInsStock','aInsPrecio','aInsUnidad'].forEach(id=>{ const e=document.querySelector('#'+id); if(e) e.value=''; }); }
-function addHist(p) { historial.unshift(p); const el=document.querySelector('#histList'); el.innerHTML=historial.slice(0,30).map(r=>`<div class="hist-item"><div class="hist-hdr"><span class="hist-mod" style="background:#d8f3dc">${r.tipoRegistro}</span><span>${r.fecha}</span></div><div class="hist-body">${JSON.stringify(r).slice(0,100)}</div></div>`).join(''); }
-async function probarConexion() { const dot=document.querySelector('#cDot'); const txt=document.querySelector('#cTxt'); dot.className='cdot test'; txt.textContent='Probando...'; const url=document.querySelector('#urlIn').value.trim(); if(!url){ toast('Ingresa URL',true); dot.className='cdot off'; txt.textContent='Sin URL'; return; } localStorage.setItem('erp_url',url); API=url; try { const res=await fetch(url+'?action=health',{cache:'no-cache'}); const data=await res.json(); if(data.status==='online'){ dot.className='cdot on'; txt.textContent='✅ Conectado'; toast('✅ Conectado'); await sincronizar(false); } else throw new Error(); } catch(e){ dot.className='cdot off'; txt.textContent='❌ Error'; toast('No se pudo conectar',true); } }
-async function exportarDashboardPDF() { toast('Generando PDF...'); const element = document.querySelector('#v-panel'); try { const canvas = await html2canvas(element, { scale: 2, backgroundColor: '#f2efe8' }); const imgData = canvas.toDataURL('image/png'); const { jsPDF } = window.jspdf; const pdf = new jsPDF('p', 'mm', 'a4'); const imgWidth = 190; const imgHeight = (canvas.height * imgWidth) / canvas.width; pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight); pdf.save('dashboard_huerta.pdf'); toast('PDF descargado'); } catch(e) { toast('Error al generar PDF', true); } }
-function toast(msg, err) { const el=document.querySelector('#toast'); el.textContent=msg; el.style.background=err?'#c0392b':'#1a3d2b'; el.classList.add('show'); clearTimeout(window._tt); window._tt=setTimeout(()=>el.classList.remove('show'),3000); }
-init();
+function toast(msg, err) {
+  const el = document.getElementById('toast');
+  if(!el) return;
+  el.textContent = msg;
+  el.style.background = err ? '#c0392b' : '#1a3d2b';
+  el.classList.add('show');
+  clearTimeout(window._tt);
+  window._tt = setTimeout(()=>el.classList.remove('show'), 3000);
+}
+// Iniciar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
 </html>
