@@ -1,449 +1,1185 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ERP Huerta - Producción V12</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ERP Huerta V16</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g1:#1a3d2b;--g2:#2d6a4f;--g3:#40916c;--g4:#52b788;--g5:#95d5b2;--g6:#d8f3dc;
+  --am:#e07a31;--am-p:#fff3e0;--rd:#c0392b;--rd-p:#fdecea;
+  --bl:#1565c0;--bl-p:#e3f2fd;
+  --bg:#f2efe8;--bg2:#e8e4db;--card:#fff;
+  --txt:#1a1a1a;--txt2:#555;--txt3:#888;
+  --bdr:#e0ddd5;
+  --r:14px;--r2:10px;--r3:6px;
+  --f:'Inter',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--f);background:var(--bg);color:var(--txt);min-height:100vh;overscroll-behavior:none}
+/* HEADER */
+.hdr{background:var(--g1);position:sticky;top:0;z-index:200}
+.hdr-top{max-width:500px;margin:0 auto;display:flex;align-items:center;padding:12px 16px;gap:8px}
+.hdr-top h1{flex:1;font-size:15px;font-weight:700;color:#fff}
+.hdr-top h1 span{font-size:10px;font-weight:400;opacity:.6;display:block;margin-top:1px}
+.sync-btn{background:none;border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.85);padding:6px 11px;border-radius:20px;font-family:var(--f);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .2s}
+.sync-btn:hover{background:rgba(255,255,255,.1)}
+.sync-btn.spin{display:inline-block;animation:giro 1s linear infinite}
+@keyframes giro{to{transform:rotate(360deg)}}
+.cfg-btn{background:none;border:none;color:rgba(255,255,255,.7);padding:6px;cursor:pointer;font-size:18px;line-height:1}
+.nav{background:var(--g2);border-top:1px solid rgba(255,255,255,.1)}
+.nav-inner{max-width:500px;margin:0 auto;display:flex}
+.nb{flex:1;padding:10px 4px 9px;border:none;background:none;color:rgba(255,255,255,.55);font-family:var(--f);font-size:9.5px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+.nb.on{color:#fff;border-bottom-color:var(--g4)}
+/* LAYOUT */
+.wrap{max-width:500px;margin:0 auto;padding:12px 14px 90px}
+.view{display:none}.view.on{display:block}
+/* TOAST */
+.toast{position:fixed;top:68px;left:50%;transform:translateX(-50%) translateY(-10px);background:var(--g1);color:#fff;padding:10px 20px;border-radius:30px;font-size:13px;font-weight:500;z-index:999;opacity:0;transition:all .25s;pointer-events:none;max-width:92vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* OFFLINE */
+.off-bar{background:var(--am);color:#fff;font-size:12px;font-weight:600;text-align:center;padding:8px;display:none}
+.off-bar.show{display:block}
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px}
+.kpi{background:var(--card);border-radius:var(--r2);padding:13px 14px;border:1px solid var(--bdr);position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%}
+.kpi.g::before{background:var(--g3)}.kpi.a::before{background:var(--am)}.kpi.r::before{background:var(--rd)}.kpi.b::before{background:var(--bl)}
+.kpi-lbl{font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.4px}
+.kpi-val{font-size:28px;font-weight:700;line-height:1;margin:3px 0 1px}
+.kpi.g .kpi-val{color:var(--g2)}.kpi.a .kpi-val{color:var(--am)}.kpi.r .kpi-val{color:var(--rd)}.kpi.b .kpi-val{color:var(--bl)}
+.kpi-sub{font-size:10.5px;color:var(--txt3)}
+/* SECCIÓN */
+.sec{margin:16px 0 8px;font-size:11px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.7px;display:flex;align-items:center;gap:6px}
+.sec::after{content:'';flex:1;height:1px;background:var(--bdr)}
+.sec-a{font-size:11px;font-weight:600;color:var(--g3);cursor:pointer;margin-left:auto;flex-shrink:0}
+/* ALERTAS */
+.ac{background:var(--card);border-radius:var(--r2);border:1px solid var(--bdr);margin-bottom:7px;overflow:hidden;cursor:pointer}
+.ac:active{transform:scale(.99)}
+.ac-in{display:flex;align-items:center;gap:10px;padding:11px 13px}
+.ac-p{width:4px;flex-shrink:0;align-self:stretch;border-radius:2px;margin-right:10px}
+.ac-p.cr{background:var(--rd)}.ac-p.wa{background:var(--am)}.ac-p.ok{background:var(--g4)}.ac-p.in{background:var(--bl)}
+.ac-ico{font-size:18px;flex-shrink:0}
+.ac-b{flex:1;min-width:0}
+.ac-b strong{font-size:13px;font-weight:600;display:block}
+.ac-b span{font-size:11.5px;color:var(--txt2);display:block;margin-top:1px;line-height:1.4}
+.ac-tag{font-size:10px;font-weight:700;padding:3px 7px;border-radius:4px;flex-shrink:0;align-self:flex-start}
+.tc{background:var(--rd-p);color:var(--rd)}.tw{background:var(--am-p);color:#9a4f1a}.tok{background:var(--g6);color:var(--g2)}.ti{background:var(--bl-p);color:var(--bl)}
+/* TIMELINE */
+.tl-i{display:flex;gap:12px;position:relative}
+.tl-i::before{content:'';position:absolute;left:15px;top:30px;bottom:-7px;width:1px;background:var(--bdr)}
+.tl-i:last-child::before{display:none}
+.tl-dot{width:31px;height:31px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;margin-top:8px;z-index:1}
+.tnow{background:var(--rd-p);border:2px solid var(--rd)}.tsoon{background:var(--am-p);border:2px solid var(--am)}.tlater{background:var(--g6);border:2px solid var(--g4)}
+.tl-card{background:var(--card);border-radius:var(--r2);border:1px solid var(--bdr);padding:10px 13px;flex:1;margin-bottom:7px}
+.tl-top{display:flex;justify-content:space-between;align-items:flex-start}
+.tl-top strong{font-size:13px;font-weight:600}
+.tl-dias{font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px}
+.dn{background:var(--rd-p);color:var(--rd)}.ds{background:var(--am-p);color:#9a4f1a}.dl{background:var(--g6);color:var(--g2)}
+.tl-sub{font-size:11px;color:var(--txt2);margin-top:3px}
+.pb{height:5px;background:var(--bg2);border-radius:3px;margin-top:8px;overflow:hidden}
+.pf{height:100%;border-radius:3px;background:var(--g4)}
+/* CHART */
+.chart-card{background:var(--card);border-radius:var(--r2);border:1px solid var(--bdr);padding:14px}
+.br{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.br:last-child{margin-bottom:0}
+.bl2{font-size:11.5px;font-weight:500;width:90px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bt{flex:1;height:10px;background:var(--bg2);border-radius:5px;overflow:hidden}
+.bf{height:100%;border-radius:5px;background:var(--g4)}
+.bn{font-size:11px;color:var(--txt3);width:22px;text-align:right;flex-shrink:0;font-weight:500}
+/* INVENTARIO */
+.inv-r{background:var(--card);border-radius:var(--r2);border:1px solid var(--bdr);padding:11px 14px;margin-bottom:7px;display:flex;align-items:center;gap:10px}
+.inv-ico{font-size:20px;flex-shrink:0}
+.inv-b{flex:1;min-width:0}
+.inv-b strong{font-size:13px;font-weight:600}
+.inv-b span{font-size:11px;color:var(--txt2);display:block}
+.inv-s{text-align:right;flex-shrink:0}
+.inv-s .num{font-size:18px;font-weight:700}
+.inv-s .unit{font-size:10px;color:var(--txt3)}
+.sok .num{color:var(--g3)}.slow .num{color:var(--am)}.scrit .num{color:var(--rd)}
+.sbr{height:4px;background:var(--bg2);border-radius:2px;margin-top:5px;overflow:hidden}
+.sbf{height:100%;border-radius:2px}
+.sok .sbf{background:var(--g4)}.slow .sbf{background:var(--am)}.scrit .sbf{background:var(--rd)}
+/* CAMAS */
+.h-block{background:var(--card);border-radius:var(--r2);border:1px solid var(--bdr);margin-bottom:8px;overflow:hidden}
+.h-hdr{padding:10px 14px;background:var(--bg);display:flex;justify-content:space-between;align-items:center;cursor:pointer;border-bottom:1px solid var(--bdr);user-select:none}
+.h-hdr strong{font-size:13px;font-weight:600}
+.h-stats{font-size:11px;color:var(--txt3)}
+.h-chips{padding:10px 12px;display:flex;flex-wrap:wrap;gap:5px}
+.chip{padding:5px 9px;border-radius:var(--r3);font-size:10.5px;font-weight:600;cursor:pointer;border:1px solid transparent;min-width:44px}
+.chip:active{transform:scale(.94)}
+.chip-txt{display:block;font-size:9px;font-weight:400;opacity:.8;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:62px}
+.crec{background:#f0fff4;border-color:#95d5b2;color:var(--g2)}
+.clista{background:var(--am-p);border-color:#f0b070;color:#7a3d10}
+.ccos{background:#f5f5f5;border-color:#ddd;color:#777}
+.cvac{background:var(--bg);border-color:var(--bdr);color:var(--txt3)}
+.leg-row{display:flex;gap:12px;flex-wrap:wrap;padding:8px 12px 12px;border-top:1px solid var(--bdr)}
+.leg{font-size:10.5px;color:var(--txt2);display:flex;align-items:center;gap:4px}
+.leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+/* EQUIPO */
+.eq-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.eq-card{background:var(--card);border-radius:var(--r2);border:1px solid var(--bdr);padding:11px 12px;display:flex;align-items:center;gap:10px;cursor:pointer}
+.eq-card:active{transform:scale(.97)}
+.eq-ava{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;color:#fff}
+.eq-info strong{font-size:12px;font-weight:600;display:block}
+.eq-info span{font-size:10.5px;color:var(--txt3)}
+/* FORM */
+.mod-pick{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
+.mpk{padding:10px 8px;border:1.5px solid var(--bdr);border-radius:var(--r2);background:var(--bg);font-family:var(--f);font-size:11px;font-weight:600;color:var(--txt2);cursor:pointer;text-align:center;line-height:1.4;transition:all .2s}
+.mpk span{display:block;font-size:16px;margin-bottom:3px}
+.mpk.on{background:var(--g2);color:#fff;border-color:var(--g2)}
+.fcard{background:var(--card);border-radius:var(--r2);border:1px solid var(--bdr);padding:15px;margin-bottom:9px}
+.fcard-ttl{font-size:11px;font-weight:700;color:var(--g2);text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--bdr);padding-bottom:9px;margin-bottom:13px}
+.fmod{display:none}.fmod.on{display:block}
+.fld{margin-bottom:11px}.fld:last-child{margin-bottom:0}
+.fld label{display:block;font-size:11px;font-weight:600;color:var(--txt2);margin-bottom:4px}
+.fld input,.fld select,.fld textarea{width:100%;padding:10px 12px;border:1.5px solid var(--bdr);border-radius:var(--r3);font-family:var(--f);font-size:14px;color:var(--txt);background:var(--bg);-webkit-appearance:none;appearance:none;transition:border .15s,box-shadow .15s}
+.fld input:focus,.fld select:focus,.fld textarea:focus{outline:none;border-color:var(--g3);box-shadow:0 0 0 3px rgba(64,145,108,.12);background:#fff}
+.fld textarea{resize:none}
+/* AUTOFILL — campo calculado */
+.autofill{background:#f0fff4 !important;color:var(--g2) !important;font-weight:600 !important;border-color:#b7e4c7 !important;cursor:default}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.row3{display:grid;grid-template-columns:2fr 1fr;gap:9px}
+.date-row{background:var(--card);border-radius:var(--r2);border:1px solid var(--bdr);padding:11px 14px;margin-bottom:9px;display:flex;align-items:center;gap:10px}
+.date-row label{font-size:12px;font-weight:600;color:var(--txt2);white-space:nowrap}
+.date-row input{flex:1;padding:8px 11px;border:1.5px solid var(--bdr);border-radius:var(--r3);font-family:var(--f);font-size:14px;background:var(--bg);color:var(--txt)}
+.date-row input:focus{outline:none;border-color:var(--g3)}
+.sbtn{width:100%;background:var(--g2);color:#fff;border:none;padding:15px;border-radius:var(--r2);font-family:var(--f);font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:4px}
+.sbtn:hover{background:var(--g3)}.sbtn:active{transform:scale(.99)}.sbtn:disabled{opacity:.55;cursor:not-allowed}
+.in-p{background:rgba(82,183,136,.1);border:1.5px solid var(--g5);border-radius:var(--r3);padding:10px 12px}
+.in-m{background:rgba(192,57,43,.07);border:1.5px solid #e8a0a0;border-radius:var(--r3);padding:10px 12px}
+/* HISTORIAL */
+.hist-item{background:var(--card);border-radius:var(--r2);border:1px solid var(--bdr);margin-bottom:8px;overflow:hidden}
+.hist-hdr{display:flex;justify-content:space-between;align-items:center;padding:10px 13px;background:var(--bg);border-bottom:1px solid var(--bdr)}
+.hist-mod{font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px}
+.hist-fecha{font-size:10.5px;color:var(--txt3);font-weight:500}
+.hist-body{padding:10px 13px;font-size:13px;line-height:1.55;color:var(--txt2)}
+.hist-body strong{color:var(--txt);font-weight:600}
+.hist-empty{text-align:center;padding:40px 20px;color:var(--txt3);font-size:13px}
+/* SISTEMA */
+.sys-card{background:var(--card);border-radius:var(--r2);border:1px solid var(--bdr);padding:16px;margin-bottom:9px}
+.sys-card h3{font-size:14px;font-weight:700;margin-bottom:12px}
+.conn-box{display:flex;align-items:center;gap:10px;padding:10px 13px;border-radius:var(--r3);background:var(--bg);margin-bottom:11px}
+.cdot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+.cdot.on{background:var(--g4);box-shadow:0 0 0 3px rgba(82,183,136,.3)}
+.cdot.off{background:var(--bdr)}.cdot.test{background:var(--am);animation:pulse .8s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.url-in{width:100%;padding:9px 11px;border:1.5px solid var(--bdr);border-radius:var(--r3);font-family:monospace;font-size:10.5px;color:var(--txt);background:var(--bg);margin-bottom:9px}
+.url-in:focus{outline:none;border-color:var(--g3)}
+.tbtn{width:100%;padding:11px;background:var(--bg);border:1.5px solid var(--bdr);border-radius:var(--r3);font-family:var(--f);font-size:13px;font-weight:600;color:var(--txt);cursor:pointer;transition:all .2s;margin-bottom:7px}
+.tbtn:hover{background:var(--g6);border-color:var(--g4);color:var(--g2)}
+.step{background:var(--bg);border-radius:var(--r3);padding:11px 13px;margin-bottom:7px;border-left:3px solid var(--g4)}
+.step strong{font-size:13px;font-weight:600;display:block;margin-bottom:3px}
+.step p{font-size:12px;color:var(--txt2);line-height:1.5}
+.step code{font-family:monospace;font-size:11px;background:var(--bdr);padding:2px 5px;border-radius:3px}
+.tip-list{list-style:none}
+.tip-list li{padding:8px 0;border-bottom:1px solid var(--bdr);font-size:12.5px;color:var(--txt2);display:flex;gap:8px;line-height:1.45}
+.tip-list li:last-child{border-bottom:none}
+.tip-list li::before{content:'→';color:var(--g3);font-weight:700;flex-shrink:0}
+/* EMPTY STATE */
+.empty{text-align:center;padding:30px 20px;color:var(--txt3);font-size:13px;line-height:1.6}
+</style>
 </head>
-<body class="bg-gray-100 min-h-screen pb-12 font-sans">
+<body>
 
-    <header class="bg-green-600 text-white p-4 shadow-md sticky top-0 z-50">
-        <div class="max-w-md mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold tracking-wide">🌱 ERP HUERTA V12</h1>
-            <button id="btnTest" onclick="testConexion()" class="bg-white text-green-700 px-3 py-1 rounded-full text-xs font-semibold shadow hover:bg-green-50 transition">
-                Test API 🔍
-            </button>
+<div id="offBar" class="off-bar">⚠️ Sin conexión — mostrando datos guardados localmente</div>
+
+<header class="hdr">
+  <div class="hdr-top">
+    <h1>🌱 ERP Huerta <span id="hdrSub">Finca San José · Casa Restaurativa</span></h1>
+    <button id="syncBtn" class="sync-btn" onclick="sincronizar(true)">↻ Sync</button>
+    <button class="cfg-btn" onclick="go('sistema')">⚙</button>
+  </div>
+  <div class="nav">
+    <div class="nav-inner">
+      <button class="nb on"  onclick="go('panel')">Panel</button>
+      <button class="nb"     onclick="go('form')">Registrar</button>
+      <button class="nb"     onclick="go('camas')">Camas</button>
+      <button class="nb"     onclick="go('equipo')">Equipo</button>
+      <button class="nb"     onclick="go('historial')">Historial</button>
+    </div>
+  </div>
+</header>
+
+<div id="toast" class="toast"></div>
+
+<main class="wrap">
+
+<!-- ═══════ PANEL ═══════ -->
+<div id="v-panel" class="view on">
+  <div style="padding:14px 0 10px">
+    <div id="saludo" style="font-size:20px;font-weight:700"></div>
+    <div id="fechaTxt" style="font-size:12px;color:var(--txt3);margin-top:2px"></div>
+    <div id="syncSt"   style="font-size:11px;color:var(--txt3);margin-top:2px"></div>
+  </div>
+  <div class="kpi-row">
+    <div class="kpi g"><div class="kpi-lbl">Camas Activas</div><div class="kpi-val" id="kA">—</div><div class="kpi-sub">de <span id="kT">—</span> totales</div></div>
+    <div class="kpi a"><div class="kpi-lbl">Listas Cosechar</div><div class="kpi-val" id="kC">—</div><div class="kpi-sub">requieren acción</div></div>
+    <div class="kpi r"><div class="kpi-lbl">Camas Vacías</div><div class="kpi-val" id="kV">—</div><div class="kpi-sub">disponibles</div></div>
+    <div class="kpi b"><div class="kpi-lbl">Equipo</div><div class="kpi-val" id="kE">—</div><div class="kpi-sub">participantes</div></div>
+  </div>
+  <div class="sec">⚠ Alertas <span class="sec-a" onclick="go('camas')">Ver camas →</span></div>
+  <div id="alertas"></div>
+  <div class="sec">🗓 Próximas Cosechas <span class="sec-a" onclick="go('form');setMod('cos',qs('.mpk:nth-child(4)'))">Registrar →</span></div>
+  <div id="timeline"></div>
+  <div class="sec">📊 Cultivos en Producción</div>
+  <div class="chart-card" id="cultChart"></div>
+  <div class="sec">📦 Stock de Insumos <span class="sec-a" onclick="go('form');setMod('ins',qs('.mpk:nth-child(5)'))">Mover →</span></div>
+  <div id="stockList"></div>
+</div>
+
+<!-- ═══════ FORMULARIO ═══════ -->
+<div id="v-form" class="view">
+  <div class="mod-pick" style="margin-top:12px">
+    <button class="mpk on"  onclick="setMod('bit',this)"><span>📋</span>Bitácora<br>Diaria</button>
+    <button class="mpk"     onclick="setMod('gest',this)"><span>👥</span>Gestión<br>Humana</button>
+    <button class="mpk"     onclick="setMod('riego',this)"><span>💧</span>Riego &<br>Fumig.</button>
+    <button class="mpk"     onclick="setMod('cos',this)"><span>🧺</span>Cosechas</button>
+    <button class="mpk"     onclick="setMod('ins',this)"><span>📦</span>Insumos</button>
+  </div>
+  <div class="date-row">
+    <label>📅 Fecha</label>
+    <input type="date" id="fFecha">
+  </div>
+
+  <form id="erpForm" onsubmit="enviar(event)">
+
+    <!-- BITÁCORA -->
+    <div id="fm-bit" class="fmod on">
+      <div class="fcard">
+        <div class="fcard-ttl">📋 Bitácora Diaria</div>
+        <div class="row2">
+          <div class="fld"><label>Cama / ID *</label>
+            <select name="camaId" id="sCamaBit" onchange="onCamaChange(this,'aBitH','aBitC','aBitO','aBitFS')"></select></div>
+          <div class="fld"><label>Huerta</label>
+            <input id="aBitH" name="huerta" class="autofill" readonly placeholder="↑ Auto"></div>
         </div>
-    </header>
-
-    <main class="max-w-md mx-auto px-4 mt-4">
-        <div id="statusAlert" class="hidden mb-4 p-3 rounded-lg text-sm text-center font-medium shadow"></div>
-
-        <div class="bg-white p-4 rounded-xl shadow-sm mb-4">
-            <label class="block text-gray-700 font-bold mb-2 text-sm">Selecciona el Módulo de Registro:</label>
-            <select id="tipoRegistro" onchange="cambiarModulo()" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2.5 text-gray-900 focus:ring-green-500 focus:border-green-500 font-medium">
-                <option value="Bitacora Diaria">📝 Bitácora Diaria (Camas/Cultivos)</option>
-                <option value="Gestion Humana">👥 Gestión Humana (Asistencia/Tareas)</option>
-                <option value="Riego_Fumigacion">💧 Riego y Fumigación</option>
-                <option value="Cosechas">🧺 Cosechas</option>
-                <option value="Insumos">📦 Insumos (Entradas/Salidas)</option>
-            </select>
+        <div class="fld"><label>Cultivo</label>
+          <input id="aBitC" name="cultivo" class="autofill" readonly placeholder="↑ Elige cama para autocompletar"></div>
+        <div class="row2">
+          <div class="fld"><label>Fase del Cultivo</label>
+            <select name="fase" id="selFase"></select></div>
+          <div class="fld"><label>% Avance</label>
+            <input type="number" name="avance" min="0" max="100" placeholder="0–100"></div>
         </div>
+        <div class="row2">
+          <div class="fld"><label>Estado Fitosanitario</label>
+            <select name="estadoFitosan" id="selEstFito"></select></div>
+          <div class="fld"><label>Humedad Suelo</label>
+            <select name="humedad">
+              <option value="Óptima">💧 Óptima</option>
+              <option value="Seco">🪵 Seco</option>
+              <option value="Saturado">🌧️ Saturado</option>
+            </select></div>
+        </div>
+        <div class="row2">
+          <div class="fld"><label>Altura (cm)</label>
+            <input type="number" name="altura" step="0.1" placeholder="cm"></div>
+          <div class="fld"><label>Tipo Origen</label>
+            <input id="aBitO" name="origen" class="autofill" readonly placeholder="↑ Auto"></div>
+        </div>
+        <div class="fld"><label>Acción Realizada</label>
+          <select name="accion" id="selAccion"></select></div>
+        <div class="fld"><label>Responsable *</label>
+          <select name="responsable" id="selRespBit"></select></div>
+        <div class="fld"><label>⚠️ Alerta (si hay)</label>
+          <input type="text" name="alerta" placeholder="Ej: Presencia de babosas, plaga detectada"></div>
+        <!-- Campo oculto para fecha siembra (para cálculos de ciclo) -->
+        <input type="hidden" name="fechaSiembra" id="aBitFS">
+      </div>
+    </div>
 
-        <form id="erpForm" onsubmit="enviarDatos(event)" class="space-y-4">
-            
-            <div class="bg-white p-4 rounded-xl shadow-sm">
-                <label class="block text-gray-700 font-semibold mb-1 text-sm">Fecha de Registro:</label>
-                <input type="date" id="fecha" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm">
-            </div>
+    <!-- GESTIÓN HUMANA -->
+    <div id="fm-gest" class="fmod">
+      <div class="fcard">
+        <div class="fcard-ttl">👥 Gestión Humana</div>
+        <div class="fld"><label>Participante *</label>
+          <select name="joven" id="selJoven" onchange="onJovenChange(this)"></select></div>
+        <div class="fld"><label>Asistencia</label>
+          <select name="asistencia" id="sAsist" onchange="toggleAsist()">
+            <option value="Presente">🟢 Presente</option>
+            <option value="Ausente">🔴 Ausente</option>
+          </select></div>
+        <div id="camposP">
+          <div class="fld"><label>Última asistencia registrada</label>
+            <input id="aJovenUlt" class="autofill" readonly placeholder="Sin registros previos"></div>
+          <div class="row2">
+            <div class="fld"><label>Cama Asignada</label>
+              <select name="camaAsignada" id="selCamaGH"></select></div>
+            <div class="fld"><label>Desempeño (1–5)</label>
+              <select name="actitud">
+                <option value="1">1 — Muy bajo</option>
+                <option value="2">2 — Bajo</option>
+                <option value="3" selected>3 — Regular</option>
+                <option value="4">4 — Bueno</option>
+                <option value="5">5 — Excelente ⭐</option>
+              </select></div>
+          </div>
+          <div class="fld"><label>Tarea Asignada</label>
+            <input type="text" name="tarea" placeholder="Ej: Preparación sustrato, siembra maíz"></div>
+          <div class="row2">
+            <div class="fld"><label>Herramienta</label>
+              <input type="text" name="herramienta" placeholder="Ej: Pala, Rastrillo"></div>
+            <div class="fld"><label>Estado Herramienta</label>
+              <select name="estadoHerr">
+                <option value="Buen Estado">🟢 Buen Estado</option>
+                <option value="Dañada">🔴 Dañada</option>
+              </select></div>
+          </div>
+          <div class="fld"><label>Insumo Entregado</label>
+            <input type="text" name="insumoGH" placeholder="Ej: 2kg Compost, 1L Neem"></div>
+        </div>
+        <div class="fld"><label>Motivo Ausencia / Observación</label>
+          <input type="text" name="motivoAusencia" id="motivoAus" placeholder="Si aplica" style="display:none"></div>
+      </div>
+    </div>
 
-            <div id="mod-Bitacora" class="modulo-form bg-white p-4 rounded-xl shadow-sm space-y-3">
-                <h3 class="text-green-700 font-bold border-b pb-1 text-sm uppercase tracking-wider">Bitácora Diaria</h3>
-                <div>
-                    <label class="block text-gray-600 text-xs font-semibold">ID Cama / Área:</label>
-                    <input type="text" id="bit_camaId" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Cama 01">
-                </div>
-                <div>
-                    <label class="block text-gray-600 text-xs font-semibold">Huerta / Sede:</label>
-                    <input type="text" id="bit_huerta" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Zona Principal">
-                </div>
-                <div>
-                    <label class="block text-gray-600 text-xs font-semibold">Cultivo:</label>
-                    <input type="text" id="bit_cultivo" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Tomate">
-                </div>
-                <div>
-                    <label class="block text-gray-600 text-xs font-semibold">Tipo Origen:</label>
-                    <input type="text" id="bit_origen" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Semillero propio">
-                </div>
-                <div>
-                    <label class="block text-gray-600 text-xs font-semibold">Fase del Cultivo:</label>
-                    <input type="text" id="bit_fase" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Crecimiento">
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-gray-600 text-xs font-semibold">% Avance Estimado:</label>
-                        <input type="number" id="bit_avance" min="0" max="100" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="0-100">
-                    </div>
-                    <div>
-                        <label class="block text-gray-600 text-xs font-semibold">Altura Promedio (cm):</label>
-                        <input type="number" id="bit_altura" step="0.1" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="En cm">
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-gray-600 text-xs font-semibold">Estado Fitosanitario:</label>
-                        <select id="bit_estadoFitosan" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm">
-                            <option value="Sano">Sano 🟢</option>
-                            <option value="Plaga Controlada">Plaga Controlada 🟡</option>
-                            <option value="Plaga Crítica">Plaga Crítica 🔴</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-gray-600 text-xs font-semibold">Humedad Suelo:</label>
-                        <select id="bit_humedad" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm">
-                            <option value="Óptima">Óptima💧</option>
-                            <option value="Seco">Seco 🪵</option>
-                            <option value="Saturado">Saturado 🌧️</option>
-                        </select>
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-gray-600 text-xs font-semibold">Acción Realizada:</label>
-                    <input type="text" id="bit_accion" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Deshierbe">
-                </div>
-                <div>
-                    <label class="block text-gray-600 text-xs font-semibold">Responsable:</label>
-                    <input type="text" id="bit_responsable" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Nombre del operador">
-                </div>
-                <div>
-                    <label class="block text-gray-600 text-xs font-semibold">⚠️ Alerta Especial:</label>
-                    <input type="text" id="bit_alerta" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Presencia de babosas">
-                </div>
-            </div>
+    <!-- RIEGO -->
+    <div id="fm-riego" class="fmod">
+      <div class="fcard">
+        <div class="fcard-ttl">💧 Riego y Fumigación</div>
+        <div class="fld"><label>Tipo Operación</label>
+          <select name="tipoOperacion">
+            <option value="Riego">💧 Riego</option>
+            <option value="Fumigación Orgánica">🌿 Fumigación Orgánica</option>
+            <option value="Fertilización">🧪 Fertilización</option>
+            <option value="Control preventivo">🛡 Control Preventivo</option>
+          </select></div>
+        <div class="row2">
+          <div class="fld"><label>Huerta</label>
+            <select name="huertaRiego" id="selHuertaR" onchange="filtrarCamasPorHuerta()"></select></div>
+          <div class="fld"><label>Cama / Área</label>
+            <select name="camaIdRiego" id="selCamaR"></select></div>
+        </div>
+        <div class="fld"><label>Cultivo</label>
+          <input id="aRiegoCult" name="cultivoRiego" class="autofill" readonly placeholder="↑ Auto al elegir cama"></div>
+        <div class="fld"><label>Responsable *</label>
+          <select name="responsableRiego" id="selRespR"></select></div>
+        <div class="fld"><label>Producto / Método</label>
+          <input type="text" name="producto" placeholder="Ej: Agua lluvia, Purín de ortiga, Neem"></div>
+        <div class="row3">
+          <div class="fld"><label>Cantidad</label>
+            <input type="number" step="0.01" name="cantidadRiego" placeholder="Número"></div>
+          <div class="fld"><label>Unidad</label>
+            <input type="text" name="unidadRiego" placeholder="L, cc…"></div>
+        </div>
+        <div class="row2">
+          <div class="fld"><label>Tiempo (min)</label>
+            <input type="number" name="tiempo" placeholder="Duración"></div>
+          <div class="fld"><label>Cobertura</label>
+            <input type="text" name="cobertura" placeholder="Total, Foliar…"></div>
+        </div>
+      </div>
+    </div>
 
-            <div id="mod-GestionHumana" class="modulo-form hidden bg-white p-4 rounded-xl shadow-sm space-y-3">
-                <h3 class="text-green-700 font-bold border-b pb-1 text-sm uppercase tracking-wider">Gestión Humana</h3>
-                <div>
-                    <label class="block text-gray-600 text-xs font-semibold">Nombre del Joven:</label>
-                    <input type="text" id="gh_joven" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Nombre completo">
-                </div>
-                <div>
-                    <label class="block text-gray-600 text-xs font-semibold">Asistencia:</label>
-                    <select id="gh_asistencia" onchange="toggleAsistenciaCampos()" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm">
-                        <option value="Presente">Presente 🟢</option>
-                        <option value="Ausente">Ausente 🔴</option>
-                    </select>
-                </div>
-                <div id="camposAsistencia" class="space-y-3">
-                    <div>
-                        <label class="block text-gray-600 text-xs font-semibold">Cama / Área Asignada:</label>
-                        <input type="text" id="gh_camaAsignada" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Área de trabajo hoy">
-                    </div>
-                    <div>
-                        <label class="block text-gray-600 text-xs font-semibold">Tarea Asignada:</label>
-                        <input type="text" id="gh_tarea" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Preparación de sustrato">
-                    </div>
-                    <div>
-                        <label class="block text-gray-600 text-xs font-semibold">Actitud / Desempeño (1-5):</label>
-                        <input type="number" id="gh_actitud" min="1" max="5" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Calificación 1 al 5">
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div>
-                            <label class="block text-gray-600 text-xs font-semibold">Herramienta Entregada:</label>
-                            <input type="text" id="gh_herramienta" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Pala">
-                        </div>
-                        <div>
-                            <label class="block text-gray-600 text-xs font-semibold">Estado de Entrega:</label>
-                            <select id="gh_estadoHerr" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm">
-                                <option value="Buen Estado">Buen Estado 🟢</option>
-                                <option value="Dañada">Dañada 🔴</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-gray-600 text-xs font-semibold">Insumo Entregado a Cargo:</label>
-                        <input type="text" id="gh_insumo" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: 2kg de Compost">
-                    </div>
-                </div>
-            </div>
+    <!-- COSECHAS -->
+    <div id="fm-cos" class="fmod">
+      <div class="fcard">
+        <div class="fcard-ttl">🧺 Registro de Cosecha</div>
+        <div class="row2">
+          <div class="fld"><label>Cama Cosechada *</label>
+            <select name="camaIdCosecha" id="sCamaCos" onchange="onCamaChange(this,'aCoH','aCoCult',null,null)"></select></div>
+          <div class="fld"><label>Huerta</label>
+            <input id="aCoH" name="huertaCosecha" class="autofill" readonly placeholder="↑ Auto"></div>
+        </div>
+        <div class="fld"><label>Cultivo Cosechado</label>
+          <input id="aCoCult" name="cultivoCosecha" class="autofill" readonly placeholder="↑ Elige cama"></div>
+        <div class="row3">
+          <div class="fld"><label>Cantidad Total *</label>
+            <input type="number" step="0.01" name="cantidadCosecha" placeholder="Ej: 2.5"></div>
+          <div class="fld"><label>Unidad</label>
+            <select name="unidadCosecha">
+              <option>Kg</option><option>gr</option><option>Atados</option><option>Unidades</option><option>L</option>
+            </select></div>
+        </div>
+        <div class="row2">
+          <div class="fld"><label>Destino</label>
+            <select name="destino" id="selDestino"></select></div>
+          <div class="fld"><label>Calidad</label>
+            <select name="calidad">
+              <option value="Primera">✨ Primera</option>
+              <option value="Segunda">🍏 Segunda</option>
+              <option value="Rechazo">🍂 Rechazo</option>
+            </select></div>
+        </div>
+        <div class="fld"><label>Responsable</label>
+          <select name="responsableCosecha" id="selRespCos"></select></div>
+      </div>
+    </div>
 
-            <div id="mod-Riego" class="modulo-form hidden bg-white p-4 rounded-xl shadow-sm space-y-3">
-                <h3 class="text-green-700 font-bold border-b pb-1 text-sm uppercase tracking-wider">Riego y Fumigación</h3>
-                <div>
-                    <label class="block text-gray-600 text-xs font-semibold">Huerta / Sede:</label>
-                    <input type="text" id="rf_huerta" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Área general">
-                </div>
-                <div>
-                    <label class="block text-gray-600 text-xs font-semibold">Tipo Operación:</label>
-                    <select id="rf_tipoOperacion" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm">
-                        <option value="Riego">Riego 💧</option>
-                        <option value="Fumigación Orgánica">Fumigación Orgánica 🌿</option>
-                        <option value="Fertilización">Fertilización 🧪</option>
-                    </select>
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-gray-600 text-xs font-semibold">ID Cama / Área:</label>
-                        <input type="text" id="rf_camaId" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Cama afectada">
-                    </div>
-                    <div>
-                        <label class="block text-gray-600 text-xs font-semibold">Cultivo Principal:</label>
-                        <input type="text" id="rf_cultivo" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Tipo planta">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-gray-600 text-xs font-semibold">Responsable:</label>
-                    <input type="text" id="rf_responsable" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Nombre del aplicador">
-                </div>
-                <div>
-                    <label class="block text-gray-600 text-xs font-semibold">Producto / Método Utilizado:</label>
-                    <input type="text" id="rf_producto" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Purín de ortiga">
-                </div>
-                <div class="grid grid-cols-3 gap-2">
-                    <div class="col-span-2">
-                        <label class="block text-gray-600 text-xs font-semibold">Dosis / Cantidad:</label>
-                        <input type="number" step="0.01" id="rf_cantidad" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Número">
-                    </div>
-                    <div>
-                        <label class="block text-gray-600 text-xs font-semibold">Unidad:</label>
-                        <input type="text" id="rf_unidad" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Litros">
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-gray-600 text-xs font-semibold">Tiempo (minutos):</label>
-                        <input type="number" id="rf_tiempo" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Duración">
-                    </div>
-                    <div>
-                        <label class="block text-gray-600 text-xs font-semibold">Cobertura:</label>
-                        <input type="text" id="rf_cobertura" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Total, Foliar">
-                    </div>
-                </div>
-            </div>
+    <!-- INSUMOS -->
+    <div id="fm-ins" class="fmod">
+      <div class="fcard">
+        <div class="fcard-ttl">📦 Control de Insumos</div>
+        <div class="fld"><label>Insumo *</label>
+          <select name="insumoNombre" id="selInsumo" onchange="onInsumoChange(this)"></select></div>
+        <div class="row2">
+          <div class="fld"><label>Categoría</label>
+            <input id="aInsCat" name="tipoInsumo" class="autofill" readonly placeholder="↑ Auto"></div>
+          <div class="fld"><label>Stock Actual</label>
+            <input id="aInsStock" class="autofill" readonly placeholder="↑ Auto"></div>
+        </div>
+        <div class="row2">
+          <div class="fld"><label>Precio Unitario ($)</label>
+            <input id="aInsPrecio" name="precio" class="autofill" readonly placeholder="↑ Auto"></div>
+          <div class="fld"><label>Unidad</label>
+            <input id="aInsUnidad" name="unidadInsumo" class="autofill" readonly placeholder="↑ Auto"></div>
+        </div>
+        <div class="fld"><label>Proveedor / Origen</label>
+          <input type="text" name="proveedor" placeholder="Ej: Ferretería, Proveedor local"></div>
+        <div class="row2">
+          <div class="fld in-p"><label style="color:var(--g2)">✚ ENTRADA (+)</label>
+            <input type="number" step="0.01" name="cantEntrada" placeholder="Cantidad ingresada" style="background:#fff"></div>
+          <div class="fld in-m"><label style="color:var(--rd)">− SALIDA (−)</label>
+            <input type="number" step="0.01" name="cantSalida" placeholder="Cantidad usada" style="background:#fff"></div>
+        </div>
+      </div>
+    </div>
 
-            <div id="mod-Cosechas" class="modulo-form hidden bg-white p-4 rounded-xl shadow-sm space-y-3">
-                <h3 class="text-green-700 font-bold border-b pb-1 text-sm uppercase tracking-wider">Cosechas</h3>
-                <div>
-                    <label class="block text-gray-600 text-xs font-semibold">ID Cama / Área:</label>
-                    <input type="text" id="cos_camaId" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Lugar origen">
-                </div>
-                <div>
-                    <label class="block text-gray-600 text-xs font-semibold">Huerta / Sede:</label>
-                    <input type="text" id="cos_huerta" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ubicación">
-                </div>
-                <div>
-                    <label class="block text-gray-600 text-xs font-semibold">Cultivo Cosechado:</label>
-                    <input type="text" id="cos_cultivo" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Cilantro">
-                </div>
-                <div class="grid grid-cols-3 gap-2">
-                    <div class="col-span-2">
-                        <label class="block text-gray-600 text-xs font-semibold">Cantidad Total:</label>
-                        <input type="number" step="0.01" id="cos_cantidad" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Total obtenido">
-                    </div>
-                    <div>
-                        <label class="block text-gray-600 text-xs font-semibold">Unidad:</label>
-                        <input type="text" id="cos_unidad" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Kg">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-gray-600 text-xs font-semibold">Destino del Producto:</label>
-                    <input type="text" id="cos_destino" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Venta, Autoconsumo">
-                </div>
-                <div>
-                    <label class="block text-gray-600 text-xs font-semibold">Calidad Comercial:</label>
-                    <select id="cos_calidad" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm">
-                        <option value="Primera">Primera (Excelente) ✨</option>
-                        <option value="Segunda">Segunda (Procesamiento) 🍏</option>
-                        <option value="Rechazo">Rechazo (Compostaje) 🍂</option>
-                    </select>
-                </div>
-            </div>
+    <div class="fcard">
+      <div class="fld">
+        <label>Observaciones / Notas</label>
+        <textarea id="obs" name="observaciones" rows="3" placeholder="Notas importantes de la jornada…"></textarea>
+      </div>
+    </div>
+    <button type="submit" id="sbtn" class="sbtn">📤 Registrar en Sistema</button>
+  </form>
+</div>
 
-            <div id="mod-Insumos" class="modulo-form hidden bg-white p-4 rounded-xl shadow-sm space-y-3">
-                <h3 class="text-green-700 font-bold border-b pb-1 text-sm uppercase tracking-wider">Control de Insumos</h3>
-                <div>
-                    <label class="block text-gray-600 text-xs font-semibold">Nombre del Insumo:</label>
-                    <input type="text" id="ins_insumoNombre" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Micorrizas">
-                </div>
-                <div>
-                    <label class="block text-gray-600 text-xs font-semibold">Tipo de Insumo:</label>
-                    <input type="text" id="ins_tipoInsumo" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Sustrato, Semilla">
-                </div>
-                <div>
-                    <label class="block text-gray-600 text-xs font-semibold">Proveedor / Origen:</label>
-                    <input type="text" id="ins_proveedor" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="De dónde vino">
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-gray-600 text-xs font-semibold">Precio Unitario ($):</label>
-                        <input type="number" step="0.01" id="ins_precio" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Costo unidad">
-                    </div>
-                    <div>
-                        <label class="block text-gray-600 text-xs font-semibold">Unidad Medida:</label>
-                        <input type="text" id="ins_unidadInsumo" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ej: Bulto, Litro">
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-2 bg-gray-50 p-2 rounded-lg border">
-                    <div>
-                        <label class="block text-green-700 text-xs font-bold">Cant. ENTRADA (+):</label>
-                        <input type="number" step="0.01" id="ins_cantEntrada" class="w-full bg-white border border-gray-300 rounded-lg p-2 text-sm" placeholder="Ingreso">
-                    </div>
-                    <div>
-                        <label class="block text-red-700 text-xs font-bold">Cant. SALIDA (-):</label>
-                        <input type="number" step="0.01" id="ins_cantSalida" class="w-full bg-white border border-gray-300 rounded-lg p-2 text-sm" placeholder="Uso/Gasto">
-                    </div>
-                </div>
-            </div>
+<!-- ═══════ CAMAS ═══════ -->
+<div id="v-camas" class="view">
+  <div class="sec" style="margin-top:12px">🗺 Estado de Camas por Huerta</div>
+  <div id="camaBlocks"></div>
+</div>
 
-            <div class="bg-white p-4 rounded-xl shadow-sm">
-                <label class="block text-gray-700 font-semibold mb-1 text-sm">Observaciones Adicionales / Notas:</label>
-                <textarea id="observaciones" rows="2" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-sm" placeholder="Detalles extra de la jornada..."></textarea>
-            </div>
+<!-- ═══════ EQUIPO ═══════ -->
+<div id="v-equipo" class="view">
+  <div class="sec" style="margin-top:12px">👥 Equipo</div>
+  <div class="eq-grid" id="equipoGrid"></div>
+</div>
 
-            <button type="submit" id="btnSubmit" class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-xl shadow-md hover:bg-green-700 active:scale-[0.98] transition text-base">
-                📤 Registrar en Sistema
-            </button>
-        </form>
-    </main>
+<!-- ═══════ HISTORIAL ═══════ -->
+<div id="v-historial" class="view">
+  <div class="sec" style="margin-top:12px">Registros de esta sesión</div>
+  <div id="histList"><div class="hist-empty">Aún no hay registros.<br>Usa el formulario para empezar.</div></div>
+</div>
 
-    <script>
-        // URL NUEVA SUMINISTRADA
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyRekXi7zp8inyBNIWAC3B_7tRnC01xFAvalVx3QgEYwEtand0Xjmbp4A1xRwGva66Y/exec";
+<!-- ═══════ SISTEMA ═══════ -->
+<div id="v-sistema" class="view">
+  <div class="sec" style="margin-top:12px">Configuración</div>
+  <div class="sys-card">
+    <h3>🔗 Conexión con Google Sheets</h3>
+    <div class="conn-box"><div id="cDot" class="cdot off"></div><span id="cTxt" style="font-size:13px;font-weight:500">Sin verificar</span></div>
+    <label style="font-size:11px;font-weight:600;color:var(--txt2);display:block;margin-bottom:5px">URL del Apps Script:</label>
+    <input id="urlIn" type="url" class="url-in" placeholder="https://script.google.com/macros/s/…">
+    <button class="tbtn" onclick="probarConexion()">🔍 Probar Conexión</button>
+    <button class="tbtn" onclick="sincronizar(true)">↻ Recargar Datos desde Sheets</button>
+  </div>
+  <div class="sys-card">
+    <h3>📋 Pasos para conectar</h3>
+    <div class="step"><strong>1 — Abrir editor</strong><p>Google Sheets → <code>Extensiones → Apps Script</code></p></div>
+    <div class="step"><strong>2 — Pegar el código</strong><p>Borra todo el editor y pega el archivo <code>apps_script_v15.gs</code></p></div>
+    <div class="step"><strong>3 — Implementar</strong><p><code>Implementar → Nueva implementación → Aplicación web</code><br>Ejecutar como: <strong>Yo</strong> · Acceso: <strong>Cualquier persona</strong></p></div>
+    <div class="step"><strong>4 — Pegar URL aquí</strong><p>Copia la URL, pégala arriba → toca <strong>Probar Conexión</strong></p></div>
+    <div class="step"><strong>5 — Actualizar script</strong><p><code>Implementar → Administrar → Editar → Nueva versión</code></p></div>
+  </div>
+  <div class="sys-card">
+    <h3>ℹ️ Estado del Sistema</h3>
+    <div id="sysInfo" style="font-size:13px;color:var(--txt2);line-height:1.9"></div>
+  </div>
+  <div class="sys-card">
+    <h3>💡 Guía de uso</h3>
+    <ul class="tip-list">
+      <li>Al elegir <strong>cualquier cama</strong> en el formulario, huerta, cultivo y origen se rellenan solos desde tu Sheets</li>
+      <li>Las listas de <strong>fases, estados, acciones y destinos</strong> vienen de la columna Config — cámbialas en el Excel y se actualizan aquí</li>
+      <li>Al elegir un <strong>participante</strong>, se muestra su última asistencia registrada</li>
+      <li>Al elegir un <strong>insumo</strong>, se muestran stock actual, precio y unidad</li>
+      <li>El botón <strong>↻ Sync</strong> recarga todo desde Sheets sin recargar la página</li>
+      <li>Los datos se guardan en caché local 30 min — funciona sin señal</li>
+    </ul>
+  </div>
+</div>
 
-        // Inicializar fecha actual de manera automática
-        document.getElementById('fecha').valueAsDate = new Date();
+</main>
 
-        function cambiarModulo() {
-            const modulo = document.getElementById('tipoRegistro').value;
-            document.querySelectorAll('.modulo-form').forEach(el => el.classList.add('hidden'));
-            
-            if (modulo === "Bitacora Diaria") document.getElementById('mod-Bitacora').classList.remove('hidden');
-            if (modulo === "Gestion Humana") document.getElementById('mod-GestionHumana').classList.remove('hidden');
-            if (modulo === "Riego_Fumigacion") document.getElementById('mod-Riego').classList.remove('hidden');
-            if (modulo === "Cosechas") document.getElementById('mod-Cosechas').classList.remove('hidden');
-            if (modulo === "Insumos") document.getElementById('mod-Insumos').classList.remove('hidden');
-        }
+<script>
+// ═══════════════════════════════════════════
+//  ESTADO GLOBAL
+// ═══════════════════════════════════════════
+let API = localStorage.getItem('erp_url') || '';
+let D = {              // datos del sistema
+  camas:[],jovenes:[],fases:[],estadosFito:[],estadosCama:[],
+  acciones:[],destinos:[],ciclos:{},inventario:[],asistencia:{}
+};
+let historial = [];
+let modActual = 'bit';
+const HOY = new Date();
+const CACHE_KEY = 'erp_v16_config';
+const CACHE_TS  = 'erp_v16_ts';
+const CACHE_TTL = 30 * 60 * 1000; // 30 min
 
-        function toggleAsistenciaCampos() {
-            const asistencia = document.getElementById('gh_asistencia').value;
-            const campos = document.getElementById('camposAsistencia');
-            if (asistencia === "Presente") {
-                campos.classList.remove('hidden');
-            } else {
-                campos.classList.add('hidden');
-            }
-        }
+// índice rápido cama → objeto
+let CAMA_IDX = {};
 
-        function showAlert(mensaje, esExito) {
-            const el = document.getElementById('statusAlert');
-            el.className = `mb-4 p-3 rounded-lg text-sm text-center font-medium shadow ${esExito ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
-            el.innerText = mensaje;
-            el.classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+const COLORES_EQ = ['#2d6a4f','#1565c0','#e65100','#6a1b9a','#880e4f','#006064','#4e342e','#37474f','#2e7d32','#1a237e','#bf360c','#4a148c'];
 
-        // CONTROLADOR TEST API (GET)
-        async function testConexion() {
-            const btn = document.getElementById('btnTest');
-            btn.innerText = "Conectando... ⏳";
-            btn.disabled = true;
-            try {
-                const response = await fetch(WEB_APP_URL);
-                const data = await response.json();
-                if (data.status === "online") {
-                    showAlert(`Conexión exitosa 🟢 (Servidor ${data.version} Activo)`, true);
-                } else {
-                    showAlert("Respuesta inesperada del servidor 🔴", false);
-                }
-            } catch (err) {
-                showAlert("Fallo de conexión en lectura 🔴 (Prueba enviar un registro directo)", false);
-                console.error(err);
-            } finally {
-                btn.innerText = "Test API 🔍";
-                btn.disabled = false;
-            }
-        }
+// Fallbacks si no hay conexión
+const FASES_FB    = ['Preparación suelo','Siembra','Germinación','Crecimiento','Floración','Producción','Cosecha'];
+const ESTFITO_FB  = ['✅ Sano','⚠️ Plaga Controlada','🔴 Plaga Crítica','🟠 Enfermedad','💧 Estrés hídrico'];
+const ACCIONES_FB = ['Riego manual','Riego goteo','Fertiliz. orgánica','Fertiliz. química','Control plagas','Poda','Trasplante','Deshierbe','Cosecha','Abono compost','Fumigación'];
+const DESTINOS_FB = ['Consumo interno','Donación','Venta','Almacenamiento','Semillero'];
+const INV_FB      = [
+  {nombre:'Compost',categoria:'Fertilizante',unidad:'kg',stock:200,minimo:50,precio:1.5},
+  {nombre:'Aceite Neem',categoria:'Biológico',unidad:'L',stock:15,minimo:5,precio:20},
+  {nombre:'Cal agrícola',categoria:'Fertilizante',unidad:'kg',stock:30,minimo:20,precio:0.8},
+  {nombre:'Semillas variadas',categoria:'Semilla',unidad:'sobres',stock:8,minimo:10,precio:3},
+  {nombre:'Malla antifúngica',categoria:'Material',unidad:'m',stock:25,minimo:15,precio:2.5}
+];
 
-        // ENVIAR FORMULARIO (POST)
-        async function enviarDatos(e) {
-            e.preventDefault();
-            const btn = document.getElementById('btnSubmit');
-            const tipoRegistro = document.getElementById('tipoRegistro').value;
-            
-            btn.innerText = "Enviando datos... ⏳";
-            btn.disabled = true;
+// ═══════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════
+function init() {
+  const h = HOY.getHours();
+  qs('#saludo').textContent = (h<12?'Buenos días':h<19?'Buenas tardes':'Buenas noches') + ', Jhon 👋';
+  const dias  = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const meses = ['enero','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  qs('#fechaTxt').textContent = dias[HOY.getDay()] + ', ' + HOY.getDate() + ' de ' + meses[HOY.getMonth()];
+  qs('#fFecha').valueAsDate = HOY;
+  qs('#urlIn').value = API;
 
-            // Construcción del Payload base
-            const payload = {
-                tipoRegistro: tipoRegistro,
-                fecha: document.getElementById('fecha').value,
-                observaciones: document.getElementById('observaciones').value
-            };
+  // Cargar caché mientras llega Sheets
+  const cache = localStorage.getItem(CACHE_KEY);
+  const ts    = Number(localStorage.getItem(CACHE_TS)||0);
+  if (cache && Date.now()-ts < CACHE_TTL) {
+    aplicarDatos(JSON.parse(cache));
+    qs('#syncSt').textContent = '📡 Caché local · sincronizando…';
+  } else {
+    aplicarFallback();
+  }
+  if (API) sincronizar(false);
+}
 
-            // Mapeo detallado según el módulo activo
-            if (tipoRegistro === "Bitacora Diaria") {
-                payload.camaId = document.getElementById('bit_camaId').value;
-                payload.huerta = document.getElementById('bit_huerta').value;
-                payload.cultivo = document.getElementById('bit_cultivo').value;
-                payload.origen = document.getElementById('bit_origen').value;
-                payload.fase = document.getElementById('bit_fase').value;
-                payload.avance = document.getElementById('bit_avance').value;
-                payload.altura = document.getElementById('bit_altura').value;
-                payload.estadoFitosan = document.getElementById('bit_estadoFitosan').value;
-                payload.humedad = document.getElementById('bit_humedad').value;
-                payload.accion = document.getElementById('bit_accion').value;
-                payload.responsable = document.getElementById('bit_responsable').value;
-                payload.alerta = document.getElementById('bit_alerta').value;
-            } 
-            else if (tipoRegistro === "Gestion Humana") {
-                payload.joven = document.getElementById('gh_joven').value;
-                payload.asistencia = document.getElementById('gh_asistencia').value;
-                payload.camaAsignada = document.getElementById('gh_camaAsignada').value;
-                payload.tarea = document.getElementById('gh_tarea').value;
-                payload.actitud = document.getElementById('gh_actitud').value;
-                payload.herramienta = document.getElementById('gh_herramienta').value;
-                payload.estadoHerr = document.getElementById('gh_estadoHerr').value;
-                payload.insumo = document.getElementById('gh_insumo').value;
-            } 
-            else if (tipoRegistro === "Riego_Fumigacion") {
-                payload.huerta = document.getElementById('rf_huerta').value;
-                payload.tipoOperacion = document.getElementById('rf_tipoOperacion').value;
-                payload.camaId = document.getElementById('rf_camaId').value;
-                payload.cultivo = document.getElementById('rf_cultivo').value;
-                payload.responsable = document.getElementById('rf_responsable').value;
-                payload.producto = document.getElementById('rf_producto').value;
-                payload.cantidad = document.getElementById('rf_cantidad').value;
-                payload.unidad = document.getElementById('rf_unidad').value;
-                payload.tiempo = document.getElementById('rf_tiempo').value;
-                payload.cobertura = document.getElementById('rf_cobertura').value;
-            } 
-            else if (tipoRegistro === "Cosechas") {
-                payload.camaId = document.getElementById('cos_camaId').value;
-                payload.huerta = document.getElementById('cos_huerta').value;
-                payload.cultivo = document.getElementById('cos_cultivo').value;
-                payload.cantidad = document.getElementById('cos_cantidad').value;
-                payload.unidad = document.getElementById('cos_unidad').value;
-                payload.destino = document.getElementById('cos_destino').value;
-                payload.calidad = document.getElementById('cos_calidad').value;
-            } 
-            else if (tipoRegistro === "Insumos") {
-                payload.insumo = document.getElementById('ins_insumoNombre').value;
-                payload.tipoInsumo = document.getElementById('ins_tipoInsumo').value;
-                payload.proveedor = document.getElementById('ins_proveedor').value;
-                payload.precio = document.getElementById('ins_precio').value;
-                payload.unidad = document.getElementById('ins_unidadInsumo').value;
-                payload.cantEntrada = document.getElementById('ins_cantEntrada').value;
-                payload.cantSalida = document.getElementById('ins_cantSalida').value;
-            }
+// ═══════════════════════════════════════════
+//  SINCRONIZACIÓN
+// ═══════════════════════════════════════════
+async function sincronizar(manual) {
+  if (!API) { if(manual) toast('⚙ Configura la URL del Apps Script en Sistema',true); return; }
+  const btn = qs('#syncBtn');
+  btn.classList.add('spin');
+  try {
+    const res  = await fetch(API + '?action=config', {cache:'no-cache'});
+    const data = await res.json();
+    if (data.status === 'ok' && data.camas) {
+      localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+      localStorage.setItem(CACHE_TS, Date.now()+'');
+      aplicarDatos(data);
+      qs('#syncSt').textContent = '✅ Sincronizado ' + hora();
+      qs('#offBar').classList.remove('show');
+      qs('#cDot').className = 'cdot on';
+      qs('#cTxt').textContent = '✅ Conectado · ' + hora();
+      if (manual) toast('✅ Datos sincronizados desde Google Sheets');
+    } else throw new Error('Respuesta inválida');
+  } catch(e) {
+    qs('#offBar').classList.add('show');
+    qs('#syncSt').textContent = '⚠️ Sin conexión — datos locales';
+    if (manual) toast('⚠️ No se pudo conectar con Sheets',true);
+  } finally {
+    btn.classList.remove('spin');
+  }
+}
 
-            try {
-                // Envío seguro a través de no-cors para evitar bloqueos perimetrales del navegador móvil
-                await fetch(WEB_APP_URL, {
-                    method: "POST",
-                    mode: "no-cors",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(payload)
-                });
+function aplicarDatos(data) {
+  D.camas       = data.camas       || [];
+  D.jovenes     = (data.jovenes    || []).filter(j=>j&&j.trim());
+  D.fases       = (data.fases      || []).filter(Boolean).length ? data.fases.filter(Boolean) : FASES_FB;
+  D.estadosFito = (data.estadosFito|| []).filter(Boolean).length ? data.estadosFito.filter(Boolean) : ESTFITO_FB;
+  D.acciones    = (data.acciones   || []).filter(Boolean).length ? data.acciones.filter(Boolean) : ACCIONES_FB;
+  D.destinos    = (data.destinos   || []).filter(Boolean).length ? data.destinos.filter(Boolean) : DESTINOS_FB;
+  D.ciclos      = data.ciclos      || {};
+  D.inventario  = (data.inventario || []).length ? data.inventario : INV_FB;
+  D.asistencia  = data.asistencia  || {};
+  if (!D.jovenes.length) D.jovenes = ['Participante 1','Participante 2','Participante 3'];
 
-                showAlert("✅ ¡Registro enviado con éxito al Excel de la Huerta!", true);
-                
-                // Limpieza estructural post-envío
-                document.getElementById('observaciones').value = "";
-                document.getElementById('erpForm').reset();
-                document.getElementById('fecha').valueAsDate = new Date();
-                cambiarModulo();
+  // Construir índice de camas
+  CAMA_IDX = {};
+  D.camas.forEach(c => { CAMA_IDX[c.id] = c; });
 
-            } catch (error) {
-                showAlert("❌ Error al procesar envío: " + error.message, false);
-                console.error(error);
-            } finally {
-                btn.innerText = "📤 Registrar en Sistema";
-                btn.disabled = false;
-            }
-        }
-    </script>
+  renderTodo();
+}
+
+function aplicarFallback() {
+  D.fases      = FASES_FB;
+  D.estadosFito= ESTFITO_FB;
+  D.acciones   = ACCIONES_FB;
+  D.destinos   = DESTINOS_FB;
+  D.inventario = INV_FB;
+  qs('#syncSt').textContent = '⚠️ Sin URL configurada — datos de ejemplo';
+  renderTodo();
+}
+
+// ═══════════════════════════════════════════
+//  RENDER COMPLETO
+// ═══════════════════════════════════════════
+function renderTodo() {
+  poblarSelects();
+  buildKPIs();
+  buildAlertas();
+  buildTimeline();
+  buildChart();
+  buildStock();
+  buildCamaBlocks();
+  buildEquipo();
+  buildSysInfo();
+}
+
+// ═══════════════════════════════════════════
+//  POBLAR TODOS LOS SELECTS DESDE D
+// ═══════════════════════════════════════════
+function poblarSelects() {
+  const camas   = D.camas;
+  const activas = camas.filter(c=>c.cultivo&&c.estado!=='Vacía');
+  const todas   = camas;
+
+  // ── Camas con cultivo (bitácora y cosecha) ──
+  poblarCamaSelect('sCamaBit', activas, 'Seleccionar cama...');
+  poblarCamaSelect('sCamaCos', activas, 'Seleccionar cama...');
+
+  // ── Todas las camas (riego y gestión) ──
+  poblarCamaSelect('selCamaGH', todas, 'Ninguna');
+  poblarCamaSelect('selCamaR',  todas, 'General (todas las camas)');
+
+  // ── Huertas únicas para riego ──
+  const huertas = [...new Set(camas.map(c=>c.huerta))].sort();
+  rellenaSelect('selHuertaR', huertas, v=>v, v=>'Huerta '+v.replace('H',''));
+  // Primera vez, filtrar camas
+  filtrarCamasPorHuerta();
+
+  // ── Jóvenes / Participantes ──
+  const jovConJhon = [...D.jovenes, 'Jhon (Instructor)'];
+  ['selRespBit','selRespR','selRespCos'].forEach(id=>{
+    rellenaSelect(id, jovConJhon, v=>v, v=>v, 'Seleccionar...');
+  });
+  rellenaSelect('selJoven', D.jovenes, v=>v, v=>v, 'Seleccionar...');
+
+  // ── Listas desde Config ──
+  rellenaSelect('selFase',    D.fases,      v=>v, v=>v);
+  rellenaSelect('selEstFito', D.estadosFito,v=>v, v=>v);
+  rellenaSelect('selAccion',  D.acciones,   v=>v, v=>v);
+  rellenaSelect('selDestino', D.destinos,   v=>v, v=>v, 'Seleccionar...');
+
+  // ── Insumos ──
+  const nombresInsumos = D.inventario.map(i=>i.nombre);
+  rellenaSelect('selInsumo', nombresInsumos, v=>v, v=>v, 'Seleccionar insumo...');
+}
+
+function poblarCamaSelect(id, lista, pfx) {
+  const sel = qs('#'+id);
+  if (!sel) return;
+  const old = sel.value;
+  sel.innerHTML = `<option value="">${pfx}</option>`;
+  lista.forEach(c => {
+    const lbl = c.id + (c.cultivo ? ' — '+c.cultivo.trim() : ' (vacía)');
+    sel.appendChild(new Option(lbl, c.id));
+  });
+  if (old) sel.value = old;
+}
+
+function rellenaSelect(id, lista, valFn, txtFn, placeholder) {
+  const sel = qs('#'+id);
+  if (!sel) return;
+  const old = sel.value;
+  sel.innerHTML = placeholder ? `<option value="">${placeholder}</option>` : '';
+  lista.forEach(item => { if(item) sel.appendChild(new Option(txtFn(item), valFn(item))); });
+  if (old) sel.value = old;
+}
+
+// ═══════════════════════════════════════════
+//  AUTORRELLENO POR CAMA
+// ═══════════════════════════════════════════
+function onCamaChange(sel, idH, idC, idO, idFS) {
+  const c = CAMA_IDX[sel.value];
+  if (idH) setAuto(idH, c ? 'Huerta '+c.huerta.replace('H','') : '');
+  if (idC) setAuto(idC, c ? (c.cultivo||'').trim() : '');
+  if (idO) setAuto(idO, c ? (c.origen||'').trim()  : '');
+  if (idFS) { const el = qs('#'+idFS); if(el) el.value = c ? (c.fechaSiembra||'') : ''; }
+
+  // En riego también actualizar cultivo
+  if (sel.id === 'selCamaR') {
+    const rc = qs('#aRiegoCult');
+    if (rc) setAuto('aRiegoCult', c ? (c.cultivo||'').trim() : '');
+  }
+}
+
+function filtrarCamasPorHuerta() {
+  const hid = qs('#selHuertaR') ? qs('#selHuertaR').value : '';
+  const lista = hid ? D.camas.filter(c=>c.huerta===hid) : D.camas;
+  const sel = qs('#selCamaR');
+  if (!sel) return;
+  const old = sel.value;
+  sel.innerHTML = '<option value="General">General (todas las camas)</option>';
+  lista.forEach(c => {
+    const lbl = c.id + (c.cultivo ? ' — '+c.cultivo.trim() : ' (vacía)');
+    sel.appendChild(new Option(lbl, c.id));
+  });
+  if (old) sel.value = old;
+}
+
+// ═══════════════════════════════════════════
+//  AUTORRELLENO JOVEN (última asistencia)
+// ═══════════════════════════════════════════
+function onJovenChange(sel) {
+  const nombre = sel.value;
+  const ult = D.asistencia[nombre];
+  const el = qs('#aJovenUlt');
+  if (ult && ult.fecha) {
+    el.value = `${ult.fecha} — ${ult.asistencia} · desempeño ${ult.actitud||'?'}/5`;
+  } else {
+    el.value = 'Sin registros previos en el sistema';
+  }
+}
+
+// ═══════════════════════════════════════════
+//  AUTORRELLENO INSUMO
+// ═══════════════════════════════════════════
+function onInsumoChange(sel) {
+  const inv = D.inventario.find(i=>i.nombre===sel.value);
+  setAuto('aInsCat',    inv ? (inv.categoria||'')      : '');
+  setAuto('aInsStock',  inv ? inv.stock+' '+inv.unidad : '');
+  setAuto('aInsPrecio', inv ? '$'+inv.precio           : '');
+  setAuto('aInsUnidad', inv ? inv.unidad               : '');
+}
+
+function setAuto(id, val) {
+  const el = qs('#'+id);
+  if (el) el.value = val || '';
+}
+
+// ═══════════════════════════════════════════
+//  TOGGLE ASISTENCIA
+// ═══════════════════════════════════════════
+function toggleAsist() {
+  const v = qs('#sAsist').value;
+  qs('#camposP').style.display = v==='Presente' ? '' : 'none';
+  qs('#motivoAus').style.display = v==='Ausente' ? '' : 'none';
+}
+
+// ═══════════════════════════════════════════
+//  KPIs
+// ═══════════════════════════════════════════
+function buildKPIs() {
+  const c = D.camas;
+  qs('#kA').textContent = c.filter(x=>x.cultivo&&x.estado!=='Vacía'&&x.estado!=='Cosechada').length||'—';
+  qs('#kT').textContent = c.length||'—';
+  qs('#kC').textContent = c.filter(x=>x.estado==='Lista para cosechar').length||'0';
+  qs('#kV').textContent = c.filter(x=>x.estado==='Vacía').length||'—';
+  qs('#kE').textContent = D.jovenes.length||'—';
+}
+
+// ═══════════════════════════════════════════
+//  ALERTAS
+// ═══════════════════════════════════════════
+function buildAlertas() {
+  const el = qs('#alertas');
+  const c  = D.camas;
+  const inv= D.inventario;
+  const alerts = [];
+
+  const listas = c.filter(x=>x.estado==='Lista para cosechar');
+  if (listas.length)
+    alerts.push({p:'cr',ico:'🧺',tag:'tc',lbl:'URGENTE',
+      t:listas.length+' camas listas para cosechar ahora',
+      s:listas.slice(0,5).map(x=>x.id+' ('+x.cultivo.trim()+')').join(' · '),
+      fn:()=>go('camas')});
+
+  const maizH4 = c.filter(x=>x.huerta==='H4'&&(x.cultivo||'').toLowerCase().includes('maíz')&&x.estado!=='Vacía');
+  if (maizH4.length) {
+    const ci = D.ciclos['Maíz']||{min:90,max:110};
+    alerts.push({p:'wa',ico:'🌽',tag:'tw',lbl:'H4 MAÍZ',
+      t:maizH4.length+' camas de maíz en seguimiento activo',
+      s:'Ciclo: '+ci.min+'–'+ci.max+' días · Revisar humedad y estado del grano'});
+  }
+
+  const vacH5 = c.filter(x=>x.huerta==='H5'&&x.estado==='Vacía').length;
+  if (vacH5)
+    alerts.push({p:'in',ico:'🌱',tag:'ti',lbl:'OPORTUNIDAD',
+      t:'H5 — '+vacH5+' camas disponibles para siembra',
+      s:'Recomendado: cilantro (25-40d), lechuga (45-60d), rábano (25-30d)'});
+
+  const criticos = inv.filter(i=>Number(i.stock)<=Number(i.minimo));
+  if (criticos.length)
+    alerts.push({p:'wa',ico:'📦',tag:'tw',lbl:'STOCK BAJO',
+      t:'Insumos bajo mínimo: '+criticos.map(i=>i.nombre).join(', '),
+      s:'Realizar pedido pronto',fn:()=>go('form')});
+
+  const cosLibres = c.filter(x=>x.estado==='Cosechada'&&x.cultivo).slice(0,4);
+  if (cosLibres.length)
+    alerts.push({p:'ok',ico:'🔄',tag:'tok',lbl:'PLANIFICAR',
+      t:'Camas cosechadas listas para resiembra',
+      s:cosLibres.map(x=>x.id).join(', ')+' — disponibles para nuevo ciclo'});
+
+  // Plan del día
+  const d = HOY.getDay();
+  const plan = [null,
+    {d:'Lunes',a:'Campo: riego, siembra, labores — registra bitácora'},
+    {d:'Martes',a:'Campo: seguimiento, control y cosecha'},
+    {d:'Miércoles',a:'Gestión: actualizar sistema + recorrido pecuaria'},
+    {d:'Jueves',a:'Gestión: reporte coordinación + planificar semana'},
+    {d:'Viernes',a:'Campo: mantenimiento y evaluación semanal'}
+  ][d];
+  if (plan)
+    alerts.push({p:'in',ico:'📅',tag:'ti',lbl:'HOY',t:plan.d+' — '+plan.a,s:'Plan estratégico Fase 1'});
+
+  el.innerHTML = '';
+  if (!alerts.length) {
+    el.innerHTML = '<div class="ac"><div class="ac-in"><div class="ac-p ok"></div><div class="ac-ico">✅</div><div class="ac-b"><strong>Sin alertas críticas</strong><span>Todo en orden</span></div></div></div>';
+    return;
+  }
+  alerts.forEach(a => {
+    const d = document.createElement('div');
+    d.className = 'ac';
+    if (a.fn) d.onclick = a.fn;
+    d.innerHTML = `<div class="ac-in"><div class="ac-p ${a.p}"></div><div class="ac-ico">${a.ico}</div><div class="ac-b"><strong>${a.t}</strong><span>${a.s}</span></div><div class="ac-tag ${a.tag}">${a.lbl}</div></div>`;
+    el.appendChild(d);
+  });
+}
+
+// ═══════════════════════════════════════════
+//  TIMELINE COSECHAS
+// ═══════════════════════════════════════════
+function buildTimeline() {
+  const el = qs('#timeline');
+  const items = [];
+  D.camas.forEach(c => {
+    if (!c.cultivo) return;
+    if (c.estado==='Lista para cosechar') { items.push({id:c.id,cult:c.cultivo.trim(),diasRest:0,avance:100,tipo:'tnow'}); return; }
+    if (c.estado!=='En crecimiento'&&c.estado!=='Sembrada') return;
+    const k  = c.cultivo.trim().split(' y ')[0].trim().split(' ')[0];
+    const ci = D.ciclos[k] || D.ciclos[c.cultivo.trim()] || {min:60,max:90};
+    let diasTransc = 30;
+    if (c.fechaSiembra) {
+      const fs = new Date(c.fechaSiembra);
+      if (!isNaN(fs)) diasTransc = Math.max(0, Math.floor((HOY-fs)/86400000));
+    }
+    const diasRest = Math.max(0, ci.min - diasTransc);
+    const avance   = Math.min(100, Math.round(diasTransc/ci.min*100));
+    items.push({id:c.id,cult:c.cultivo.trim(),diasRest,avance,tipo:diasRest===0?'tnow':diasRest<=14?'tsoon':'tlater'});
+  });
+  items.sort((a,b)=>a.diasRest-b.diasRest);
+  el.innerHTML = '';
+  if (!items.length) { el.innerHTML = '<div class="empty">Conecta con Sheets para ver el timeline real</div>'; return; }
+  items.slice(0,8).forEach(it => {
+    const lbl = it.diasRest===0?'¡YA!':it.diasRest<=7?'Esta semana':'En ~'+it.diasRest+'d';
+    const dc  = it.diasRest===0?'dn':it.diasRest<=14?'ds':'dl';
+    const em  = it.diasRest===0?'🍅':it.diasRest<=7?'⏰':'🌿';
+    el.innerHTML += `<div class="tl-i">
+      <div class="tl-dot ${it.tipo}">${em}</div>
+      <div class="tl-card">
+        <div class="tl-top"><strong>${it.cult}</strong><span class="tl-dias ${dc}">${lbl}</span></div>
+        <div class="tl-sub">${it.id} · ${it.avance}% del ciclo estimado</div>
+        <div class="pb"><div class="pf" style="width:${it.avance}%"></div></div>
+      </div>
+    </div>`;
+  });
+}
+
+// ═══════════════════════════════════════════
+//  GRÁFICA CULTIVOS
+// ═══════════════════════════════════════════
+function buildChart() {
+  const counts = {};
+  D.camas.forEach(c => {
+    if (c.cultivo&&c.estado==='En crecimiento') {
+      const k = c.cultivo.trim().split(' y ')[0].trim().split(' ')[0];
+      counts[k] = (counts[k]||0)+1;
+    }
+  });
+  const s = Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const max = s[0]?s[0][1]:1;
+  const el = qs('#cultChart');
+  if (!s.length) { el.innerHTML = '<div class="empty" style="padding:16px">Conecta con Sheets para datos reales</div>'; return; }
+  el.innerHTML = s.map(([n,v])=>`<div class="br"><div class="bl2">${n}</div><div class="bt"><div class="bf" style="width:${Math.round(v/max*100)}%"></div></div><div class="bn">${v}</div></div>`).join('');
+}
+
+// ═══════════════════════════════════════════
+//  STOCK INVENTARIO
+// ═══════════════════════════════════════════
+function buildStock() {
+  const el = qs('#stockList');
+  const iconos = {Fertilizante:'🌿',Biológico:'🧴',Semilla:'🌱',Herramienta:'🔧',Sustrato:'🪴',Material:'🕸'};
+  el.innerHTML = D.inventario.map(i => {
+    const stock = Number(i.stock)||0;
+    const min   = Number(i.minimo)||1;
+    const pct   = Math.min(100, Math.round(stock/(min*3)*100));
+    const cls   = stock<=min ? (stock<=min*.5?'scrit':'slow') : 'sok';
+    const lbl   = stock<=min ? (stock<=min*.5?'⚠️ CRÍTICO':'⚡ BAJO') : '✅ OK';
+    const ico   = iconos[i.categoria]||'📦';
+    return `<div class="inv-r">
+      <div class="inv-ico">${ico}</div>
+      <div class="inv-b"><strong>${i.nombre}</strong>
+        <span>${i.categoria||''} · Mín: ${min} ${i.unidad} · $${i.precio||0}/${i.unidad}</span>
+        <div class="sbr ${cls}"><div class="sbf" style="width:${pct}%"></div></div>
+      </div>
+      <div class="inv-s ${cls}"><div class="num">${stock}</div><div class="unit">${i.unidad}</div>
+        <div style="font-size:10px;font-weight:700;margin-top:2px">${lbl}</div></div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════
+//  MAPA DE CAMAS
+// ═══════════════════════════════════════════
+function buildCamaBlocks() {
+  const huertas = [...new Set(D.camas.map(c=>c.huerta))].sort();
+  const nomH = {H1:'Huerta 1',H2:'Huerta 2',H3:'Huerta 3',H4:'Huerta 4 — Maíz',H5:'Huerta 5'};
+  const el = qs('#camaBlocks');
+  el.innerHTML = '';
+  if (!huertas.length) { el.innerHTML = '<div class="empty">Conecta con Sheets para ver el mapa</div>'; return; }
+  huertas.forEach(hid => {
+    const lista = D.camas.filter(c=>c.huerta===hid);
+    const act   = lista.filter(c=>c.cultivo&&c.estado!=='Vacía'&&c.estado!=='Cosechada').length;
+    const lcos  = lista.filter(c=>c.estado==='Lista para cosechar').length;
+    const div   = document.createElement('div');
+    div.className = 'h-block';
+    div.innerHTML = `
+      <div class="h-hdr" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'':'none'">
+        <strong>🌿 ${nomH[hid]||hid}</strong>
+        <span class="h-stats">${act} activas · ${lcos} cosechar · ${lista.length} total</span>
+      </div>
+      <div class="h-chips">
+        ${lista.map(c=>{
+          let cls = 'chip cvac';
+          if (c.estado==='Lista para cosechar') cls='chip clista';
+          else if (c.estado==='En crecimiento'||c.estado==='Sembrada') cls='chip crec';
+          else if (c.estado==='Cosechada') cls='chip ccos';
+          return `<div class="${cls}" onclick="irAForm('${c.id}')" title="${c.id}: ${(c.cultivo||'Vacía').trim()} — ${c.estado}">
+            ${c.num}<span class="chip-txt">${(c.cultivo||'—').trim()}</span>
+          </div>`;
+        }).join('')}
+      </div>
+      <div class="leg-row">
+        <span class="leg"><span class="leg-dot" style="background:#95d5b2"></span>Creciendo</span>
+        <span class="leg"><span class="leg-dot" style="background:var(--am)"></span>Cosechar</span>
+        <span class="leg"><span class="leg-dot" style="background:#ddd"></span>Cosechada</span>
+        <span class="leg"><span class="leg-dot" style="background:var(--bg2);border:1px solid var(--bdr)"></span>Vacía</span>
+      </div>`;
+    el.appendChild(div);
+  });
+}
+
+// ═══════════════════════════════════════════
+//  EQUIPO
+// ═══════════════════════════════════════════
+function buildEquipo() {
+  const el = qs('#equipoGrid');
+  el.innerHTML = D.jovenes.map((n,i)=>{
+    const ini = n.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    const bg  = COLORES_EQ[i%COLORES_EQ.length];
+    const ult = D.asistencia[n];
+    const sub = ult && ult.fecha ? ult.fecha+' · '+ult.asistencia : 'Sin registros';
+    return `<div class="eq-card" onclick="irAFormEquipo('${n}')">
+      <div class="eq-ava" style="background:${bg}">${ini}</div>
+      <div class="eq-info"><strong>${n.split(' ')[0]}</strong><span>${sub}</span></div>
+      <span style="font-size:14px;margin-left:auto;color:var(--g3)">➕</span>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════
+//  SISTEMA INFO
+// ═══════════════════════════════════════════
+function buildSysInfo() {
+  const c = D.camas;
+  qs('#sysInfo').innerHTML =
+    `Camas: <strong>${c.length}</strong> · Con cultivo: <strong>${c.filter(x=>x.cultivo&&x.estado!=='Vacía').length}</strong> · Vacías: <strong>${c.filter(x=>x.estado==='Vacía').length}</strong><br>
+     Participantes: <strong>${D.jovenes.length}</strong> · Insumos: <strong>${D.inventario.length}</strong><br>
+     Fases: <strong>${D.fases.length}</strong> · Acciones: <strong>${D.acciones.length}</strong><br>
+     Fuente: <strong>${c.length?'Google Sheets ✅':'Datos de ejemplo ⚠️'}</strong>`;
+}
+
+// ═══════════════════════════════════════════
+//  NAVEGACIÓN
+// ═══════════════════════════════════════════
+function go(name) {
+  qsa('.view').forEach(v=>v.classList.remove('on'));
+  qsa('.nb').forEach(b=>b.classList.remove('on'));
+  qs('#v-'+name).classList.add('on');
+  const idx = {panel:0,form:1,camas:2,equipo:3,historial:4}[name];
+  const nbs = qsa('.nb');
+  if (idx!=null && nbs[idx]) nbs[idx].classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function setMod(m, btn) {
+  modActual = m;
+  qsa('.mpk').forEach(b=>b.classList.remove('on'));
+  if (btn) btn.classList.add('on');
+  qsa('.fmod').forEach(f=>f.classList.remove('on'));
+  qs('#fm-'+m).classList.add('on');
+}
+
+function irAForm(camaId) {
+  go('form');
+  setMod('bit', qsa('.mpk')[0]);
+  setTimeout(()=>{
+    const s = qs('#sCamaBit');
+    if (s) { s.value = camaId; onCamaChange(s,'aBitH','aBitC','aBitO','aBitFS'); }
+  }, 80);
+}
+
+function irAFormEquipo(nombre) {
+  go('form');
+  setMod('gest', qsa('.mpk')[1]);
+  setTimeout(()=>{
+    const s = qs('#selJoven');
+    if (s) { s.value = nombre; onJovenChange(s); }
+  }, 80);
+}
+
+// ═══════════════════════════════════════════
+//  ENVÍO FORMULARIO
+// ═══════════════════════════════════════════
+async function enviar(e) {
+  e.preventDefault();
+  const btn = qs('#sbtn');
+  btn.textContent = 'Enviando…'; btn.disabled = true;
+  const fd   = new FormData(qs('#erpForm'));
+  const fecha = qs('#fFecha').value;
+  const obs   = qs('#obs').value;
+  const url   = qs('#urlIn').value;
+  const p = {tipoRegistro:'', fecha, observaciones:obs};
+
+  if (modActual==='bit') {
+    p.tipoRegistro='Bitacora Diaria';
+    for (const k of ['camaId','huerta','cultivo','origen','fase','avance','altura','estadoFitosan','humedad','accion','responsable','alerta'])
+      p[k] = fd.get(k)||'';
+  } else if (modActual==='gest') {
+    p.tipoRegistro='Gestion Humana';
+    for (const k of ['joven','asistencia','camaAsignada','tarea','actitud','herramienta','estadoHerr','insumoGH','motivoAusencia'])
+      p[k] = fd.get(k)||'';
+  } else if (modActual==='riego') {
+    p.tipoRegistro='Riego_Fumigacion';
+    p.huerta     = fd.get('huertaRiego')||'';
+    p.camaId     = fd.get('camaIdRiego')||'';
+    p.cultivo    = fd.get('cultivoRiego')||'';
+    p.responsable= fd.get('responsableRiego')||'';
+    for (const k of ['tipoOperacion','producto','cantidadRiego','unidadRiego','tiempo','cobertura'])
+      p[k] = fd.get(k)||'';
+    p.cantidad = p.cantidadRiego; p.unidad = p.unidadRiego;
+  } else if (modActual==='cos') {
+    p.tipoRegistro='Cosechas';
+    p.camaId    = fd.get('camaIdCosecha')||'';
+    p.huerta    = fd.get('huertaCosecha')||'';
+    p.cultivo   = fd.get('cultivoCosecha')||'';
+    p.cantidad  = fd.get('cantidadCosecha')||'';
+    p.responsable= fd.get('responsableCosecha')||'';
+    for (const k of ['unidadCosecha','destino','calidad']) p[k] = fd.get(k)||'';
+    p.unidad = p.unidadCosecha;
+  } else if (modActual==='ins') {
+    p.tipoRegistro='Insumos';
+    p.insumo   = fd.get('insumoNombre')||'';
+    for (const k of ['tipoInsumo','proveedor','precio','unidadInsumo','cantEntrada','cantSalida'])
+      p[k] = fd.get(k)||'';
+    p.unidad = p.unidadInsumo;
+  }
+
+  try {
+    if (!url) throw new Error('Sin URL configurada. Ve a Sistema y pega la URL del Apps Script.');
+    await fetch(url, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
+    toast('✅ Registro enviado a Google Sheets');
+    addHist(p);
+    limpiar();
+  } catch(err) {
+    toast('❌ '+err.message, true);
+  } finally {
+    btn.textContent = '📤 Registrar en Sistema';
+    btn.disabled = false;
+  }
+}
+
+function limpiar() {
+  qs('#erpForm').reset();
+  qs('#fFecha').valueAsDate = HOY;
+  ['aBitH','aBitC','aBitO','aH2Cos','aCoCult','aRiegoCult','aJovenUlt','aInsCat','aInsStock','aInsPrecio','aInsUnidad'].forEach(id=>{
+    const e = qs('#'+id); if(e) e.value='';
+  });
+}
+
+// ═══════════════════════════════════════════
+//  HISTORIAL
+// ═══════════════════════════════════════════
+function addHist(p) {
+  historial.unshift(p);
+  const el = qs('#histList');
+  el.innerHTML = '';
+  const MST = {
+    'Bitacora Diaria': ['background:#d8f3dc;color:#2d6a4f','📋 Bitácora'],
+    'Gestion Humana':  ['background:#e3f2fd;color:#1565c0','👥 G.Humana'],
+    'Riego_Fumigacion':['background:#e0f7fa;color:#006064','💧 Riego'],
+    'Cosechas':        ['background:#fff3e0;color:#9a4f1a','🧺 Cosecha'],
+    'Insumos':         ['background:#f3e5f5;color:#6a1b9a','📦 Insumos']
+  };
+  historial.slice(0,30).forEach(r => {
+    const [sty,lbl] = MST[r.tipoRegistro]||['','Registro'];
+    let body='';
+    if (r.camaId)          body += `Cama <strong>${r.camaId}</strong>`;
+    if (r.cultivo)         body += ` · ${r.cultivo}`;
+    if (r.joven)           body += `Joven: <strong>${r.joven}</strong> · ${r.asistencia}`;
+    if (r.tipoOperacion)   body += ` · ${r.tipoOperacion}`;
+    if (r.insumo)          body += `Insumo: <strong>${r.insumo}</strong>`;
+    if (r.cantidad)        body += ` · ${r.cantidad} ${r.unidad||''}`;
+    if (r.observaciones)   body += `<br><em style="color:var(--txt3)">${r.observaciones.slice(0,80)}</em>`;
+    const d = document.createElement('div');
+    d.className = 'hist-item';
+    d.innerHTML = `<div class="hist-hdr"><span class="hist-mod" style="${sty}">${lbl}</span><span class="hist-fecha">${r.fecha}</span></div><div class="hist-body">${body||'Registro guardado'}</div>`;
+    el.appendChild(d);
+  });
+}
+
+// ═══════════════════════════════════════════
+//  PROBAR CONEXIÓN
+// ═══════════════════════════════════════════
+async function probarConexion() {
+  const dot=qs('#cDot');const txt=qs('#cTxt');
+  dot.className='cdot test'; txt.textContent='Probando…';
+  const url = qs('#urlIn').value.trim();
+  if (!url) { toast('Ingresa la URL del Apps Script',true); dot.className='cdot off'; txt.textContent='Sin URL'; return; }
+  localStorage.setItem('erp_url', url); API = url;
+  try {
+    const res  = await fetch(url+'?action=health',{cache:'no-cache'});
+    const data = await res.json();
+    if (data.status==='online') {
+      dot.className='cdot on'; txt.textContent='✅ Conectado — '+data.version;
+      toast('🟢 Servidor activo — cargando datos…');
+      await sincronizar(false);
+      toast('✅ Todo cargado desde Google Sheets');
+    } else throw new Error('Respuesta inesperada');
+  } catch(e) {
+    dot.className='cdot off'; txt.textContent='❌ Sin conexión';
+    toast('🔴 No se pudo conectar. Verifica URL y permisos del script',true);
+  }
+}
+
+// ═══════════════════════════════════════════
+//  TOAST + UTILS
+// ═══════════════════════════════════════════
+let _tt;
+function toast(msg, err) {
+  const el = qs('#toast');
+  el.textContent = msg;
+  el.style.background = err ? '#c0392b' : '#1a3d2b';
+  el.classList.add('show');
+  clearTimeout(_tt);
+  _tt = setTimeout(()=>el.classList.remove('show'), 3400);
+}
+function hora() {
+  return HOY.getHours().toString().padStart(2,'0')+':'+new Date().getMinutes().toString().padStart(2,'0');
+}
+function qs(s)  { return document.querySelector(s); }
+function qsa(s) { return document.querySelectorAll(s); }
+
+init();
+</script>
 </body>
 </html>
