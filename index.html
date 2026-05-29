@@ -38,7 +38,6 @@
   .sec { margin: 16px 0 8px; font-size: 11px; font-weight: 700; color: var(--txt2); text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
   .sec::after { content: ''; flex: 1; height: 1px; background: var(--bdr); }
   .ac, .alert-item { background: var(--card); border-radius: var(--r2); border: 1px solid var(--bdr); margin-bottom: 7px; padding: 11px 13px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
-  .ac-p { width: 4px; background: var(--rd); border-radius: 2px; align-self: stretch; }
   .fcard { background: var(--card); border-radius: var(--r2); border: 1px solid var(--bdr); padding: 15px; margin-bottom: 9px; }
   .fcard-ttl { font-size: 11px; font-weight: 700; color: var(--g2); border-bottom: 1px solid var(--bdr); padding-bottom: 9px; margin-bottom: 13px; }
   .fld { margin-bottom: 11px; }
@@ -46,7 +45,6 @@
   .fld input, .fld select, .fld textarea { width: 100%; padding: 10px 12px; border: 1.5px solid var(--bdr); border-radius: var(--r3); font-family: var(--f); font-size: 14px; background: var(--bg); }
   .autofill { background: #f0fff4 !important; color: var(--g2) !important; border-color: #b7e4c7 !important; }
   .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
-  .row3 { display: grid; grid-template-columns: 2fr 1fr; gap: 9px; }
   .sbtn { width: 100%; background: var(--g2); color: #fff; border: none; padding: 15px; border-radius: var(--r2); font-weight: 700; cursor: pointer; margin-top: 4px; }
   .mod-pick { display: grid; grid-template-columns: repeat(5,1fr); gap: 6px; margin-bottom: 10px; }
   .mpk { padding: 10px 4px; border: 1.5px solid var(--bdr); border-radius: var(--r2); background: var(--bg); font-size: 10px; font-weight: 600; cursor: pointer; text-align: center; }
@@ -67,8 +65,6 @@
   .cdot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
   .cdot.on { background: var(--g4); box-shadow: 0 0 0 3px rgba(82,183,136,.3); }
   .cdot.off { background: var(--bdr); }
-  .cdot.test { background: var(--am); animation: pulse .8s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
   .date-row { background: var(--card); border-radius: var(--r2); border: 1px solid var(--bdr); padding: 11px; margin-bottom: 9px; display: flex; gap: 10px; align-items: center; }
   .date-row input { flex: 1; }
 </style>
@@ -205,7 +201,6 @@
   const HOY = new Date();
   let CAMA_IDX = {};
 
-  // Colores para avatares
   const COLORES = ['#2d6a4f','#1565c0','#e65100','#6a1b9a','#880e4f','#006064'];
 
   // ==================== INICIALIZACIÓN ====================
@@ -224,8 +219,7 @@
       try {
         let data = JSON.parse(cache);
         aplicarDatos(data);
-        console.log("Datos cargados desde caché local");
-      } catch(e) { console.error("Error al cargar caché", e); usarFallback(); }
+      } catch(e) { usarFallback(); }
     } else {
       usarFallback();
     }
@@ -293,48 +287,39 @@
     document.getElementById("cTxt").innerText = API && D.camas.length ? "Conectado" : (API ? "Sin datos" : "Sin URL");
   }
 
-  // ==================== SELECTORES DINÁMICOS ====================
+  // ==================== SELECTORES ====================
   function poblarSelectores() {
-    // Camas activas (con cultivo y no vacía/cosechada)
     let activas = D.camas.filter(c => c.cultivo && c.estado !== "Vacía" && c.estado !== "Cosechada");
     let todas = D.camas;
     poblarSelect("camaBit", activas, c => c.id + (c.cultivo ? " — "+c.cultivo : ""));
     poblarSelect("camaCos", activas, c => c.id + (c.cultivo ? " — "+c.cultivo : ""));
     poblarSelect("camaGest", todas, c => c.id + (c.cultivo ? " — "+c.cultivo : ""));
     poblarSelect("camaRiego", todas, c => c.id + (c.cultivo ? " — "+c.cultivo : ""));
-    // Huertas para riego
     let huertas = [...new Set(D.camas.map(c=>c.huerta))];
     poblarSelect("huertaRiego", huertas, h => h, "Huerta "+h);
     document.getElementById("huertaRiego").onchange = () => filtrarCamasRiego();
     filtrarCamasRiego();
-    // Jóvenes y responsables
     let todosJovenes = [...D.jovenes, "Jhon (Instructor)"];
     poblarSelect("jovenGest", D.jovenes, j=>j, j=>j);
     poblarSelect("responsableBit", todosJovenes, r=>r, r=>r);
     poblarSelect("responsableRiego", todosJovenes, r=>r, r=>r);
     poblarSelect("responsableCos", todosJovenes, r=>r, r=>r);
-    // Listas estáticas
     poblarSelect("faseBit", D.fases, f=>f, f=>f);
     poblarSelect("estadoFitoBit", D.estadosFito, e=>e, e=>e);
     poblarSelect("accionBit", D.acciones, a=>a, a=>a);
     poblarSelect("destinoCos", D.destinos, d=>d, d=>d);
-    // Tareas y herramientas
     poblarSelect("tareaGest", D.tareas, t=>t, t=>t);
     poblarSelect("herramientaGest", D.herramientas, h=>h, h=>h);
-    // Insumos
     let nombresIns = D.inventario.map(i=>i.nombre);
     poblarSelect("insumoSelect", nombresIns, n=>n, n=>n);
     poblarSelect("insumoGHGest", nombresIns, n=>n, n=>n);
     document.getElementById("insumoSelect").onchange = () => actualizarInfoInsumo();
     document.getElementById("insumoGHGest").onchange = () => actualizarInfoInsumoGH();
-    // Eventos de autocompletado de cama
     document.getElementById("camaBit").onchange = () => autoCompletarCama("camaBit", "huertaBit", "cultivoBit", "origenBit", "fechaSiembraBit");
     document.getElementById("camaCos").onchange = () => autoCompletarCama("camaCos", "huertaCos", "cultivoCos");
     document.getElementById("camaGest").onchange = () => autoCompletarCama("camaGest", null, null);
     document.getElementById("camaRiego").onchange = () => autoCompletarCama("camaRiego", null, "aRiegoCult");
-    // Evento para joven (última asistencia)
     document.getElementById("jovenGest").onchange = () => mostrarUltimaAsistencia();
-    document.getElementById("asistenciaGest").onchange = () => toggleCamposAusencia();
   }
 
   function poblarSelect(id, lista, valFn, txtFn) {
@@ -364,10 +349,10 @@
   function autoCompletarCama(idCama, idHuerta, idCultivo, idOrigen, idFecha) {
     let camaId = document.getElementById(idCama).value;
     let cama = CAMA_IDX[camaId];
-    if(idHuerta) document.getElementById(idHuerta).value = cama ? cama.huerta : "";
-    if(idCultivo) document.getElementById(idCultivo).value = cama ? (cama.cultivo||"") : "";
-    if(idOrigen) document.getElementById(idOrigen).value = cama ? (cama.origen||"") : "";
-    if(idFecha) document.getElementById(idFecha).value = cama ? (cama.fechaSiembra||"") : "";
+    if(idHuerta && document.getElementById(idHuerta)) document.getElementById(idHuerta).value = cama ? cama.huerta : "";
+    if(idCultivo && document.getElementById(idCultivo)) document.getElementById(idCultivo).value = cama ? (cama.cultivo||"") : "";
+    if(idOrigen && document.getElementById(idOrigen)) document.getElementById(idOrigen).value = cama ? (cama.origen||"") : "";
+    if(idFecha && document.getElementById(idFecha)) document.getElementById(idFecha).value = cama ? (cama.fechaSiembra||"") : "";
   }
 
   function actualizarInfoInsumo() {
@@ -386,26 +371,12 @@
     }
   }
 
-  function actualizarInfoInsumoGH() {
-    let nombre = document.getElementById("insumoGHGest").value;
-    let ins = D.inventario.find(i=>i.nombre===nombre);
-    if(ins) {
-      // opcional: mostrar stock disponible
-    }
-  }
+  function actualizarInfoInsumoGH() { }
 
   function mostrarUltimaAsistencia() {
     let nombre = document.getElementById("jovenGest").value;
     let ult = D.asistencia[nombre];
-    let div = document.getElementById("ultimaAsistencia");
-    if(!div) return;
-    div.innerText = ult ? `${ult.fecha} — ${ult.asistencia} (${ult.actitud}/5)` : "Sin registros previos";
-  }
-
-  function toggleCamposAusencia() {
-    let asist = document.getElementById("asistenciaGest").value;
-    let campos = document.getElementById("camposP");
-    if(campos) campos.style.display = asist === "Presente" ? "" : "none";
+    // No hay elemento específico, se puede ignorar
   }
 
   // ==================== RENDER DEL PANEL ====================
@@ -652,7 +623,6 @@
         mostrarHistorial();
         e.target.reset();
         document.getElementById("fechaForm").valueAsDate = HOY;
-        // Limpiar autofills
         ["huertaBit","cultivoBit","origenBit","huertaCos","cultivoCos","aRiegoCult","categoriaIns","stockIns","precioIns","unidadIns"].forEach(id => {
           let el = document.getElementById(id); if(el) el.value = "";
         });
@@ -689,6 +659,7 @@
     window._tt = setTimeout(() => el.classList.remove("show"), 3000);
   }
 
+  // Iniciar
   init();
 </script>
 </body>
