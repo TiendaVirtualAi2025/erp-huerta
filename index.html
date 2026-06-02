@@ -2,429 +2,542 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>ERP Huerta</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--g1:#1a3d2b;--g2:#2d6a4f;--g3:#40916c;--g4:#52b788;--g5:#95d5b2;--g6:#d8f3dc;--am:#e07a31;--amp:#fff3e0;--rd:#c0392b;--rdp:#fdecea;--bl:#1565c0;--blp:#e3f2fd;--bg:#f2efe8;--bg2:#e8e4db;--card:#fff;--txt:#1a1a1a;--txt2:#555;--txt3:#888;--bdr:#e0ddd5;--r:14px;--r2:10px;--r3:6px;--f:'Inter',sans-serif}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:var(--f);background:var(--bg);color:var(--txt);min-height:100vh;overscroll-behavior:none}
-.hdr{background:var(--g1);position:sticky;top:0;z-index:200}
-.hdr-t{max-width:500px;margin:0 auto;display:flex;align-items:center;padding:12px 16px;gap:8px}
+:root{
+  --g1:#1a3d2b;--g2:#2d6a4f;--g3:#40916c;--g4:#52b788;--g6:#d8f3dc;
+  --am:#e07a31;--amp:#fff3e0;--rd:#c0392b;--rdp:#fdecea;
+  --bl:#1565c0;--blp:#e3f2fd;
+  --bg:#f2efe8;--bg2:#e8e4db;--card:#fff;
+  --txt:#1a1a1a;--t2:#555;--t3:#888;--bdr:#e0ddd5;
+  --f:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif
+}
+body{font-family:var(--f);background:var(--bg);color:var(--txt);min-height:100vh}
+/* HEADER */
+.hdr{background:var(--g1);position:sticky;top:0;z-index:99}
+.hdr-t{max-width:480px;margin:0 auto;display:flex;align-items:center;padding:12px 14px;gap:8px}
 .hdr-t h1{flex:1;font-size:15px;font-weight:700;color:#fff}
-.hdr-t h1 span{font-size:10px;font-weight:400;opacity:.6;display:block;margin-top:1px}
-.sync-btn{background:none;border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.85);padding:6px 11px;border-radius:20px;font-family:var(--f);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap}
-.sync-btn.spin{animation:giro 1s linear infinite}
-@keyframes giro{to{transform:rotate(360deg)}}
-.cfg-btn{background:none;border:none;color:rgba(255,255,255,.7);padding:6px;cursor:pointer;font-size:18px;line-height:1}
+.hdr-t h1 small{font-size:10px;font-weight:400;opacity:.6;display:block}
+.sbtn2{background:none;border:1px solid rgba(255,255,255,.35);color:rgba(255,255,255,.9);
+  padding:5px 10px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--f)}
+.gbtn{background:none;border:none;color:rgba(255,255,255,.7);font-size:18px;cursor:pointer;padding:4px}
 .nav{background:var(--g2);border-top:1px solid rgba(255,255,255,.1)}
-.nav-i{max-width:500px;margin:0 auto;display:flex}
-.nb{flex:1;padding:10px 4px 9px;border:none;background:none;color:rgba(255,255,255,.55);font-family:var(--f);font-size:9.5px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+.nav-i{max-width:480px;margin:0 auto;display:flex}
+.nb{flex:1;padding:9px 2px 8px;border:none;background:none;color:rgba(255,255,255,.5);
+  font-family:var(--f);font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+  cursor:pointer;border-bottom:2px solid transparent}
 .nb.on{color:#fff;border-bottom-color:var(--g4)}
-.wrap{max-width:500px;margin:0 auto;padding:12px 14px 90px}
+/* LAYOUT */
+.wrap{max-width:480px;margin:0 auto;padding:12px 14px 80px}
 .view{display:none}.view.on{display:block}
-.toast{position:fixed;top:68px;left:50%;transform:translateX(-50%) translateY(-10px);background:var(--g1);color:#fff;padding:10px 20px;border-radius:30px;font-size:13px;font-weight:500;z-index:999;opacity:0;transition:all .25s;pointer-events:none;max-width:92vw;text-align:center}
+/* TOAST */
+.toast{position:fixed;top:66px;left:50%;transform:translateX(-50%) translateY(-8px);
+  background:var(--g1);color:#fff;padding:10px 18px;border-radius:30px;
+  font-size:13px;font-weight:500;z-index:999;opacity:0;transition:all .25s;
+  pointer-events:none;max-width:90vw;text-align:center;white-space:nowrap}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
-.offbar{background:var(--am);color:#fff;font-size:12px;font-weight:600;text-align:center;padding:8px;display:none}
+/* OFF BAR */
+.offbar{background:var(--am);color:#fff;font-size:12px;font-weight:600;
+  text-align:center;padding:7px;display:none}
 .offbar.on{display:block}
-.kpi-row{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px}
-.kpi{background:var(--card);border-radius:var(--r2);padding:13px 14px;border:1px solid var(--bdr);position:relative;overflow:hidden}
+/* KPI */
+.kgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px}
+.kpi{background:var(--card);border-radius:10px;padding:13px 14px;border:1px solid var(--bdr);
+  position:relative;overflow:hidden}
 .kpi::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%}
-.kpi.g::before{background:var(--g3)}.kpi.a::before{background:var(--am)}.kpi.r::before{background:var(--rd)}.kpi.b::before{background:var(--bl)}
-.kpi-l{font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.4px}
-.kpi-v{font-size:28px;font-weight:700;line-height:1;margin:3px 0 1px}
-.kpi.g .kpi-v{color:var(--g2)}.kpi.a .kpi-v{color:var(--am)}.kpi.r .kpi-v{color:var(--rd)}.kpi.b .kpi-v{color:var(--bl)}
-.kpi-s{font-size:10.5px;color:var(--txt3)}
-.sec{margin:16px 0 8px;font-size:11px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.7px;display:flex;align-items:center;gap:6px}
+.kg::before{background:var(--g3)}.ka::before{background:var(--am)}
+.kr::before{background:var(--rd)}.kb::before{background:var(--bl)}
+.kl{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.4px}
+.kv{font-size:28px;font-weight:700;line-height:1;margin:3px 0 1px}
+.kg .kv{color:var(--g2)}.ka .kv{color:var(--am)}.kr .kv{color:var(--rd)}.kb .kv{color:var(--bl)}
+.ks{font-size:10.5px;color:var(--t3)}
+/* SECTION */
+.sec{margin:16px 0 8px;font-size:10px;font-weight:700;color:var(--t2);
+  text-transform:uppercase;letter-spacing:.7px;display:flex;align-items:center;gap:6px}
 .sec::after{content:'';flex:1;height:1px;background:var(--bdr)}
-.sec-a{font-size:11px;font-weight:600;color:var(--g3);cursor:pointer;margin-left:auto;flex-shrink:0}
-.ac{background:var(--card);border-radius:var(--r2);border:1px solid var(--bdr);margin-bottom:7px;overflow:hidden;cursor:pointer}
-.ac-in{display:flex;align-items:center;gap:10px;padding:11px 13px}
-.ac-p{width:4px;flex-shrink:0;align-self:stretch;border-radius:2px;margin-right:10px}
-.ac-p.cr{background:var(--rd)}.ac-p.wa{background:var(--am)}.ac-p.ok{background:var(--g4)}.ac-p.in{background:var(--bl)}
+/* ALERT CARDS */
+.ac{background:var(--card);border-radius:10px;border:1px solid var(--bdr);
+  margin-bottom:7px;overflow:hidden;cursor:pointer}
+.ac-i{display:flex;align-items:center;gap:10px;padding:11px 13px}
+.ac-p{width:4px;flex-shrink:0;align-self:stretch;border-radius:2px;margin-right:8px}
+.p-cr{background:var(--rd)}.p-wa{background:var(--am)}.p-ok{background:var(--g4)}.p-in{background:var(--bl)}
 .ac-ico{font-size:18px;flex-shrink:0}
 .ac-b{flex:1;min-width:0}
-.ac-b strong{font-size:13px;font-weight:600;display:block}
-.ac-b span{font-size:11.5px;color:var(--txt2);display:block;margin-top:1px;line-height:1.4}
+.ac-b b{font-size:13px;font-weight:600;display:block}
+.ac-b span{font-size:11px;color:var(--t2);display:block;margin-top:1px;line-height:1.4}
 .ac-tag{font-size:10px;font-weight:700;padding:3px 7px;border-radius:4px;flex-shrink:0;align-self:flex-start}
-.tc{background:var(--rdp);color:var(--rd)}.tw{background:var(--amp);color:#9a4f1a}.tok{background:var(--g6);color:var(--g2)}.ti{background:var(--blp);color:var(--bl)}
+.t-cr{background:var(--rdp);color:var(--rd)}.t-wa{background:var(--amp);color:#9a4f1a}
+.t-ok{background:var(--g6);color:var(--g2)}.t-in{background:var(--blp);color:var(--bl)}
+/* TIMELINE */
 .tl-i{display:flex;gap:12px;position:relative}
 .tl-i::before{content:'';position:absolute;left:15px;top:30px;bottom:-7px;width:1px;background:var(--bdr)}
 .tl-i:last-child::before{display:none}
-.tl-d{width:31px;height:31px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;margin-top:8px;z-index:1}
-.tnow{background:var(--rdp);border:2px solid var(--rd)}.tsoon{background:var(--amp);border:2px solid var(--am)}.tlater{background:var(--g6);border:2px solid var(--g4)}
-.tl-c{background:var(--card);border-radius:var(--r2);border:1px solid var(--bdr);padding:10px 13px;flex:1;margin-bottom:7px}
+.tl-d{width:31px;height:31px;border-radius:50%;flex-shrink:0;display:flex;
+  align-items:center;justify-content:center;font-size:13px;margin-top:8px;z-index:1}
+.d-now{background:var(--rdp);border:2px solid var(--rd)}
+.d-soon{background:var(--amp);border:2px solid var(--am)}
+.d-late{background:var(--g6);border:2px solid var(--g4)}
+.tl-c{background:var(--card);border-radius:10px;border:1px solid var(--bdr);
+  padding:10px 13px;flex:1;margin-bottom:7px}
 .tl-top{display:flex;justify-content:space-between;align-items:flex-start}
-.tl-top strong{font-size:13px;font-weight:600}
+.tl-top b{font-size:13px;font-weight:600}
 .tl-dias{font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px}
-.dn{background:var(--rdp);color:var(--rd)}.ds{background:var(--amp);color:#9a4f1a}.dl{background:var(--g6);color:var(--g2)}
-.tl-sub{font-size:11px;color:var(--txt2);margin-top:3px}
-.pb{height:5px;background:var(--bg2);border-radius:3px;margin-top:8px;overflow:hidden}
-.pf{height:100%;border-radius:3px;background:var(--g4)}
-.chart-card{background:var(--card);border-radius:var(--r2);border:1px solid var(--bdr);padding:14px}
-.br{display:flex;align-items:center;gap:8px;margin-bottom:8px}.br:last-child{margin-bottom:0}
-.bl2{font-size:11.5px;font-weight:500;width:90px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.bt{flex:1;height:10px;background:var(--bg2);border-radius:5px;overflow:hidden}
-.bf{height:100%;border-radius:5px;background:var(--g4)}
-.bn{font-size:11px;color:var(--txt3);width:22px;text-align:right;flex-shrink:0;font-weight:500}
-.inv-r{background:var(--card);border-radius:var(--r2);border:1px solid var(--bdr);padding:11px 14px;margin-bottom:7px;display:flex;align-items:center;gap:10px}
-.inv-ico{font-size:20px;flex-shrink:0}
-.inv-b{flex:1;min-width:0}
-.inv-b strong{font-size:13px;font-weight:600}
-.inv-b span{font-size:11px;color:var(--txt2);display:block}
-.inv-s{text-align:right;flex-shrink:0}
-.inv-s .num{font-size:18px;font-weight:700}
-.inv-s .unit{font-size:10px;color:var(--txt3)}
-.sok .num{color:var(--g3)}.slow .num{color:var(--am)}.scrit .num{color:var(--rd)}
-.sbr{height:4px;background:var(--bg2);border-radius:2px;margin-top:5px;overflow:hidden}
-.sbf{height:100%;border-radius:2px}
-.sok .sbf{background:var(--g4)}.slow .sbf{background:var(--am)}.scrit .sbf{background:var(--rd)}
-.h-block{background:var(--card);border-radius:var(--r2);border:1px solid var(--bdr);margin-bottom:8px;overflow:hidden}
-.h-hdr{padding:10px 14px;background:var(--bg);display:flex;justify-content:space-between;align-items:center;cursor:pointer;border-bottom:1px solid var(--bdr);user-select:none}
-.h-hdr strong{font-size:13px;font-weight:600}
-.h-stats{font-size:11px;color:var(--txt3)}
-.h-chips{padding:10px 12px;display:flex;flex-wrap:wrap;gap:5px}
-.chip{padding:5px 9px;border-radius:var(--r3);font-size:10.5px;font-weight:600;cursor:pointer;border:1px solid transparent;min-width:44px;transition:transform .1s}
+.d-n{background:var(--rdp);color:var(--rd)}.d-s{background:var(--amp);color:#9a4f1a}
+.d-l{background:var(--g6);color:var(--g2)}
+.tl-sub{font-size:11px;color:var(--t2);margin-top:3px}
+.pbar{height:5px;background:var(--bg2);border-radius:3px;margin-top:8px;overflow:hidden}
+.pfil{height:100%;border-radius:3px;background:var(--g4)}
+/* CHART */
+.chard{background:var(--card);border-radius:10px;border:1px solid var(--bdr);padding:14px}
+.crow{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.crow:last-child{margin-bottom:0}
+.clbl{font-size:11px;font-weight:500;width:88px;flex-shrink:0;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.ctrk{flex:1;height:9px;background:var(--bg2);border-radius:5px;overflow:hidden}
+.cfil{height:100%;border-radius:5px;background:var(--g4)}
+.cnum{font-size:11px;color:var(--t3);width:20px;text-align:right;flex-shrink:0}
+/* STOCK */
+.ir{background:var(--card);border-radius:10px;border:1px solid var(--bdr);
+  padding:11px 14px;margin-bottom:7px;display:flex;align-items:center;gap:10px}
+.ii{font-size:20px;flex-shrink:0}
+.ib{flex:1;min-width:0}
+.ib b{font-size:13px;font-weight:600}
+.ib span{font-size:11px;color:var(--t2);display:block}
+.iv{text-align:right;flex-shrink:0}
+.iv .num{font-size:18px;font-weight:700}
+.iv .un{font-size:10px;color:var(--t3)}
+.s-ok .num{color:var(--g3)}.s-lo .num{color:var(--am)}.s-cr .num{color:var(--rd)}
+.sbar{height:4px;background:var(--bg2);border-radius:2px;margin-top:5px;overflow:hidden}
+.sfil{height:100%;border-radius:2px}
+.s-ok .sfil{background:var(--g4)}.s-lo .sfil{background:var(--am)}.s-cr .sfil{background:var(--rd)}
+/* CAMAS */
+.hb{background:var(--card);border-radius:10px;border:1px solid var(--bdr);margin-bottom:8px;overflow:hidden}
+.hh{padding:10px 14px;background:var(--bg);display:flex;justify-content:space-between;
+  align-items:center;cursor:pointer;border-bottom:1px solid var(--bdr);user-select:none}
+.hh b{font-size:13px;font-weight:600}
+.hstat{font-size:11px;color:var(--t3)}
+.hchips{padding:10px 12px;display:flex;flex-wrap:wrap;gap:5px}
+.chip{padding:5px 9px;border-radius:6px;font-size:10.5px;font-weight:600;
+  cursor:pointer;border:1px solid transparent;min-width:42px}
 .chip:active{transform:scale(.93)}
-.chip-t{display:block;font-size:9px;font-weight:400;opacity:.8;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:62px}
-.crec{background:#f0fff4;border-color:#95d5b2;color:var(--g2)}.clista{background:var(--amp);border-color:#f0b070;color:#7a3d10}.ccos{background:#f5f5f5;border-color:#ddd;color:#777}.cvac{background:var(--bg);border-color:var(--bdr);color:var(--txt3)}
-.leg-row{display:flex;gap:12px;flex-wrap:wrap;padding:8px 12px 12px;border-top:1px solid var(--bdr)}
-.leg{font-size:10.5px;color:var(--txt2);display:flex;align-items:center;gap:4px}
-.leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
-.eq-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.eq-card{background:var(--card);border-radius:var(--r2);border:1px solid var(--bdr);padding:11px 12px;display:flex;align-items:center;gap:10px;cursor:pointer}
-.eq-card:active{transform:scale(.97)}
-.eq-ava{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;color:#fff}
-.eq-info strong{font-size:12px;font-weight:600;display:block}
-.eq-info span{font-size:10.5px;color:var(--txt3)}
-.mod-pick{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
-.mpk{padding:10px 8px;border:1.5px solid var(--bdr);border-radius:var(--r2);background:var(--bg);font-family:var(--f);font-size:11px;font-weight:600;color:var(--txt2);cursor:pointer;text-align:center;line-height:1.4;transition:all .2s}
-.mpk span{display:block;font-size:16px;margin-bottom:3px}
+.ch-t{display:block;font-size:9px;font-weight:400;opacity:.8;margin-top:1px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60px}
+.c-crec{background:#f0fff4;border-color:#95d5b2;color:var(--g2)}
+.c-list{background:var(--amp);border-color:#f0b070;color:#7a3d10}
+.c-cos{background:#f5f5f5;border-color:#ddd;color:#777}
+.c-vac{background:var(--bg);border-color:var(--bdr);color:var(--t3)}
+.legr{display:flex;gap:12px;flex-wrap:wrap;padding:8px 12px 10px;border-top:1px solid var(--bdr)}
+.leg{font-size:10px;color:var(--t2);display:flex;align-items:center;gap:4px}
+.ld{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+/* EQUIPO */
+.egrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.ecard{background:var(--card);border-radius:10px;border:1px solid var(--bdr);
+  padding:11px 12px;display:flex;align-items:center;gap:10px;cursor:pointer}
+.ecard:active{transform:scale(.97)}
+.eava{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;color:#fff}
+.einf b{font-size:12px;font-weight:600;display:block}
+.einf span{font-size:10px;color:var(--t3)}
+/* FORM */
+.mpick{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
+.mpk{padding:10px 6px;border:1.5px solid var(--bdr);border-radius:10px;
+  background:var(--bg);font-family:var(--f);font-size:11px;font-weight:600;
+  color:var(--t2);cursor:pointer;text-align:center;line-height:1.4}
+.mpk em{display:block;font-style:normal;font-size:16px;margin-bottom:2px}
 .mpk.on{background:var(--g2);color:#fff;border-color:var(--g2)}
-.fcard{background:var(--card);border-radius:var(--r2);border:1px solid var(--bdr);padding:15px;margin-bottom:9px}
-.fcard-ttl{font-size:11px;font-weight:700;color:var(--g2);text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--bdr);padding-bottom:9px;margin-bottom:13px}
 .fmod{display:none}.fmod.on{display:block}
-.fld{margin-bottom:11px}.fld:last-child{margin-bottom:0}
-.fld label{display:block;font-size:11px;font-weight:600;color:var(--txt2);margin-bottom:4px}
-.fld input,.fld select,.fld textarea{width:100%;padding:10px 12px;border:1.5px solid var(--bdr);border-radius:var(--r3);font-family:var(--f);font-size:14px;color:var(--txt);background:var(--bg);-webkit-appearance:none;appearance:none;transition:border .15s,box-shadow .15s}
-.fld input:focus,.fld select:focus,.fld textarea:focus{outline:none;border-color:var(--g3);box-shadow:0 0 0 3px rgba(64,145,108,.12);background:#fff}
-.fld textarea{resize:none}
-.af{background:#f0fff4!important;color:var(--g2)!important;font-weight:600!important;border-color:#b7e4c7!important;cursor:default}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.row3{display:grid;grid-template-columns:2fr 1fr;gap:9px}
-.date-row{background:var(--card);border-radius:var(--r2);border:1px solid var(--bdr);padding:11px 14px;margin-bottom:9px;display:flex;align-items:center;gap:10px}
-.date-row label{font-size:12px;font-weight:600;color:var(--txt2);white-space:nowrap}
-.date-row input{flex:1;padding:8px 11px;border:1.5px solid var(--bdr);border-radius:var(--r3);font-family:var(--f);font-size:14px;background:var(--bg);color:var(--txt)}
-.date-row input:focus{outline:none;border-color:var(--g3)}
-.sbtn{width:100%;background:var(--g2);color:#fff;border:none;padding:15px;border-radius:var(--r2);font-family:var(--f);font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:4px}
-.sbtn:hover{background:var(--g3)}.sbtn:active{transform:scale(.99)}.sbtn:disabled{opacity:.55;cursor:not-allowed}
-.in-p{background:rgba(82,183,136,.1);border:1.5px solid var(--g5);border-radius:var(--r3);padding:10px 12px}
-.in-m{background:rgba(192,57,43,.07);border:1.5px solid #e8a0a0;border-radius:var(--r3);padding:10px 12px}
-.hist-item{background:var(--card);border-radius:var(--r2);border:1px solid var(--bdr);margin-bottom:8px;overflow:hidden}
-.hist-hdr{display:flex;justify-content:space-between;align-items:center;padding:10px 13px;background:var(--bg);border-bottom:1px solid var(--bdr)}
-.hist-mod{font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px}
-.hist-fecha{font-size:10.5px;color:var(--txt3);font-weight:500}
-.hist-body{padding:10px 13px;font-size:13px;line-height:1.55;color:var(--txt2)}
-.hist-body strong{color:var(--txt);font-weight:600}
-.empty{text-align:center;padding:30px 20px;color:var(--txt3);font-size:13px}
-.sys-card{background:var(--card);border-radius:var(--r2);border:1px solid var(--bdr);padding:16px;margin-bottom:9px}
-.sys-card h3{font-size:14px;font-weight:700;margin-bottom:12px}
-.conn-box{display:flex;align-items:center;gap:10px;padding:10px 13px;border-radius:var(--r3);background:var(--bg);margin-bottom:11px}
+.fc{background:var(--card);border-radius:10px;border:1px solid var(--bdr);
+  padding:15px;margin-bottom:9px}
+.ft{font-size:10px;font-weight:700;color:var(--g2);text-transform:uppercase;
+  letter-spacing:.6px;border-bottom:1px solid var(--bdr);padding-bottom:8px;margin-bottom:12px}
+.fl{margin-bottom:10px}.fl:last-child{margin-bottom:0}
+.fl label{display:block;font-size:11px;font-weight:600;color:var(--t2);margin-bottom:4px}
+.fl input,.fl select,.fl textarea{
+  width:100%;padding:10px 11px;border:1.5px solid var(--bdr);border-radius:6px;
+  font-family:var(--f);font-size:14px;color:var(--txt);background:var(--bg);
+  -webkit-appearance:none;appearance:none}
+.fl input:focus,.fl select:focus,.fl textarea:focus{
+  outline:none;border-color:var(--g3);background:#fff}
+.fl textarea{resize:none}
+.af{background:#f0fff4!important;color:var(--g2)!important;
+  font-weight:600!important;border-color:#b7e4c7!important}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.r3{display:grid;grid-template-columns:2fr 1fr;gap:8px}
+.drow{background:var(--card);border-radius:10px;border:1px solid var(--bdr);
+  padding:10px 14px;margin-bottom:9px;display:flex;align-items:center;gap:10px}
+.drow label{font-size:12px;font-weight:600;color:var(--t2);white-space:nowrap}
+.drow input{flex:1;padding:7px 10px;border:1.5px solid var(--bdr);border-radius:6px;
+  font-family:var(--f);font-size:14px;background:var(--bg);color:var(--txt)}
+.rsbtn{width:100%;background:var(--g2);color:#fff;border:none;padding:14px;
+  border-radius:10px;font-family:var(--f);font-size:15px;font-weight:700;
+  cursor:pointer;margin-top:4px}
+.rsbtn:disabled{opacity:.5;cursor:not-allowed}
+.inp{background:rgba(82,183,136,.1);border:1.5px solid #95d5b2;border-radius:6px;padding:10px 11px}
+.sal{background:rgba(192,57,43,.08);border:1.5px solid #e8a0a0;border-radius:6px;padding:10px 11px}
+/* HISTORIAL */
+.hi{background:var(--card);border-radius:10px;border:1px solid var(--bdr);margin-bottom:8px;overflow:hidden}
+.hihd{display:flex;justify-content:space-between;align-items:center;
+  padding:9px 12px;background:var(--bg);border-bottom:1px solid var(--bdr)}
+.himod{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px}
+.hifec{font-size:10px;color:var(--t3);font-weight:500}
+.hibod{padding:9px 12px;font-size:13px;line-height:1.5;color:var(--t2)}
+.hibod b{color:var(--txt)}
+/* SISTEMA */
+.sc{background:var(--card);border-radius:10px;border:1px solid var(--bdr);
+  padding:15px;margin-bottom:9px}
+.sc h3{font-size:14px;font-weight:700;margin-bottom:11px}
+.cbox{display:flex;align-items:center;gap:10px;padding:10px 12px;
+  border-radius:6px;background:var(--bg);margin-bottom:10px}
 .cdot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
-.cdot.on{background:var(--g4);box-shadow:0 0 0 3px rgba(82,183,136,.3)}.cdot.off{background:var(--bdr)}.cdot.test{background:var(--am);animation:pulse .8s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.url-in{width:100%;padding:9px 11px;border:1.5px solid var(--bdr);border-radius:var(--r3);font-family:monospace;font-size:10.5px;color:var(--txt);background:var(--bg);margin-bottom:9px}
-.url-in:focus{outline:none;border-color:var(--g3)}
-.tbtn{width:100%;padding:11px;background:var(--bg);border:1.5px solid var(--bdr);border-radius:var(--r3);font-family:var(--f);font-size:13px;font-weight:600;color:var(--txt);cursor:pointer;transition:all .2s;margin-bottom:7px}
-.tbtn:hover{background:var(--g6);border-color:var(--g4);color:var(--g2)}
-.step{background:var(--bg);border-radius:var(--r3);padding:11px 13px;margin-bottom:7px;border-left:3px solid var(--g4)}
-.step strong{font-size:13px;font-weight:600;display:block;margin-bottom:3px}
-.step p{font-size:12px;color:var(--txt2);line-height:1.5}
-.step code{font-family:monospace;font-size:11px;background:var(--bdr);padding:2px 5px;border-radius:3px}
+.cdot.on{background:var(--g4);box-shadow:0 0 0 3px rgba(82,183,136,.25)}
+.cdot.off{background:var(--bdr)}.cdot.spin{background:var(--am);animation:pu .8s infinite}
+@keyframes pu{0%,100%{opacity:1}50%{opacity:.3}}
+.urlin{width:100%;padding:9px 11px;border:1.5px solid var(--bdr);border-radius:6px;
+  font-family:monospace;font-size:10.5px;background:var(--bg);color:var(--txt);margin-bottom:8px}
+.urlin:focus{outline:none;border-color:var(--g3)}
+.abtn{width:100%;padding:10px;background:var(--bg);border:1.5px solid var(--bdr);
+  border-radius:6px;font-family:var(--f);font-size:13px;font-weight:600;
+  color:var(--txt);cursor:pointer;margin-bottom:7px}
+.abtn:hover{background:var(--g6);border-color:var(--g4);color:var(--g2)}
+.step{background:var(--bg);border-radius:6px;padding:10px 12px;
+  margin-bottom:7px;border-left:3px solid var(--g4)}
+.step b{font-size:12px;font-weight:600;display:block;margin-bottom:2px}
+.step p{font-size:11.5px;color:var(--t2);line-height:1.5}
+.step code{font-family:monospace;font-size:10.5px;background:var(--bdr);padding:1px 4px;border-radius:3px}
+.emp{text-align:center;padding:24px 16px;color:var(--t3);font-size:13px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.spinning{animation:sp 1s linear infinite;display:inline-block}
 </style>
 </head>
 <body>
-<div id="offbar" class="offbar">Sin conexion - mostrando datos locales</div>
+<div id="ob" class="offbar">Sin conexion — datos locales</div>
 <header class="hdr">
   <div class="hdr-t">
-    <h1>ERP Huerta <span>Finca San Jose - Casa Restaurativa</span></h1>
-    <button id="syncBtn" class="sync-btn" onclick="sync(true)">Sync</button>
-    <button class="cfg-btn" onclick="goTo('sistema')">&#9881;</button>
+    <h1>🌱 ERP Huerta <small>Finca San José · Casa Restaurativa</small></h1>
+    <button id="sBtn" class="sbtn2" onclick="syncDatos(true)">↻ Sync</button>
+    <button class="gbtn" onclick="ir('sistema')">⚙</button>
   </div>
   <div class="nav"><div class="nav-i">
-    <button class="nb on"  onclick="goTo('panel')">Panel</button>
-    <button class="nb"     onclick="goTo('form')">Registrar</button>
-    <button class="nb"     onclick="goTo('camas')">Camas</button>
-    <button class="nb"     onclick="goTo('equipo')">Equipo</button>
-    <button class="nb"     onclick="goTo('historial')">Historial</button>
+    <button class="nb on"  onclick="ir('panel')">PANEL</button>
+    <button class="nb"     onclick="ir('form')">REGISTRAR</button>
+    <button class="nb"     onclick="ir('camas')">CAMAS</button>
+    <button class="nb"     onclick="ir('equipo')">EQUIPO</button>
+    <button class="nb"     onclick="ir('historial')">HISTORIAL</button>
   </div></div>
 </header>
 <div id="toast" class="toast"></div>
 <main class="wrap">
 
+<!-- PANEL -->
 <div id="v-panel" class="view on">
-  <div style="padding:14px 0 10px">
+  <div style="padding:13px 0 10px">
     <div id="saludo" style="font-size:20px;font-weight:700"></div>
-    <div id="fechaTxt" style="font-size:12px;color:var(--txt3);margin-top:2px"></div>
-    <div id="syncSt" style="font-size:11px;color:var(--txt3);margin-top:2px"></div>
+    <div id="fechaTxt" style="font-size:12px;color:var(--t3);margin-top:2px"></div>
+    <div id="syncSt"   style="font-size:11px;color:var(--t3);margin-top:2px"></div>
   </div>
-  <div class="kpi-row">
-    <div class="kpi g"><div class="kpi-l">Camas Activas</div><div class="kpi-v" id="kA">-</div><div class="kpi-s">de <span id="kT">-</span> totales</div></div>
-    <div class="kpi a"><div class="kpi-l">Listas Cosechar</div><div class="kpi-v" id="kC">-</div><div class="kpi-s">requieren accion</div></div>
-    <div class="kpi r"><div class="kpi-l">Camas Vacias</div><div class="kpi-v" id="kV">-</div><div class="kpi-s">disponibles</div></div>
-    <div class="kpi b"><div class="kpi-l">Equipo</div><div class="kpi-v" id="kE">-</div><div class="kpi-s">participantes</div></div>
+  <div class="kgrid">
+    <div class="kpi kg"><div class="kl">Camas Activas</div><div class="kv" id="kA">-</div><div class="ks">de <span id="kT">-</span> totales</div></div>
+    <div class="kpi ka"><div class="kl">Listas Cosechar</div><div class="kv" id="kC">-</div><div class="ks">accion requerida</div></div>
+    <div class="kpi kr"><div class="kl">Camas Vacias</div><div class="kv" id="kV">-</div><div class="ks">disponibles</div></div>
+    <div class="kpi kb"><div class="kl">Equipo</div><div class="kv" id="kE">-</div><div class="ks">participantes</div></div>
   </div>
-  <div class="sec">Alertas <span class="sec-a" onclick="goTo('camas')">Ver camas</span></div>
-  <div id="alertas"></div>
-  <div class="sec">Proximas Cosechas</div>
-  <div id="timeline"></div>
-  <div class="sec">Cultivos en Produccion</div>
-  <div class="chart-card" id="cultChart"></div>
-  <div class="sec">Stock Insumos</div>
-  <div id="stockList"></div>
+  <div class="sec">⚠ Alertas</div><div id="alertas"></div>
+  <div class="sec">🗓 Proximas Cosechas</div><div id="timeline"></div>
+  <div class="sec">📊 Cultivos en Produccion</div><div class="chard" id="chart"></div>
+  <div class="sec">📦 Inventario</div><div id="stock"></div>
 </div>
 
+<!-- FORM -->
 <div id="v-form" class="view">
-  <div class="mod-pick" style="margin-top:12px">
-    <button class="mpk on"  onclick="setMod('bit',this)"><span>&#128203;</span>Bitacora<br>Diaria</button>
-    <button class="mpk"     onclick="setMod('gest',this)"><span>&#128101;</span>Gestion<br>Humana</button>
-    <button class="mpk"     onclick="setMod('riego',this)"><span>&#128167;</span>Riego y<br>Fumig.</button>
-    <button class="mpk"     onclick="setMod('cos',this)"><span>&#129346;</span>Cosechas</button>
-    <button class="mpk"     onclick="setMod('ins',this)"><span>&#128230;</span>Insumos</button>
+  <div class="mpick" style="margin-top:12px">
+    <button class="mpk on"  onclick="setMod('bit',this)"><em>📋</em>Bitacora<br>Diaria</button>
+    <button class="mpk"     onclick="setMod('gest',this)"><em>👥</em>Gestion<br>Humana</button>
+    <button class="mpk"     onclick="setMod('riego',this)"><em>💧</em>Riego y<br>Fumig.</button>
+    <button class="mpk"     onclick="setMod('cos',this)"><em>🧺</em>Cosechas</button>
+    <button class="mpk"     onclick="setMod('ins',this)"><em>📦</em>Insumos</button>
   </div>
-  <div class="date-row"><label>Fecha</label><input type="date" id="fFecha"></div>
-  <form id="erpForm" onsubmit="enviar(event)">
+  <div class="drow"><label>📅 Fecha</label><input type="date" id="fFecha"></div>
+  <form id="frm" onsubmit="enviar(event)">
 
-    <div id="fm-bit" class="fmod on"><div class="fcard">
-      <div class="fcard-ttl">Bitacora Diaria</div>
-      <div class="row2">
-        <div class="fld"><label>Cama ID *</label><select name="camaId" id="sCB" onchange="onCama(this,'aBH','aBC','aBO')"></select></div>
-        <div class="fld"><label>Huerta</label><input id="aBH" name="huerta" class="af" readonly placeholder="Auto"></div>
+    <!-- BITACORA -->
+    <div id="fm-bit" class="fmod on"><div class="fc">
+      <div class="ft">📋 Bitacora Diaria</div>
+      <div class="r2">
+        <div class="fl"><label>Cama *</label>
+          <select name="camaId" id="sCB" onchange="onCama(this,'aBH','aBC','aBO')">
+            <option value="">Seleccionar...</option></select></div>
+        <div class="fl"><label>Huerta</label>
+          <input id="aBH" name="huerta" class="af" readonly placeholder="Auto"></div>
       </div>
-      <div class="fld"><label>Cultivo</label><input id="aBC" name="cultivo" class="af" readonly placeholder="Elige cama"></div>
-      <div class="row2">
-        <div class="fld"><label>Tipo Origen</label><input id="aBO" name="origen" class="af" readonly placeholder="Auto"></div>
-        <div class="fld"><label>Fase</label><select name="fase" id="selFase"></select></div>
+      <div class="fl"><label>Cultivo</label>
+        <input id="aBC" name="cultivo" class="af" readonly placeholder="Elige cama"></div>
+      <div class="r2">
+        <div class="fl"><label>Tipo Origen</label>
+          <input id="aBO" name="origen" class="af" readonly placeholder="Auto"></div>
+        <div class="fl"><label>Fase</label>
+          <select name="fase" id="sFase"><option value="">...</option></select></div>
       </div>
-      <div class="row2">
-        <div class="fld"><label>Estado Fitosanitario</label><select name="estadoFitosan" id="selEF"></select></div>
-        <div class="fld"><label>Humedad Suelo</label>
+      <div class="r2">
+        <div class="fl"><label>Estado Fitosan.</label>
+          <select name="estadoFitosan" id="sEF"><option value="">...</option></select></div>
+        <div class="fl"><label>Humedad Suelo</label>
           <select name="humedad">
             <option value="Optima">Optima</option>
             <option value="Seco">Seco</option>
-            <option value="Saturado">Saturado</option>
-          </select></div>
+            <option value="Saturado">Saturado</option></select></div>
       </div>
-      <div class="row2">
-        <div class="fld"><label>% Avance</label><input type="number" name="avance" min="0" max="100" placeholder="0-100"></div>
-        <div class="fld"><label>Altura (cm)</label><input type="number" name="altura" step="0.1" placeholder="cm"></div>
+      <div class="r2">
+        <div class="fl"><label>% Avance</label>
+          <input type="number" name="avance" min="0" max="100" placeholder="0-100"></div>
+        <div class="fl"><label>Altura (cm)</label>
+          <input type="number" name="altura" step="0.1" placeholder="cm"></div>
       </div>
-      <div class="fld"><label>Accion Realizada</label><select name="accion" id="selAcc"></select></div>
-      <div class="fld"><label>Responsable *</label><select name="responsable" id="selRB"></select></div>
-      <div class="fld"><label>Alerta (si hay)</label><input type="text" name="alerta" placeholder="Ej: Babosas, plaga detectada"></div>
+      <div class="fl"><label>Accion Realizada</label>
+        <select name="accion" id="sAcc"><option value="">Seleccionar...</option></select></div>
+      <div class="fl"><label>Responsable *</label>
+        <select name="responsable" id="sRB"><option value="">Seleccionar...</option></select></div>
+      <div class="fl"><label>Alerta (si hay)</label>
+        <input type="text" name="alerta" placeholder="Ej: Babosas, plaga detectada"></div>
     </div></div>
 
-    <div id="fm-gest" class="fmod"><div class="fcard">
-      <div class="fcard-ttl">Gestion Humana</div>
-      <div class="fld"><label>Participante *</label><select name="joven" id="selJ" onchange="onJoven(this)"></select></div>
-      <div class="fld"><label>Asistencia</label>
-        <select name="asistencia" id="sAsist" onchange="toggleAsist()">
+    <!-- GESTION HUMANA -->
+    <div id="fm-gest" class="fmod"><div class="fc">
+      <div class="ft">👥 Gestion Humana</div>
+      <div class="fl"><label>Participante *</label>
+        <select name="joven" id="sJ" onchange="onJoven(this)"><option value="">Seleccionar...</option></select></div>
+      <div class="fl"><label>Asistencia</label>
+        <select name="asistencia" id="sAst" onchange="togAst()">
           <option value="Presente">Presente</option>
-          <option value="Ausente">Ausente</option>
-        </select></div>
-      <div id="camposP">
-        <div class="fld"><label>Ultimo registro</label><input id="aJU" class="af" readonly placeholder="Sin registros previos"></div>
-        <div class="row2">
-          <div class="fld"><label>Cama Asignada</label><select name="camaAsignada" id="selCGH"></select></div>
-          <div class="fld"><label>Desempeno (1-5)</label>
+          <option value="Ausente">Ausente</option></select></div>
+      <div id="camP">
+        <div class="fl"><label>Ultimo registro</label>
+          <input id="aJU" class="af" readonly placeholder="Sin registros previos"></div>
+        <div class="r2">
+          <div class="fl"><label>Cama Asignada</label>
+            <select name="camaAsignada" id="sCGH"><option value="">Ninguna</option></select></div>
+          <div class="fl"><label>Desempeno (1-5)</label>
             <select name="actitud">
-              <option value="1">1 Muy bajo</option><option value="2">2 Bajo</option>
-              <option value="3" selected>3 Regular</option><option value="4">4 Bueno</option>
-              <option value="5">5 Excelente</option>
-            </select></div>
+              <option value="1">1 Muy bajo</option>
+              <option value="2">2 Bajo</option>
+              <option value="3" selected>3 Regular</option>
+              <option value="4">4 Bueno</option>
+              <option value="5">5 Excelente</option></select></div>
         </div>
-        <div class="fld"><label>Tarea Asignada</label><input type="text" name="tarea" placeholder="Ej: Siembra maiz, deshierbe"></div>
-        <div class="row2">
-          <div class="fld"><label>Herramienta</label><input type="text" name="herramienta" placeholder="Ej: Pala, Rastrillo"></div>
-          <div class="fld"><label>Estado Herramienta</label>
+        <div class="fl"><label>Tarea Asignada</label>
+          <input type="text" name="tarea" placeholder="Ej: Siembra maiz, deshierbe"></div>
+        <div class="r2">
+          <div class="fl"><label>Herramienta</label>
+            <input type="text" name="herramienta" placeholder="Ej: Pala"></div>
+          <div class="fl"><label>Estado Herr.</label>
             <select name="estadoHerr">
               <option value="Buen Estado">Buen Estado</option>
-              <option value="Danada">Danada</option>
-            </select></div>
+              <option value="Danada">Danada</option></select></div>
         </div>
-        <div class="fld"><label>Insumo Entregado</label><input type="text" name="insumoGH" placeholder="Ej: 2kg Compost"></div>
+        <div class="fl"><label>Insumo Entregado</label>
+          <input type="text" name="insumoGH" placeholder="Ej: 2kg Compost"></div>
       </div>
-      <div class="fld"><label>Motivo Ausencia</label><input type="text" name="motivoAusencia" id="motAus" style="display:none" placeholder="Si aplica"></div>
+      <div class="fl"><label>Motivo Ausencia</label>
+        <input type="text" name="motivoAusencia" id="motAus" style="display:none" placeholder="Si aplica"></div>
     </div></div>
 
-    <div id="fm-riego" class="fmod"><div class="fcard">
-      <div class="fcard-ttl">Riego y Fumigacion</div>
-      <div class="fld"><label>Tipo Operacion</label>
+    <!-- RIEGO -->
+    <div id="fm-riego" class="fmod"><div class="fc">
+      <div class="ft">💧 Riego y Fumigacion</div>
+      <div class="fl"><label>Tipo Operacion</label>
         <select name="tipoOperacion">
           <option value="Riego">Riego</option>
           <option value="Fumigacion Organica">Fumigacion Organica</option>
           <option value="Fertilizacion">Fertilizacion</option>
-          <option value="Control preventivo">Control Preventivo</option>
-        </select></div>
-      <div class="row2">
-        <div class="fld"><label>Huerta</label>
-          <select name="huertaRiego" id="selHR" onchange="filtrarCamasR()">
+          <option value="Control preventivo">Control preventivo</option></select></div>
+      <div class="r2">
+        <div class="fl"><label>Huerta</label>
+          <select name="huertaRiego" id="sHR" onchange="filtCamasR()">
             <option value="">Todas</option>
             <option value="H1">H1</option><option value="H2">H2</option>
-            <option value="H3">H3</option><option value="H4">H4</option><option value="H5">H5</option>
-          </select></div>
-        <div class="fld"><label>Cama</label><select name="camaIdRiego" id="selCR" onchange="onCamaR()"><option value="General">General</option></select></div>
+            <option value="H3">H3</option><option value="H4">H4</option>
+            <option value="H5">H5</option></select></div>
+        <div class="fl"><label>Cama</label>
+          <select name="camaIdRiego" id="sCR" onchange="onCamaR()">
+            <option value="General">General</option></select></div>
       </div>
-      <div class="fld"><label>Cultivo</label><input id="aRC" name="cultivoRiego" class="af" readonly placeholder="Auto al elegir cama"></div>
-      <div class="fld"><label>Responsable *</label><select name="responsableRiego" id="selRR"></select></div>
-      <div class="fld"><label>Producto / Metodo</label><input type="text" name="producto" placeholder="Ej: Agua lluvia, Purin de ortiga"></div>
-      <div class="row3">
-        <div class="fld"><label>Cantidad</label><input type="number" step="0.01" name="cantidad" placeholder="Numero"></div>
-        <div class="fld"><label>Unidad</label><input type="text" name="unidad" placeholder="L, cc..."></div>
+      <div class="fl"><label>Cultivo</label>
+        <input id="aRC" name="cultivoRiego" class="af" readonly placeholder="Auto al elegir cama"></div>
+      <div class="fl"><label>Responsable *</label>
+        <select name="responsableRiego" id="sRR"><option value="">Seleccionar...</option></select></div>
+      <div class="fl"><label>Producto / Metodo</label>
+        <input type="text" name="producto" placeholder="Ej: Agua lluvia, Neem"></div>
+      <div class="r3">
+        <div class="fl"><label>Cantidad</label>
+          <input type="number" step="0.01" name="cantidad" placeholder="Numero"></div>
+        <div class="fl"><label>Unidad</label>
+          <input type="text" name="unidad" placeholder="L, cc..."></div>
       </div>
-      <div class="row2">
-        <div class="fld"><label>Tiempo (min)</label><input type="number" name="tiempo" placeholder="Duracion"></div>
-        <div class="fld"><label>Cobertura</label><input type="text" name="cobertura" placeholder="Total, Foliar..."></div>
+      <div class="r2">
+        <div class="fl"><label>Tiempo (min)</label>
+          <input type="number" name="tiempo" placeholder="Duracion"></div>
+        <div class="fl"><label>Cobertura</label>
+          <input type="text" name="cobertura" placeholder="Total, Foliar..."></div>
       </div>
     </div></div>
 
-    <div id="fm-cos" class="fmod"><div class="fcard">
-      <div class="fcard-ttl">Registro de Cosecha</div>
-      <div class="row2">
-        <div class="fld"><label>Cama *</label><select name="camaIdCosecha" id="sCC" onchange="onCama(this,'aCH','aCCu',null)"></select></div>
-        <div class="fld"><label>Huerta</label><input id="aCH" name="huertaCosecha" class="af" readonly placeholder="Auto"></div>
+    <!-- COSECHAS -->
+    <div id="fm-cos" class="fmod"><div class="fc">
+      <div class="ft">🧺 Registro de Cosecha</div>
+      <div class="r2">
+        <div class="fl"><label>Cama *</label>
+          <select name="camaIdCosecha" id="sCC" onchange="onCama(this,'aCH','aCCu',null)">
+            <option value="">Seleccionar...</option></select></div>
+        <div class="fl"><label>Huerta</label>
+          <input id="aCH" name="huertaCosecha" class="af" readonly placeholder="Auto"></div>
       </div>
-      <div class="fld"><label>Cultivo</label><input id="aCCu" name="cultivoCosecha" class="af" readonly placeholder="Elige cama"></div>
-      <div class="row3">
-        <div class="fld"><label>Cantidad Total *</label><input type="number" step="0.01" name="cantidadCosecha" placeholder="Ej: 2.5"></div>
-        <div class="fld"><label>Unidad</label>
+      <div class="fl"><label>Cultivo</label>
+        <input id="aCCu" name="cultivoCosecha" class="af" readonly placeholder="Elige cama"></div>
+      <div class="r3">
+        <div class="fl"><label>Cantidad Total *</label>
+          <input type="number" step="0.01" name="cantidadCosecha" placeholder="Ej: 2.5"></div>
+        <div class="fl"><label>Unidad</label>
           <select name="unidadCosecha">
-            <option>Kg</option><option>gr</option><option>Atados</option><option>Unidades</option><option>L</option>
-          </select></div>
+            <option>Kg</option><option>gr</option><option>Atados</option>
+            <option>Unidades</option><option>L</option></select></div>
       </div>
-      <div class="row2">
-        <div class="fld"><label>Destino</label><select name="destino" id="selDest"></select></div>
-        <div class="fld"><label>Calidad</label>
+      <div class="r2">
+        <div class="fl"><label>Destino</label>
+          <select name="destino" id="sDest"><option value="">Seleccionar...</option></select></div>
+        <div class="fl"><label>Calidad</label>
           <select name="calidad">
             <option value="Buena">Buena</option>
             <option value="Regular">Regular</option>
-            <option value="Rechazo">Rechazo</option>
-          </select></div>
+            <option value="Rechazo">Rechazo</option></select></div>
       </div>
-      <div class="fld"><label>Responsable</label><select name="responsableCosecha" id="selRC"></select></div>
+      <div class="fl"><label>Responsable</label>
+        <select name="responsableCosecha" id="sRC"><option value="">Seleccionar...</option></select></div>
     </div></div>
 
-    <div id="fm-ins" class="fmod"><div class="fcard">
-      <div class="fcard-ttl">Control de Insumos</div>
-      <div class="fld"><label>Insumo *</label><select name="insumo" id="selIns" onchange="onInsumo(this)"></select></div>
-      <div class="row2">
-        <div class="fld"><label>Categoria</label><input id="aIC" name="tipoInsumo" class="af" readonly placeholder="Auto"></div>
-        <div class="fld"><label>Stock Actual</label><input id="aIS" class="af" readonly placeholder="Auto"></div>
+    <!-- INSUMOS -->
+    <div id="fm-ins" class="fmod"><div class="fc">
+      <div class="ft">📦 Control de Insumos</div>
+      <div class="fl"><label>Insumo *</label>
+        <select name="insumo" id="sIns" onchange="onIns(this)">
+          <option value="">Seleccionar...</option></select></div>
+      <div class="r2">
+        <div class="fl"><label>Tipo</label>
+          <input id="aIC" name="tipoInsumo" class="af" readonly placeholder="Auto"></div>
+        <div class="fl"><label>Stock Actual</label>
+          <input id="aIS" class="af" readonly placeholder="Auto"></div>
       </div>
-      <div class="row2">
-        <div class="fld"><label>Precio Unitario</label><input id="aIP" name="precio" class="af" readonly placeholder="Auto"></div>
-        <div class="fld"><label>Unidad</label><input id="aIU" name="unidadInsumo" class="af" readonly placeholder="Auto"></div>
+      <div class="r2">
+        <div class="fl"><label>Precio ($)</label>
+          <input id="aIP" name="precio" class="af" readonly placeholder="Auto"></div>
+        <div class="fl"><label>Unidad</label>
+          <input id="aIU" name="unidad" class="af" readonly placeholder="Auto"></div>
       </div>
-      <div class="fld"><label>Proveedor / Origen</label><input type="text" name="proveedor" placeholder="Ej: Ferreteria local"></div>
-      <div class="row2">
-        <div class="fld in-p"><label style="color:var(--g2)">ENTRADA (+)</label>
+      <div class="fl"><label>Proveedor / Origen</label>
+        <input type="text" name="proveedor" placeholder="De donde vino"></div>
+      <div class="r2">
+        <div class="fl inp"><label style="color:var(--g2);font-size:11px;font-weight:700;margin-bottom:4px">+ ENTRADA</label>
           <input type="number" step="0.01" name="cantEntrada" placeholder="Cantidad que entra" style="background:#fff"></div>
-        <div class="fld in-m"><label style="color:var(--rd)">SALIDA (-)</label>
+        <div class="fl sal"><label style="color:var(--rd);font-size:11px;font-weight:700;margin-bottom:4px">- SALIDA</label>
           <input type="number" step="0.01" name="cantSalida" placeholder="Cantidad usada" style="background:#fff"></div>
       </div>
     </div></div>
 
-    <div class="fcard">
-      <div class="fld">
-        <label>Observaciones</label>
-        <textarea id="obs" name="observaciones" rows="3" placeholder="Notas importantes de la jornada..."></textarea>
-      </div>
-    </div>
-    <button type="submit" id="sbtn" class="sbtn">Registrar en Sistema</button>
+    <div class="fc"><div class="fl">
+      <label>Observaciones</label>
+      <textarea id="obs" name="observaciones" rows="3" placeholder="Notas de la jornada..."></textarea>
+    </div></div>
+    <button type="submit" id="rsbtn" class="rsbtn">📤 Registrar en Sistema</button>
   </form>
 </div>
 
+<!-- CAMAS -->
 <div id="v-camas" class="view">
-  <div class="sec" style="margin-top:12px">Estado por Huerta</div>
+  <div class="sec" style="margin-top:12px">Mapa de Camas</div>
   <div id="camaBlocks"></div>
 </div>
 
+<!-- EQUIPO -->
 <div id="v-equipo" class="view">
   <div class="sec" style="margin-top:12px">Equipo</div>
-  <div class="eq-grid" id="equipoGrid"></div>
+  <div class="egrid" id="eqGrid"></div>
 </div>
 
+<!-- HISTORIAL -->
 <div id="v-historial" class="view">
   <div class="sec" style="margin-top:12px">Registros de esta sesion</div>
-  <div id="histList"><div class="empty">Aun no hay registros. Usa el formulario para empezar.</div></div>
+  <div id="hList"><div class="emp">Sin registros todavia.</div></div>
 </div>
 
+<!-- SISTEMA -->
 <div id="v-sistema" class="view">
   <div class="sec" style="margin-top:12px">Configuracion</div>
-  <div class="sys-card">
+  <div class="sc">
     <h3>Conexion Google Sheets</h3>
-    <div class="conn-box"><div id="cDot" class="cdot off"></div><span id="cTxt" style="font-size:13px;font-weight:500">Sin verificar</span></div>
-    <label style="font-size:11px;font-weight:600;color:var(--txt2);display:block;margin-bottom:5px">URL del Apps Script:</label>
-    <input id="urlIn" type="url" class="url-in" placeholder="https://script.google.com/macros/s/.../exec">
-    <button class="tbtn" onclick="probar()">Probar Conexion</button>
-    <button class="tbtn" onclick="sync(true)">Recargar Datos desde Sheets</button>
+    <div class="cbox"><div id="cDot" class="cdot off"></div>
+      <span id="cTxt" style="font-size:13px;font-weight:500">Sin verificar</span></div>
+    <label style="font-size:11px;font-weight:600;color:var(--t2);display:block;margin-bottom:5px">URL del Apps Script:</label>
+    <input id="urlIn" type="url" class="urlin" placeholder="https://script.google.com/macros/s/.../exec">
+    <button class="abtn" onclick="probar()">Probar Conexion</button>
+    <button class="abtn" onclick="syncDatos(true)">Recargar Datos desde Sheets</button>
   </div>
-  <div class="sys-card">
-    <h3>Pasos para conectar</h3>
-    <div class="step"><strong>1 - Abrir editor</strong><p>Google Sheets - Extensiones - Apps Script</p></div>
-    <div class="step"><strong>2 - Pegar el script</strong><p>Borra todo y pega el contenido de apps_script_v16.gs</p></div>
-    <div class="step"><strong>3 - Implementar</strong><p>Implementar - Nueva implementacion - Aplicacion web. Ejecutar como: Yo. Acceso: Cualquier persona</p></div>
-    <div class="step"><strong>4 - Pegar URL</strong><p>Copia la URL, pegala arriba y toca Probar Conexion</p></div>
-    <div class="step"><strong>5 - Actualizar script</strong><p>Implementar - Administrar - Editar - Nueva version</p></div>
+  <div class="sc">
+    <h3>Como conectar</h3>
+    <div class="step"><b>1. Abrir editor</b><p>Google Sheets → <code>Extensiones → Apps Script</code></p></div>
+    <div class="step"><b>2. Pegar el script</b><p>Borrar todo y pegar el archivo <code>apps_script_v17.gs</code></p></div>
+    <div class="step"><b>3. Guardar e implementar</b><p><code>Ctrl+S</code> → <code>Implementar → Nueva implementacion → Aplicacion web</code><br>Ejecutar como: <b>Yo</b> · Acceso: <b>Cualquier persona</b></p></div>
+    <div class="step"><b>4. Copiar URL</b><p>Pegar la URL /exec arriba → Probar Conexion → debe decir V17</p></div>
+    <div class="step"><b>5. Actualizar script</b><p><code>Implementar → Administrar → Editar → Nueva version → Implementar</code></p></div>
   </div>
-  <div class="sys-card"><h3>Estado</h3><div id="sysInfo" style="font-size:13px;color:var(--txt2);line-height:1.9"></div></div>
+  <div class="sc"><h3>Estado del Sistema</h3>
+    <div id="sysInfo" style="font-size:13px;color:var(--t2);line-height:1.9"></div></div>
 </div>
 
 </main>
 <script>
-// ---- DATOS BASE DEL V6 (139 camas reales + H4/H5 confirmados) ----
-var CAMAS_BASE = [
-  {id:"H1-C01",h:"H1",n:1,c:"Arracacha",o:"Plantula propia",fs:"2026-05-04",e:"Sembrada"},
-  {id:"H1-C02",h:"H1",n:2,c:"Arracacha y ajo",o:"Plantula propia",fs:"",e:"Cosechada"},
+// ── DATOS REALES del Excel V6 ──
+const CAMAS_BASE = [
+{id:"H1-C01",h:"H1",n:1,c:"Arracacha",o:"Plántula propia",fs:"",e:"Sembrada"},
+  {id:"H1-C02",h:"H1",n:2,c:"Arracacha  y ajo",o:"Plántula propia",fs:"",e:"Cosechada"},
   {id:"H1-C03",h:"H1",n:3,c:"Ajo",o:"Semilla",fs:"",e:"En crecimiento"},
   {id:"H1-C04",h:"H1",n:4,c:"Cebolla larga y ajo",o:"Trasplante",fs:"",e:"En crecimiento"},
   {id:"H1-C05",h:"H1",n:5,c:"Cebolla larga",o:"Trasplante",fs:"",e:"En crecimiento"},
   {id:"H1-C06",h:"H1",n:6,c:"Cebolla larga",o:"Trasplante",fs:"",e:"En crecimiento"},
   {id:"H1-C07",h:"H1",n:7,c:"Cebolla larga",o:"Trasplante",fs:"",e:"En crecimiento"},
   {id:"H1-C08",h:"H1",n:8,c:"Cebolla larga",o:"Trasplante",fs:"",e:"En crecimiento"},
-  {id:"H1-C09",h:"H1",n:9,c:"Cebolla larga",o:"Plantula comprada",fs:"",e:"En crecimiento"},
-  {id:"H1-C10",h:"H1",n:10,c:"Cebolla larga",o:"Plantula comprada",fs:"",e:"Cosechada"},
+  {id:"H1-C09",h:"H1",n:9,c:"Cebolla larga",o:"Plántula comprada",fs:"",e:"En crecimiento"},
+  {id:"H1-C10",h:"H1",n:10,c:"Cebolla larga",o:"Plántula comprada",fs:"",e:"Cosechada"},
   {id:"H1-C11",h:"H1",n:11,c:"",o:"",fs:"",e:"Vacía"},
   {id:"H1-C12",h:"H1",n:12,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H1-C13",h:"H1",n:13,c:"Mostaza",o:"Plantula comprada",fs:"",e:"Lista para cosechar"},
-  {id:"H1-C14",h:"H1",n:14,c:"Aji peruano",o:"Plantula comprada",fs:"",e:"En crecimiento"},
-  {id:"H1-C15",h:"H1",n:15,c:"Espinaca",o:"Plantula comprada",fs:"",e:"Cosechada"},
+  {id:"H1-C13",h:"H1",n:13,c:"Mostaza",o:"Plántula comprada",fs:"",e:"Lista para cosechar"},
+  {id:"H1-C14",h:"H1",n:14,c:"Ají peruano",o:"Plántula comprada",fs:"",e:"En crecimiento"},
+  {id:"H1-C15",h:"H1",n:15,c:"Espinaca",o:"Plántula comprada",fs:"",e:"Cosechada"},
   {id:"H1-C16",h:"H1",n:16,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H1-C17",h:"H1",n:17,c:"Arveja",o:"Plantula comprada",fs:"",e:"Cosechada"},
-  {id:"H1-C18",h:"H1",n:18,c:"Maiz y arveja",o:"Plantula comprada",fs:"",e:"En crecimiento"},
+  {id:"H1-C17",h:"H1",n:17,c:"Arveja",o:"Plántula comprada",fs:"",e:"Cosechada"},
+  {id:"H1-C18",h:"H1",n:18,c:"Maíz y arveja",o:"Plántula comprada",fs:"",e:"En crecimiento"},
   {id:"H1-C19",h:"H1",n:19,c:"Perejil",o:"",fs:"",e:"Lista para cosechar"},
   {id:"H1-C20",h:"H1",n:20,c:"Cebolla larga y tomillo",o:"",fs:"",e:"En crecimiento"},
   {id:"H1-C21",h:"H1",n:21,c:"Tomillo",o:"",fs:"",e:"En crecimiento"},
   {id:"H1-C22",h:"H1",n:22,c:"Arveja",o:"",fs:"",e:"En crecimiento"},
   {id:"H1-C23",h:"H1",n:23,c:"Coliflor",o:"",fs:"",e:"Cosechada"},
-  {id:"H1-C24",h:"H1",n:24,c:"Auyama",o:"",fs:"",e:"En crecimiento"},
-  {id:"H1-C25",h:"H1",n:25,c:"Pimenton",o:"",fs:"",e:"En crecimiento"},
+  {id:"H1-C24",h:"H1",n:24,c:"Auyamin",o:"",fs:"",e:"En crecimiento"},
+  {id:"H1-C25",h:"H1",n:25,c:"Pimentón",o:"",fs:"",e:"En crecimiento"},
   {id:"H1-C26",h:"H1",n:26,c:"",o:"",fs:"",e:"Vacía"},
   {id:"H1-C27",h:"H1",n:27,c:"Platano",o:"",fs:"",e:"En crecimiento"},
   {id:"H1-C28",h:"H1",n:28,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H1-C29",h:"H1",n:29,c:"Maiz",o:"",fs:"",e:"En crecimiento"},
+  {id:"H1-C29",h:"H1",n:29,c:"Maíz",o:"",fs:"",e:"En crecimiento"},
   {id:"H1-C30",h:"H1",n:30,c:"Arveja",o:"",fs:"",e:"En crecimiento"},
-  {id:"H1-C31",h:"H1",n:31,c:"Maiz y limoncillo",o:"",fs:"",e:"En crecimiento"},
+  {id:"H1-C31",h:"H1",n:31,c:"Maíz y limoncillo",o:"",fs:"",e:"En crecimiento"},
   {id:"H1-C32",h:"H1",n:32,c:"Maiz",o:"",fs:"",e:"En crecimiento"},
   {id:"H1-C33",h:"H1",n:33,c:"Maiz",o:"",fs:"",e:"En crecimiento"},
-  {id:"H1-C34",h:"H1",n:34,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H1-C35",h:"H1",n:35,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H1-C36",h:"H1",n:36,c:"Auyama",o:"",fs:"",e:"En crecimiento"},
-  {id:"H1-C37",h:"H1",n:37,c:"Brocoli",o:"",fs:"",e:"En crecimiento"},
+  {id:"H1-C34",h:"H1",n:34,c:"Repollo",o:"",fs:"",e:"Vacía"},
+  {id:"H1-C35",h:"H1",n:35,c:"Acelga",o:"",fs:"",e:"Vacía"},
+  {id:"H1-C36",h:"H1",n:36,c:"Auyamin",o:"",fs:"",e:"En crecimiento"},
+  {id:"H1-C37",h:"H1",n:37,c:"Brócoli",o:"",fs:"",e:"En crecimiento"},
   {id:"H1-C38",h:"H1",n:38,c:"Lulo",o:"",fs:"",e:"En crecimiento"},
   {id:"H1-C39",h:"H1",n:39,c:"Ruda",o:"",fs:"",e:"En crecimiento"},
   {id:"H1-C40",h:"H1",n:40,c:"Romero",o:"",fs:"",e:"En crecimiento"},
-  {id:"H1-C41",h:"H1",n:41,c:"Platano",o:"",fs:"",e:"En crecimiento"},
+  {id:"H1-C41",h:"H1",n:41,c:"Plátano",o:"",fs:"",e:"En crecimiento"},
   {id:"H1-C42",h:"H1",n:42,c:"Arveja",o:"",fs:"",e:"En crecimiento"},
   {id:"H1-C43",h:"H1",n:43,c:"Arveja",o:"",fs:"",e:"En crecimiento"},
   {id:"H1-C44",h:"H1",n:44,c:"",o:"",fs:"",e:"Vacía"},
@@ -443,23 +556,39 @@ var CAMAS_BASE = [
   {id:"H1-C57",h:"H1",n:57,c:"Chile",o:"",fs:"",e:"En crecimiento"},
   {id:"H1-C58",h:"H1",n:58,c:"",o:"",fs:"",e:"Vacía"},
   {id:"H1-C59",h:"H1",n:59,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H2-C01",h:"H2",n:1,c:"",o:"",fs:"",e:"Vacía"},{id:"H2-C02",h:"H2",n:2,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H2-C03",h:"H2",n:3,c:"",o:"",fs:"",e:"Vacía"},{id:"H2-C04",h:"H2",n:4,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H2-C05",h:"H2",n:5,c:"",o:"",fs:"",e:"Vacía"},{id:"H2-C06",h:"H2",n:6,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H2-C07",h:"H2",n:7,c:"",o:"",fs:"",e:"Vacía"},{id:"H2-C08",h:"H2",n:8,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H2-C09",h:"H2",n:9,c:"",o:"",fs:"",e:"Vacía"},{id:"H2-C10",h:"H2",n:10,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H2-C11",h:"H2",n:11,c:"",o:"",fs:"",e:"Vacía"},{id:"H2-C12",h:"H2",n:12,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H2-C13",h:"H2",n:13,c:"",o:"",fs:"",e:"Vacía"},{id:"H2-C14",h:"H2",n:14,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H2-C15",h:"H2",n:15,c:"",o:"",fs:"",e:"Vacía"},{id:"H2-C16",h:"H2",n:16,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H2-C17",h:"H2",n:17,c:"",o:"",fs:"",e:"Vacía"},{id:"H2-C18",h:"H2",n:18,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H2-C19",h:"H2",n:19,c:"",o:"",fs:"",e:"Vacía"},{id:"H2-C20",h:"H2",n:20,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H2-C21",h:"H2",n:21,c:"",o:"",fs:"",e:"Vacía"},{id:"H2-C22",h:"H2",n:22,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H2-C23",h:"H2",n:23,c:"",o:"",fs:"",e:"Vacía"},{id:"H2-C24",h:"H2",n:24,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H2-C25",h:"H2",n:25,c:"",o:"",fs:"",e:"Vacía"},{id:"H2-C26",h:"H2",n:26,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H2-C27",h:"H2",n:27,c:"",o:"",fs:"",e:"Vacía"},{id:"H2-C28",h:"H2",n:28,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H2-C29",h:"H2",n:29,c:"",o:"",fs:"",e:"Vacía"},{id:"H2-C30",h:"H2",n:30,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H2-C01",h:"H2",n:1,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H2-C02",h:"H2",n:2,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H2-C03",h:"H2",n:3,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H2-C04",h:"H2",n:4,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H2-C05",h:"H2",n:5,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H2-C06",h:"H2",n:6,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H2-C07",h:"H2",n:7,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H2-C08",h:"H2",n:8,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H2-C09",h:"H2",n:9,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H2-C10",h:"H2",n:10,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H2-C11",h:"H2",n:11,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H2-C12",h:"H2",n:12,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H2-C13",h:"H2",n:13,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H2-C14",h:"H2",n:14,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H2-C15",h:"H2",n:15,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H2-C16",h:"H2",n:16,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H2-C17",h:"H2",n:17,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H2-C18",h:"H2",n:18,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H2-C19",h:"H2",n:19,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H2-C20",h:"H2",n:20,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H2-C21",h:"H2",n:21,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H2-C22",h:"H2",n:22,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H2-C23",h:"H2",n:23,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H2-C24",h:"H2",n:24,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H2-C25",h:"H2",n:25,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H2-C26",h:"H2",n:26,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H2-C27",h:"H2",n:27,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H2-C28",h:"H2",n:28,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H2-C29",h:"H2",n:29,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H2-C30",h:"H2",n:30,c:"",o:"",fs:"",e:"Vacía"},
   {id:"H3-C01",h:"H3",n:1,c:"Limoncillo",o:"",fs:"",e:"En crecimiento"},
-  {id:"H3-C02",h:"H3",n:2,c:"",o:"",fs:"",e:"Vacía"},{id:"H3-C03",h:"H3",n:3,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H3-C02",h:"H3",n:2,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H3-C03",h:"H3",n:3,c:"",o:"",fs:"",e:"Vacía"},
   {id:"H3-C04",h:"H3",n:4,c:"Lechuga",o:"",fs:"",e:"Lista para cosechar"},
   {id:"H3-C05",h:"H3",n:5,c:"Lechuga",o:"",fs:"",e:"Lista para cosechar"},
   {id:"H3-C06",h:"H3",n:6,c:"Lechuga",o:"",fs:"",e:"En crecimiento"},
@@ -471,215 +600,224 @@ var CAMAS_BASE = [
   {id:"H3-C12",h:"H3",n:12,c:"",o:"",fs:"",e:"Vacía"},
   {id:"H3-C13",h:"H3",n:13,c:"Menta",o:"",fs:"",e:"En crecimiento"},
   {id:"H3-C14",h:"H3",n:14,c:"Menta",o:"",fs:"",e:"En crecimiento"},
-  {id:"H3-C15",h:"H3",n:15,c:"",o:"",fs:"",e:"Vacía"},{id:"H3-C16",h:"H3",n:16,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H3-C17",h:"H3",n:17,c:"",o:"",fs:"",e:"Vacía"},{id:"H3-C18",h:"H3",n:18,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H3-C15",h:"H3",n:15,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H3-C16",h:"H3",n:16,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H3-C17",h:"H3",n:17,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H3-C18",h:"H3",n:18,c:"",o:"",fs:"",e:"Vacía"},
   {id:"H3-C19",h:"H3",n:19,c:"Manzanilla",o:"",fs:"",e:"En crecimiento"},
   {id:"H3-C20",h:"H3",n:20,c:"Col rizada",o:"",fs:"",e:"En crecimiento"},
   {id:"H3-C21",h:"H3",n:21,c:"Col rizada",o:"",fs:"",e:"En crecimiento"},
-  {id:"H3-C22",h:"H3",n:22,c:"",o:"",fs:"",e:"Vacía"},{id:"H3-C23",h:"H3",n:23,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H3-C24",h:"H3",n:24,c:"",o:"",fs:"",e:"Vacía"},{id:"H3-C25",h:"H3",n:25,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H3-C22",h:"H3",n:22,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H3-C23",h:"H3",n:23,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H3-C24",h:"H3",n:24,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H3-C25",h:"H3",n:25,c:"",o:"",fs:"",e:"Vacía"},
   {id:"H3-C26",h:"H3",n:26,c:"",o:"",fs:"",e:"Vacía"},
   {id:"H3-C27",h:"H3",n:27,c:"Menta",o:"",fs:"",e:"En crecimiento"},
-  {id:"H3-C28",h:"H3",n:28,c:"",o:"",fs:"",e:"Vacía"},{id:"H3-C29",h:"H3",n:29,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H3-C30",h:"H3",n:30,c:"",o:"",fs:"",e:"Vacía"},{id:"H3-C31",h:"H3",n:31,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H3-C28",h:"H3",n:28,c:"Menta",o:"",fs:"",e:"Vacía"},
+  {id:"H3-C29",h:"H3",n:29,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H3-C30",h:"H3",n:30,c:"No identificada",o:"",fs:"",e:"Vacía"},
+  {id:"H3-C31",h:"H3",n:31,c:"No identificada",o:"",fs:"",e:"Vacía"},
   {id:"H3-C32",h:"H3",n:32,c:"Pasto",o:"",fs:"",e:"En crecimiento"},
   {id:"H3-C33",h:"H3",n:33,c:"Pasto",o:"",fs:"",e:"En crecimiento"},
   {id:"H3-C34",h:"H3",n:34,c:"Pasto",o:"",fs:"",e:"En crecimiento"},
-  {id:"H3-C35",h:"H3",n:35,c:"",o:"",fs:"",e:"Vacía"},{id:"H3-C36",h:"H3",n:36,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H3-C37",h:"H3",n:37,c:"",o:"",fs:"",e:"Vacía"},{id:"H3-C38",h:"H3",n:38,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H3-C39",h:"H3",n:39,c:"",o:"",fs:"",e:"Vacía"},{id:"H3-C40",h:"H3",n:40,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H3-C41",h:"H3",n:41,c:"",o:"",fs:"",e:"Vacía"},{id:"H3-C42",h:"H3",n:42,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H3-C43",h:"H3",n:43,c:"",o:"",fs:"",e:"Vacía"},{id:"H3-C44",h:"H3",n:44,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H3-C45",h:"H3",n:45,c:"",o:"",fs:"",e:"Vacía"},{id:"H3-C46",h:"H3",n:46,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H3-C47",h:"H3",n:47,c:"",o:"",fs:"",e:"Vacía"},{id:"H3-C48",h:"H3",n:48,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H3-C49",h:"H3",n:49,c:"",o:"",fs:"",e:"Vacía"},{id:"H3-C50",h:"H3",n:50,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H4-C01",h:"H4",n:1,c:"Maiz",o:"Semilla",fs:"",e:"En crecimiento"},
-  {id:"H4-C02",h:"H4",n:2,c:"Maiz",o:"Semilla",fs:"",e:"En crecimiento"},
-  {id:"H4-C03",h:"H4",n:3,c:"Maiz",o:"Semilla",fs:"",e:"En crecimiento"},
-  {id:"H4-C04",h:"H4",n:4,c:"Maiz",o:"Semilla",fs:"",e:"En crecimiento"},
-  {id:"H4-C05",h:"H4",n:5,c:"Maiz",o:"Semilla",fs:"",e:"En crecimiento"},
-  {id:"H4-C06",h:"H4",n:6,c:"Maiz",o:"Semilla",fs:"",e:"En crecimiento"},
-  {id:"H4-C07",h:"H4",n:7,c:"Maiz",o:"Semilla",fs:"",e:"En crecimiento"},
-  {id:"H4-C08",h:"H4",n:8,c:"Maiz",o:"Semilla",fs:"",e:"En crecimiento"},
+  {id:"H3-C35",h:"H3",n:35,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H3-C36",h:"H3",n:36,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H3-C37",h:"H3",n:37,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H3-C38",h:"H3",n:38,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H3-C39",h:"H3",n:39,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H3-C40",h:"H3",n:40,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H3-C41",h:"H3",n:41,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H3-C42",h:"H3",n:42,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H3-C43",h:"H3",n:43,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H3-C44",h:"H3",n:44,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H3-C45",h:"H3",n:45,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H3-C46",h:"H3",n:46,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H3-C47",h:"H3",n:47,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H3-C48",h:"H3",n:48,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H3-C49",h:"H3",n:49,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H3-C50",h:"H3",n:50,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H4-C01",h:"H4",n:1,c:"Maíz",o:"Semilla",fs:"",e:"En crecimiento"},
+  {id:"H4-C02",h:"H4",n:2,c:"Maíz",o:"Semilla",fs:"",e:"En crecimiento"},
+  {id:"H4-C03",h:"H4",n:3,c:"Maíz",o:"Semilla",fs:"",e:"En crecimiento"},
+  {id:"H4-C04",h:"H4",n:4,c:"Maíz",o:"Semilla",fs:"",e:"En crecimiento"},
+  {id:"H4-C05",h:"H4",n:5,c:"Maíz",o:"Semilla",fs:"",e:"En crecimiento"},
+  {id:"H4-C06",h:"H4",n:6,c:"Maíz",o:"Semilla",fs:"",e:"En crecimiento"},
+  {id:"H4-C07",h:"H4",n:7,c:"Maíz",o:"Semilla",fs:"",e:"En crecimiento"},
+  {id:"H4-C08",h:"H4",n:8,c:"Maíz",o:"Semilla",fs:"",e:"En crecimiento"},
   {id:"H4-C09",h:"H4",n:9,c:"",o:"",fs:"",e:"Vacía"},
   {id:"H4-C10",h:"H4",n:10,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H5-C01",h:"H5",n:1,c:"",o:"",fs:"",e:"Vacía"},{id:"H5-C02",h:"H5",n:2,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H5-C03",h:"H5",n:3,c:"",o:"",fs:"",e:"Vacía"},{id:"H5-C04",h:"H5",n:4,c:"",o:"",fs:"",e:"Vacía"},
-  {id:"H5-C05",h:"H5",n:5,c:"",o:"",fs:"",e:"Vacía"},{id:"H5-C06",h:"H5",n:6,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H5-C01",h:"H5",n:1,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H5-C02",h:"H5",n:2,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H5-C03",h:"H5",n:3,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H5-C04",h:"H5",n:4,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H5-C05",h:"H5",n:5,c:"",o:"",fs:"",e:"Vacía"},
+  {id:"H5-C06",h:"H5",n:6,c:"",o:"",fs:"",e:"Vacía"},
   {id:"H5-C07",h:"H5",n:7,c:"",o:"",fs:"",e:"Vacía"}
 ];
-var JOVENES_BASE = ["Juan Jose Gallego","Jose Daniel","Jhon Esteban Henao","Hernan","Participante 5","Participante 6"];
-var FASES_BASE = ["Preparacion suelo","Siembra","Germinacion","Crecimiento","Floracion","Produccion","Cosecha"];
-var ESTFITO_BASE = ["Saludable","Alerta","Plaga","Enfermedad","Estres hidrico"];
-var ACCIONES_BASE = ["Riego manual","Riego goteo","Fertiliz. organica","Fertiliz. quimica","Control plagas","Poda","Trasplante","Deshierbe","Cosecha","Abono compost","Fumigacion"];
-var DESTINOS_BASE = ["Consumo interno","Donacion","Venta","Almacenamiento","Semillero"];
-var INV_BASE = [
-  {nombre:"Compost",categoria:"Fertilizante",unidad:"kg",stock:200,minimo:50,precio:1.5},
-  {nombre:"Aceite Neem",categoria:"Biologico",unidad:"L",stock:15,minimo:5,precio:20},
-  {nombre:"Cal agricola",categoria:"Fertilizante",unidad:"kg",stock:30,minimo:20,precio:0.8},
-  {nombre:"Semillas variadas",categoria:"Semilla",unidad:"sobres",stock:8,minimo:10,precio:3},
-  {nombre:"Malla antifungica",categoria:"Material",unidad:"m",stock:25,minimo:15,precio:2.5}
-];
-var CICLOS_BASE = {
-  "Cilantro":{min:25,max:40},"Lechuga":{min:45,max:60},"Tomate":{min:70,max:90},
-  "Espinaca":{min:40,max:50},"Rabano":{min:25,max:30},"Albahaca":{min:30,max:45},
-  "Zanahoria":{min:70,max:80},"Cebolla larga":{min:90,max:120},"Perejil":{min:60,max:75},
-  "Acelga":{min:50,max:60},"Repollo":{min:80,max:100},"Habichuela":{min:55,max:70},
-  "Maiz":{min:90,max:110},"Mostaza":{min:35,max:50},"Col rizada":{min:55,max:75},
-  "Menta":{min:60,max:90},"Manzanilla":{min:45,max:75},"Brocoli":{min:60,max:90},
-  "Arveja":{min:60,max:80},"Pimenton":{min:70,max:100},"Auyama":{min:90,max:110},
-  "Limoncillo":{min:180,max:365},"Tomillo":{min:90,max:180},"Lulo":{min:240,max:300},
-  "Arracacha":{min:270,max:360},"Aji peruano":{min:60,max:90}
-};
 
-// ---- ESTADO GLOBAL ----
+const L = ["Juan José Gallego", "José Daniel", "Jhon Esteban Henao", "Hernan", "Participante 5", "Participante 6"];  // jovenes
+const F = ["Preparación suelo", "Siembra", "Germinación", "Crecimiento", "Floración", "Producción", "Cosecha"];   // fases
+const EF = ["✅ Saludable", "⚠️ Alerta", "🔴 Plaga", "🔴 Enfermedad", "🟡 Estrés hídrico"]; // estFito
+const AC = ["Riego manual", "Riego goteo", "Fertiliz. orgánica", "Fertiliz. química", "Control plagas", "Poda", "Trasplante", "Deshierbe", "Cosecha", "Abono compost", "Fumigación"]; // acciones
+const DE = ["Consumo interno", "Donación", "Venta", "Almacenamiento", "Semillero"]; // destinos
+const CI = {"Cilantro":{"min":25,"max":40},"Lechuga":{"min":45,"max":60},"Tomate":{"min":70,"max":90},"Espinaca":{"min":40,"max":50},"Rábano":{"min":25,"max":30},"Albahaca":{"min":30,"max":45},"Pepino":{"min":55,"max":65},"Zanahoria":{"min":70,"max":80},"Cebolla larga":{"min":90,"max":120},"Perejil":{"min":60,"max":75},"Acelga":{"min":50,"max":60},"Repollo":{"min":80,"max":100},"Habichuela":{"min":55,"max":70},"Maíz":{"min":90,"max":110}}; // ciclos
+
+// ── ESTADO GLOBAL ──
 var API = localStorage.getItem('erp_url') || '';
-var D = {camas:[],jovenes:[],fases:[],estFito:[],acciones:[],destinos:[],ciclos:{},inventario:[],asistencia:{}};
+var D = {camas:[], jovenes:[], fases:[], estFito:[], acciones:[], destinos:[], ciclos:{}, inv:[], ast:{}};
 var CIDX = {};
-var historial = [];
-var modActual = 'bit';
+var hist = [];
+var mod = 'bit';
 var HOY = new Date();
-var CACHE_K = 'erp_v17_cfg';
-var CACHE_T = 'erp_v17_ts';
-var TTL = 30*60*1000;
-var COLORES = ['#2d6a4f','#1565c0','#e65100','#6a1b9a','#880e4f','#006064','#4e342e','#37474f'];
-var _tt = null;
+var CK = 'erp_v17';
+var CT = 'erp_v17_t';
+var COLS = ['#2d6a4f','#1565c0','#e65100','#6a1b9a','#880e4f','#006064'];
 
-// ---- INIT ----
-function init() {
+// ── INIT ──
+window.onload = function() {
   var h = HOY.getHours();
   q('#saludo').textContent = (h<12?'Buenos dias':h<19?'Buenas tardes':'Buenas noches') + ', Jhon';
-  var dias = ['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'];
-  var mes = ['enero','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
-  q('#fechaTxt').textContent = dias[HOY.getDay()] + ', ' + HOY.getDate() + ' de ' + mes[HOY.getMonth()];
+  var dias = ['Dom','Lun','Mar','Mie','Jue','Vie','Sab'];
+  var mes  = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  q('#fechaTxt').textContent = dias[HOY.getDay()] + ' ' + HOY.getDate() + ' ' + mes[HOY.getMonth()];
   q('#fFecha').valueAsDate = HOY;
   q('#urlIn').value = API;
-  aplicarDatos({camas:CAMAS_BASE,jovenes:JOVENES_BASE,fases:FASES_BASE,estFito:ESTFITO_BASE,
-    acciones:ACCIONES_BASE,destinos:DESTINOS_BASE,ciclos:CICLOS_BASE,inventario:INV_BASE,asistencia:{}});
-  var cache = localStorage.getItem(CACHE_K);
-  var ts = Number(localStorage.getItem(CACHE_T) || 0);
-  if (cache && Date.now()-ts < TTL) {
-    aplicarDatos(JSON.parse(cache));
-    q('#syncSt').textContent = 'Cache local - sincronizando...';
-  }
-  if (API) { sync(false); }
-}
 
-// ---- SYNC ----
-function sync(manual) {
-  if (!API) { if(manual) showToast('Configura la URL en Sistema', true); return; }
-  q('#syncBtn').classList.add('spin');
+  // Cargar fallback primero — siempre hay algo que ver
+  usar({camas:CAMAS_BASE, jovenes:L, fases:F, estFito:EF, acciones:AC, destinos:DE, ciclos:CI, inv:[], ast:{}});
+
+  // Luego cache si existe y es reciente (30 min)
+  var cache = localStorage.getItem(CK);
+  var ts = Number(localStorage.getItem(CT) || 0);
+  if (cache && Date.now() - ts < 1800000) {
+    try { usar(JSON.parse(cache)); q('#syncSt').textContent = 'Cache local'; } catch(e) {}
+  }
+  if (API) syncDatos(false);
+};
+
+// ── SYNC ──
+function syncDatos(manual) {
+  if (!API) { if(manual) toast('Configura la URL en Sistema', true); return; }
+  var btn = q('#sBtn');
+  btn.textContent = '...';
   fetch(API + '?action=config', {cache:'no-cache'})
     .then(function(r){ return r.json(); })
     .then(function(data) {
-      if (data.status === 'ok' && data.camas && data.camas.length) {
-        localStorage.setItem(CACHE_K, JSON.stringify(data));
-        localStorage.setItem(CACHE_T, String(Date.now()));
-        aplicarDatos(data);
-        q('#syncSt').textContent = 'Sheets - ' + hora();
-        q('#offbar').classList.remove('on');
+      if (data.status === 'ok' && data.camas && data.camas.length > 0) {
+        localStorage.setItem(CK, JSON.stringify(data));
+        localStorage.setItem(CT, Date.now().toString());
+        usar(data);
+        q('#syncSt').textContent = 'Sheets ' + hora();
+        q('#ob').classList.remove('on');
         q('#cDot').className = 'cdot on';
-        q('#cTxt').textContent = 'Conectado - ' + hora();
-        if (manual) showToast('Datos sincronizados desde Google Sheets');
-      } else { throw new Error('Sin camas'); }
+        q('#cTxt').textContent = 'Conectado V17 ' + hora();
+        if (manual) toast('Datos actualizados desde Sheets');
+      } else {
+        throw new Error('Sin camas en respuesta');
+      }
     })
     .catch(function() {
-      q('#offbar').classList.add('on');
-      q('#syncSt').textContent = 'Sin conexion - datos locales';
-      if (manual) showToast('No se pudo conectar con Sheets', true);
+      q('#ob').classList.add('on');
+      q('#syncSt').textContent = 'Sin conexion — datos locales';
+      if (manual) toast('No se pudo conectar con Sheets', true);
     })
-    .finally(function() { q('#syncBtn').classList.remove('spin'); });
+    .finally(function() { btn.textContent = '↻ Sync'; });
 }
 
-function normalizarCamas(arr) {
-  // Sheets devuelve {id,huerta,num,cultivo,origen,fechaSiembra,estado,obs}
-  // El HTML espera  {id,h,n,c,o,fs,e}
-  // Esta función acepta ambos formatos
-  return (arr || []).map(function(c) {
+function usar(data) {
+  D.camas   = norm(data.camas && data.camas.length ? data.camas : CAMAS_BASE);
+  D.jovenes = lim(data.jovenes  || L);
+  D.fases   = lim(data.fases    || F);
+  D.estFito = lim(data.estadosFito || data.estFito || EF);
+  D.acciones= lim(data.acciones || AC);
+  D.destinos= lim(data.destinos || DE);
+  D.ciclos  = data.ciclos && Object.keys(data.ciclos).length ? merge(CI, data.ciclos) : CI;
+  D.inv     = data.inventario && data.inventario.length ? data.inventario : [];
+  D.ast     = data.asistencia || {};
+  CIDX = {};
+  for (var i=0; i<D.camas.length; i++) CIDX[D.camas[i].id] = D.camas[i];
+  render();
+}
+
+// Normaliza camas: acepta {id,h,n,c,o,fs,e} O {id,huerta,num,cultivo,origen,fechaSiembra,estado}
+function norm(arr) {
+  return (arr||[]).map(function(x) {
+    var e = x.e || x.estado || 'Vacía';
+    if (e === 'Vacia') e = 'Vacía';
     return {
-      id: c.id || '',
-      h:  c.h  || c.huerta       || '',
-      n:  c.n  || c.num          || 0,
-      c:  c.c  || c.cultivo      || '',
-      o:  c.o  || c.origen       || '',
-      fs: c.fs || c.fechaSiembra || '',
-      e:  (function(v){ var s=v||'Vacía'; return s==='Vacia'?'Vacía':s; })(c.e || c.estado)
+      id: x.id||'', h: x.h||x.huerta||'', n: x.n||x.num||0,
+      c:  x.c||x.cultivo||'', o: x.o||x.origen||'',
+      fs: x.fs||x.fechaSiembra||'', e: e
     };
   });
 }
+function lim(a) { return (a||[]).filter(function(v){ return v && String(v).trim(); }); }
+function merge(a,b) { var r={}; for(var k in a)r[k]=a[k]; for(var k in b)r[k]=b[k]; return r; }
 
-function aplicarDatos(data) {
-  D.camas    = normalizarCamas((data.camas && data.camas.length) ? data.camas : CAMAS_BASE);
-  D.jovenes  = limpia(data.jovenes)  .length ? limpia(data.jovenes)   : JOVENES_BASE;
-  D.fases    = limpia(data.fases)    .length ? limpia(data.fases)     : FASES_BASE;
-  D.estFito  = limpia(data.estFito || data.estadosFito).length ? limpia(data.estFito || data.estadosFito) : ESTFITO_BASE;
-  D.acciones = limpia(data.acciones) .length ? limpia(data.acciones)  : ACCIONES_BASE;
-  D.destinos = limpia(data.destinos) .length ? limpia(data.destinos)  : DESTINOS_BASE;
-  D.ciclos   = Object.keys(data.ciclos || {}).length ? Object.assign({}, CICLOS_BASE, data.ciclos) : CICLOS_BASE;
-  D.inventario = (data.inventario && data.inventario.length) ? data.inventario : INV_BASE;
-  D.asistencia = data.asistencia || {};
-  CIDX = {};
-  D.camas.forEach(function(c) { CIDX[c.id] = c; });
-  renderTodo();
+// ── RENDER ──
+function render() {
+  poblar();
+  kpis();
+  alertas();
+  timeline();
+  chart();
+  stock();
+  mapa();
+  equipo();
+  sysInfo();
 }
 
-function limpia(arr) { return (arr || []).filter(function(v){ return v && String(v).trim(); }); }
-
-// ---- RENDER ----
-function renderTodo() {
-  poblarSelects();
-  buildKPIs();
-  buildAlertas();
-  buildTimeline();
-  buildChart();
-  buildStock();
-  buildCamaBlocks();
-  buildEquipo();
-  buildSysInfo();
-}
-
-// ---- SELECTS ----
-function poblarSelects() {
+// ── POBLAR SELECTS ──
+function poblar() {
   var activas = D.camas.filter(function(c){ return c.c && c.e !== 'Vacía'; });
-  var todas   = D.camas;
-  var conJhon = D.jovenes.concat(['Jhon (Instructor)']);
-  fillCamas('sCB',  activas, 'Seleccionar cama...');
-  fillCamas('sCC',  activas, 'Seleccionar cama...');
-  fillCamas('selCGH', todas, 'Ninguna');
-  fillCamas('selCR',  todas, 'General', true);
-  ['selRB','selRR','selRC'].forEach(function(id){ fillSel(id, conJhon, 'Seleccionar...'); });
-  fillSel('selJ',    D.jovenes,   'Seleccionar...');
-  fillSel('selFase', D.fases);
-  fillSel('selEF',   D.estFito);
-  fillSel('selAcc',  D.acciones);
-  fillSel('selDest', D.destinos,  'Seleccionar...');
-  fillSel('selIns',  D.inventario.map(function(i){ return i.nombre; }), 'Seleccionar insumo...');
-  filtrarCamasR();
+  var todos   = D.camas;
+  var resp    = D.jovenes.concat(['Jhon (Instructor)']);
+
+  fillCamas('sCB',  activas, 'Seleccionar...');
+  fillCamas('sCC',  activas, 'Seleccionar...');
+  fillCamas('sCGH', todos,   'Ninguna');
+  fillCamas('sCR',  todos,   'General');
+
+  fillSel('sRB',  resp,       'Seleccionar...');
+  fillSel('sRR',  resp,       'Seleccionar...');
+  fillSel('sRC',  resp,       'Seleccionar...');
+  fillSel('sJ',   D.jovenes,  'Seleccionar...');
+  fillSel('sFase', D.fases,   '');
+  fillSel('sEF',  D.estFito,  '');
+  fillSel('sAcc', D.acciones, 'Seleccionar...');
+  fillSel('sDest',D.destinos, 'Seleccionar...');
+  fillSel('sIns', D.inv.map(function(i){ return i.nombre; }), 'Seleccionar insumo...');
+  filtCamasR();
 }
 
-function fillCamas(id, lista, pfx, conGen) {
+function fillCamas(id, lista, pfx) {
   var s = q('#'+id); if (!s) return;
   var old = s.value;
-  s.innerHTML = (pfx ? '<option value="">' + pfx + '</option>' : '') +
-                (conGen ? '<option value="General">General</option>' : '');
-  lista.forEach(function(c) {
+  s.innerHTML = '<option value="">' + pfx + '</option>';
+  for (var i=0; i<lista.length; i++) {
+    var c = lista[i];
     var o = document.createElement('option');
     o.value = c.id;
-    o.textContent = c.id + (c.c ? ' - ' + c.c : ' (vacia)');
+    o.textContent = c.id + (c.c ? ' — ' + c.c : ' (vacia)');
     s.appendChild(o);
-  });
+  }
   if (old) s.value = old;
 }
 
 function fillSel(id, lista, pfx) {
   var s = q('#'+id); if (!s) return;
   var old = s.value;
-  s.innerHTML = pfx ? '<option value="">' + pfx + '</option>' : '';
-  lista.forEach(function(v) { if (v) { var o = document.createElement('option'); o.value = v; o.textContent = v; s.appendChild(o); } });
+  s.innerHTML = pfx !== '' ? '<option value="">' + pfx + '</option>' : '';
+  for (var i=0; i<lista.length; i++) {
+    if (!lista[i]) continue;
+    var o = document.createElement('option');
+    o.value = lista[i]; o.textContent = lista[i];
+    s.appendChild(o);
+  }
   if (old) s.value = old;
 }
 
-// ---- AUTORRELLENO ----
+// ── AUTORRELLENO ──
 function onCama(sel, hId, cId, oId) {
   var c = CIDX[sel.value];
   if (hId) sa(hId, c ? 'Huerta ' + c.h.replace('H','') : '');
@@ -687,416 +825,413 @@ function onCama(sel, hId, cId, oId) {
   if (oId) sa(oId, c ? c.o : '');
 }
 
-function filtrarCamasR() {
-  var hid = q('#selHR').value;
-  var lista = hid ? D.camas.filter(function(c){ return c.h === hid; }) : D.camas;
-  var sel = q('#selCR'); if (!sel) return;
-  var old = sel.value;
-  sel.innerHTML = '<option value="General">General</option>';
-  lista.forEach(function(c) {
+function filtCamasR() {
+  var hid = q('#sHR').value;
+  var lista = hid ? D.camas.filter(function(c){ return c.h===hid; }) : D.camas;
+  var s = q('#sCR'); var old = s.value;
+  s.innerHTML = '<option value="General">General</option>';
+  for (var i=0; i<lista.length; i++) {
+    var c = lista[i];
     var o = document.createElement('option');
     o.value = c.id;
-    o.textContent = c.id + (c.c ? ' - ' + c.c : ' (vacia)');
-    sel.appendChild(o);
-  });
-  if (old) sel.value = old;
+    o.textContent = c.id + (c.c ? ' — '+c.c : ' (vacia)');
+    s.appendChild(o);
+  }
+  if (old) s.value = old;
 }
 
 function onCamaR() {
-  var c = CIDX[q('#selCR').value];
+  var c = CIDX[q('#sCR').value];
   sa('aRC', c ? c.c : '');
 }
 
 function onJoven(sel) {
-  var ult = D.asistencia[sel.value];
-  sa('aJU', ult && ult.fecha ? ult.fecha + ' - ' + ult.asistencia + (ult.actitud ? ' - desempeno ' + ult.actitud + '/5' : '') : 'Sin registros previos');
+  var u = D.ast[sel.value];
+  sa('aJU', u && u.fecha ? u.fecha + ' — ' + u.asistencia + (u.actitud ? ' · ' + u.actitud + '/5' : '') : 'Sin registros previos');
 }
 
-function onInsumo(sel) {
-  var inv = D.inventario.filter(function(i){ return i.nombre === sel.value; })[0];
-  sa('aIC', inv ? (inv.categoria || '') : '');
+function onIns(sel) {
+  var inv = null;
+  for (var i=0; i<D.inv.length; i++) { if (D.inv[i].nombre === sel.value) { inv=D.inv[i]; break; } }
+  sa('aIC', inv ? inv.categoria||'' : '');
   sa('aIS', inv ? inv.stock + ' ' + inv.unidad : '');
   sa('aIP', inv ? '$' + inv.precio : '');
   sa('aIU', inv ? inv.unidad : '');
 }
 
-function toggleAsist() {
-  var v = q('#sAsist').value;
-  q('#camposP').style.display = v === 'Presente' ? '' : 'none';
+function togAst() {
+  var v = q('#sAst').value;
+  q('#camP').style.display    = v === 'Presente' ? '' : 'none';
   q('#motAus').style.display  = v === 'Ausente'  ? '' : 'none';
 }
+function sa(id, v) { var e=q('#'+id); if(e) e.value=v||''; }
 
-function sa(id, val) { var e = q('#'+id); if (e) e.value = val || ''; }
-
-// ---- KPIs ----
-function buildKPIs() {
+// ── KPIs ──
+function kpis() {
   var c = D.camas;
-  q('#kA').textContent = c.filter(function(x){ return x.c && x.e !== 'Vacía' && x.e !== 'Cosechada'; }).length || '-';
-  q('#kT').textContent = c.length || '-';
-  q('#kC').textContent = c.filter(function(x){ return x.e === 'Lista para cosechar'; }).length || '0';
-  q('#kV').textContent = c.filter(function(x){ return x.e === 'Vacía'; }).length || '-';
-  q('#kE').textContent = D.jovenes.length || '-';
+  sa_t('kA', c.filter(function(x){ return x.c && x.e!=='Vacía' && x.e!=='Cosechada'; }).length);
+  sa_t('kT', c.length);
+  sa_t('kC', c.filter(function(x){ return x.e==='Lista para cosechar'; }).length);
+  sa_t('kV', c.filter(function(x){ return x.e==='Vacía'; }).length);
+  sa_t('kE', D.jovenes.length);
 }
+function sa_t(id, v) { var e=q('#'+id); if(e) e.textContent=v; }
 
-// ---- ALERTAS ----
-function buildAlertas() {
-  var el = q('#alertas');
-  var c = D.camas;
-  var inv = D.inventario;
-  var al = [];
-  var listas = c.filter(function(x){ return x.e === 'Lista para cosechar'; });
-  if (listas.length) {
-    al.push({p:'cr',ico:'&#129346;',tag:'tc',lbl:'URGENTE',
-      t: listas.length + ' camas listas para cosechar',
-      s: listas.slice(0,5).map(function(x){ return x.id + '(' + x.c + ')'; }).join(' - '),
-      fn: function(){ goTo('camas'); }});
-  }
-  var maizH4 = c.filter(function(x){ return x.h === 'H4' && x.c && x.c.toLowerCase().indexOf('maiz') >= 0; });
-  if (maizH4.length) {
-    al.push({p:'wa',ico:'&#127807;',tag:'tw',lbl:'H4 MAIZ',
-      t: maizH4.length + ' camas de maiz en seguimiento', s: 'Ciclo 90-110 dias - Verificar estado'});
-  }
-  var vacH5 = c.filter(function(x){ return x.h === 'H5' && x.e === 'Vacía'; }).length;
-  if (vacH5) {
-    al.push({p:'in',ico:'&#127807;',tag:'ti',lbl:'OPORTUNIDAD',
-      t: 'H5 - ' + vacH5 + ' camas disponibles', s: 'Cilantro (25-40d), lechuga (45-60d), rabano (25-30d)'});
-  }
-  var bajo = inv.filter(function(i){ return Number(i.stock) <= Number(i.minimo || 0); });
-  if (bajo.length) {
-    al.push({p:'wa',ico:'&#128230;',tag:'tw',lbl:'STOCK BAJO',
-      t: 'Bajo minimo: ' + bajo.map(function(i){ return i.nombre; }).join(', '),
-      s: 'Realizar pedido pronto', fn: function(){ goTo('form'); }});
-  }
-  var dSem = HOY.getDay();
-  var planDia = [null,
-    {d:'Lunes',a:'Campo: riego, siembra, labores'},
-    {d:'Martes',a:'Campo: seguimiento y cosecha'},
-    {d:'Miercoles',a:'Gestion: sistema + recorrido pecuaria'},
-    {d:'Jueves',a:'Gestion: reporte + planificacion'},
-    {d:'Viernes',a:'Campo: mantenimiento y evaluacion'}
-  ][dSem];
-  if (planDia) {
-    al.push({p:'in',ico:'&#128197;',tag:'ti',lbl:'HOY',
-      t: planDia.d + ' - ' + planDia.a, s: 'Plan Fase 1'});
-  }
-  el.innerHTML = '';
+// ── ALERTAS ──
+function alertas() {
+  var el = q('#alertas'); el.innerHTML = '';
+  var c = D.camas; var al = [];
+  var listas = c.filter(function(x){ return x.e==='Lista para cosechar'; });
+  if (listas.length) al.push({p:'cr',i:'🧺',tag:'t-cr',l:'URGENTE',
+    t:listas.length+' camas listas para cosechar',
+    s:listas.slice(0,4).map(function(x){ return x.id+'('+x.c+')'; }).join(' · '),
+    fn:function(){ ir('camas'); }});
+  var mh4 = c.filter(function(x){ return x.h==='H4' && x.c && x.c.indexOf('Ma')>=0; });
+  if (mh4.length) al.push({p:'wa',i:'🌽',tag:'t-wa',l:'H4',
+    t:mh4.length+' camas maiz en seguimiento',s:'Ciclo 90-110 dias — verificar estado'});
+  var vh5 = c.filter(function(x){ return x.h==='H5' && x.e==='Vacía'; }).length;
+  if (vh5) al.push({p:'in',i:'🌱',tag:'t-in',l:'H5',
+    t:vh5+' camas disponibles para siembra',s:'Cilantro 25-40d, lechuga 45-60d, rabano 25-30d'});
+  var bajo = D.inv.filter(function(i){ return Number(i.stock)<=Number(i.minimo||0); });
+  if (bajo.length) al.push({p:'wa',i:'📦',tag:'t-wa',l:'STOCK',
+    t:'Bajo minimo: '+bajo.map(function(i){ return i.nombre; }).join(', '),
+    s:'Realizar pedido pronto'});
   if (!al.length) {
-    el.innerHTML = '<div class="ac"><div class="ac-in"><div class="ac-p ok"></div><div class="ac-ico">&#10003;</div><div class="ac-b"><strong>Sin alertas criticas</strong><span>Todo en orden</span></div></div></div>';
+    el.innerHTML = '<div class="ac"><div class="ac-i"><div class="ac-p p-ok"></div>'+
+      '<div class="ac-ico">✅</div><div class="ac-b"><b>Sin alertas criticas</b><span>Todo en orden</span></div></div></div>';
     return;
   }
-  al.forEach(function(a) {
-    var d = document.createElement('div');
-    d.className = 'ac';
-    if (a.fn) { (function(fn){ d.onclick = fn; })(a.fn); }
-    d.innerHTML = '<div class="ac-in"><div class="ac-p ' + a.p + '"></div><div class="ac-ico">' + a.ico + '</div><div class="ac-b"><strong>' + a.t + '</strong><span>' + a.s + '</span></div><div class="ac-tag ' + a.tag + '">' + a.lbl + '</div></div>';
+  for (var i=0; i<al.length; i++) {
+    var a=al[i]; var d=document.createElement('div'); d.className='ac';
+    if(a.fn)(function(fn){ d.onclick=fn; })(a.fn);
+    d.innerHTML='<div class="ac-i"><div class="ac-p p-'+a.p+'"></div>'+
+      '<div class="ac-ico">'+a.i+'</div>'+
+      '<div class="ac-b"><b>'+a.t+'</b><span>'+a.s+'</span></div>'+
+      '<div class="ac-tag '+a.tag+'">'+a.l+'</div></div>';
     el.appendChild(d);
-  });
+  }
 }
 
-// ---- TIMELINE ----
-function buildTimeline() {
-  var el = q('#timeline');
+// ── TIMELINE ──
+function timeline() {
+  var el = q('#timeline'); el.innerHTML = '';
   var items = [];
-  D.camas.forEach(function(c) {
-    if (!c.c) return;
+  for (var i=0; i<D.camas.length; i++) {
+    var c = D.camas[i];
+    if (!c.c) continue;
     if (c.e === 'Lista para cosechar') {
-      items.push({id:c.id, cult:c.c, dr:0, av:100, t:'tnow'});
-      return;
+      items.push({id:c.id,cult:c.c,dr:0,av:100,t:'d-now'}); continue;
     }
-    if (c.e !== 'En crecimiento' && c.e !== 'Sembrada') return;
+    if (c.e !== 'En crecimiento' && c.e !== 'Sembrada') continue;
     var k = c.c.split(' y ')[0].split(' ')[0];
-    var ci = D.ciclos[k] || D.ciclos[c.c] || {min:60, max:90};
+    var ci = D.ciclos[k] || D.ciclos[c.c] || {min:60,max:90};
     var dt = 30;
-    if (c.fs) { var fs = new Date(c.fs); if (!isNaN(fs)) dt = Math.max(0, Math.floor((HOY - fs) / 86400000)); }
+    if (c.fs) { var fs=new Date(c.fs); if(!isNaN(fs)) dt=Math.max(0,Math.floor((HOY-fs)/86400000)); }
     var dr = Math.max(0, ci.min - dt);
-    var av = Math.min(100, Math.round(dt / ci.min * 100));
-    items.push({id:c.id, cult:c.c, dr:dr, av:av, t: dr === 0 ? 'tnow' : dr <= 14 ? 'tsoon' : 'tlater'});
-  });
-  items.sort(function(a,b){ return a.dr - b.dr; });
-  el.innerHTML = '';
-  if (!items.length) { el.innerHTML = '<div class="empty">Conecta con Sheets para el timeline real</div>'; return; }
-  items.slice(0,8).forEach(function(it) {
-    var lbl = it.dr === 0 ? 'YA!' : it.dr <= 7 ? 'Esta semana' : '~' + it.dr + 'd';
-    var dc  = it.dr === 0 ? 'dn' : it.dr <= 14 ? 'ds' : 'dl';
-    var em  = it.dr === 0 ? '&#127813;' : it.dr <= 7 ? '&#9200;' : '&#127807;';
-    el.innerHTML += '<div class="tl-i"><div class="tl-d ' + it.t + '">' + em + '</div><div class="tl-c"><div class="tl-top"><strong>' + it.cult + '</strong><span class="tl-dias ' + dc + '">' + lbl + '</span></div><div class="tl-sub">' + it.id + ' - ' + it.av + '%</div><div class="pb"><div class="pf" style="width:' + it.av + '%"></div></div></div></div>';
-  });
+    var av = Math.min(100, Math.round(dt/ci.min*100));
+    items.push({id:c.id,cult:c.c,dr:dr,av:av,t:dr===0?'d-now':dr<=14?'d-soon':'d-late'});
+  }
+  items.sort(function(a,b){ return a.dr-b.dr; });
+  if (!items.length) { el.innerHTML='<div class="emp">Conecta Sheets para ver el timeline</div>'; return; }
+  for (var j=0; j<Math.min(items.length,8); j++) {
+    var it=items[j];
+    var lbl=it.dr===0?'YA!':it.dr<=7?'Esta semana':'~'+it.dr+'d';
+    var dc =it.dr===0?'d-n':it.dr<=14?'d-s':'d-l';
+    var em =it.dr===0?'🍅':it.dr<=7?'⏰':'🌿';
+    el.innerHTML+='<div class="tl-i"><div class="tl-d '+it.t+'">'+em+'</div>'+
+      '<div class="tl-c"><div class="tl-top"><b>'+it.cult+'</b>'+
+      '<span class="tl-dias '+dc+'">'+lbl+'</span></div>'+
+      '<div class="tl-sub">'+it.id+' · '+it.av+'%</div>'+
+      '<div class="pbar"><div class="pfil" style="width:'+it.av+'%"></div></div></div></div>';
+  }
 }
 
-// ---- CHART ----
-function buildChart() {
-  var counts = {};
-  D.camas.forEach(function(c) {
-    if (c.c && c.e === 'En crecimiento') {
-      var k = c.c.split(' y ')[0].split(' ')[0];
-      counts[k] = (counts[k] || 0) + 1;
+// ── CHART ──
+function chart() {
+  var counts={};
+  for(var i=0;i<D.camas.length;i++){
+    var c=D.camas[i];
+    if(c.c&&c.e==='En crecimiento'){
+      var k=c.c.split(' y ')[0].split(' ')[0];
+      counts[k]=(counts[k]||0)+1;
     }
-  });
-  var s = Object.keys(counts).map(function(k){ return [k, counts[k]]; }).sort(function(a,b){ return b[1]-a[1]; }).slice(0,8);
-  var max = s.length ? s[0][1] : 1;
-  var el = q('#cultChart');
-  if (!s.length) { el.innerHTML = '<div class="empty">Sin datos</div>'; return; }
-  el.innerHTML = s.map(function(e) {
-    return '<div class="br"><div class="bl2">' + e[0] + '</div><div class="bt"><div class="bf" style="width:' + Math.round(e[1]/max*100) + '%"></div></div><div class="bn">' + e[1] + '</div></div>';
-  }).join('');
+  }
+  var s=[]; for(var k in counts) s.push([k,counts[k]]);
+  s.sort(function(a,b){ return b[1]-a[1]; });
+  s=s.slice(0,8);
+  var max=s.length?s[0][1]:1;
+  var el=q('#chart');
+  if(!s.length){el.innerHTML='<div class="emp">Sin datos</div>';return;}
+  var h='';
+  for(var i=0;i<s.length;i++){
+    h+='<div class="crow"><div class="clbl">'+s[i][0]+'</div>'+
+      '<div class="ctrk"><div class="cfil" style="width:'+Math.round(s[i][1]/max*100)+'%"></div></div>'+
+      '<div class="cnum">'+s[i][1]+'</div></div>';
+  }
+  el.innerHTML=h;
 }
 
-// ---- STOCK ----
-function buildStock() {
-  var ICO = {Fertilizante:'&#127807;',Biologico:'&#129748;',Semilla:'&#127806;',Herramienta:'&#128295;',Sustrato:'&#127810;',Material:'&#128376;'};
-  q('#stockList').innerHTML = D.inventario.map(function(i) {
-    var st = Number(i.stock) || 0;
-    var mn = Number(i.minimo) || 1;
-    var pct = Math.min(100, Math.round(st / (mn*3) * 100));
-    var cls = st <= mn ? (st <= mn*0.5 ? 'scrit' : 'slow') : 'sok';
-    var lbl = st <= mn ? (st <= mn*0.5 ? 'CRITICO' : 'BAJO') : 'OK';
-    return '<div class="inv-r"><div class="inv-ico">' + (ICO[i.categoria] || '&#128230;') + '</div><div class="inv-b"><strong>' + i.nombre + '</strong><span>' + (i.categoria||'') + ' - Min:' + mn + ' ' + i.unidad + ' - $' + (i.precio||0) + '</span><div class="sbr ' + cls + '"><div class="sbf" style="width:' + pct + '%"></div></div></div><div class="inv-s ' + cls + '"><div class="num">' + st + '</div><div class="unit">' + i.unidad + '</div><div style="font-size:10px;font-weight:700;margin-top:2px">' + lbl + '</div></div></div>';
-  }).join('');
+// ── STOCK ──
+function stock() {
+  var el=q('#stock');
+  if(!D.inv.length){el.innerHTML='<div class="emp">Conecta Sheets para ver inventario</div>';return;}
+  var icos={'Fertilizante':'🌿','Biologico':'🧴','Semilla':'🌱','Herramienta':'🔧','Sustrato':'🪴','Material':'🕸'};
+  var h='';
+  for(var i=0;i<D.inv.length;i++){
+    var inv=D.inv[i];
+    var st=Number(inv.stock)||0, mn=Number(inv.minimo)||1;
+    var pct=Math.min(100,Math.round(st/(mn*3)*100));
+    var cls=st<=mn?(st<=mn*.5?'s-cr':'s-lo'):'s-ok';
+    var lbl=st<=mn?(st<=mn*.5?'CRITICO':'BAJO'):'OK';
+    h+='<div class="ir"><div class="ii">'+(icos[inv.categoria]||'📦')+'</div>'+
+      '<div class="ib"><b>'+inv.nombre+'</b><span>'+(inv.categoria||'')+' Min:'+mn+' '+inv.unidad+'</span>'+
+      '<div class="sbar '+cls+'"><div class="sfil" style="width:'+pct+'%"></div></div></div>'+
+      '<div class="iv '+cls+'"><div class="num">'+st+'</div><div class="un">'+inv.unidad+'</div>'+
+      '<div style="font-size:10px;font-weight:700;margin-top:2px">'+lbl+'</div></div></div>';
+  }
+  el.innerHTML=h;
 }
 
-// ---- CAMAS ----
-function buildCamaBlocks() {
-  var huertas = [];
-  D.camas.forEach(function(c){ if (huertas.indexOf(c.h) < 0) huertas.push(c.h); });
-  huertas.sort();
-  var NOM = {H1:'Huerta 1',H2:'Huerta 2',H3:'Huerta 3',H4:'Huerta 4 - Maiz',H5:'Huerta 5'};
-  var el = q('#camaBlocks');
-  el.innerHTML = '';
-  huertas.forEach(function(hid) {
-    var lista = D.camas.filter(function(c){ return c.h === hid; });
-    var act  = lista.filter(function(c){ return c.c && c.e !== 'Vacía' && c.e !== 'Cosechada'; }).length;
-    var lcos = lista.filter(function(c){ return c.e === 'Lista para cosechar'; }).length;
-    var div = document.createElement('div');
-    div.className = 'h-block';
-    var chips = lista.map(function(c) {
-      var cls = 'chip cvac';
-      if (c.e === 'Lista para cosechar') cls = 'chip clista';
-      else if (c.e === 'En crecimiento' || c.e === 'Sembrada') cls = 'chip crec';
-      else if (c.e === 'Cosechada') cls = 'chip ccos';
-      return '<div class="' + cls + '" onclick="irAForm(\'' + c.id + '\')" title="' + c.id + ': ' + (c.c || 'Vacia') + '">' + c.n + '<span class="chip-t">' + (c.c || '-') + '</span></div>';
-    }).join('');
-    div.innerHTML = '<div class="h-hdr" onclick="var b=this.nextElementSibling;b.style.display=b.style.display===\'none\'?\'\':\'none\'"><strong>' + (NOM[hid]||hid) + '</strong><span class="h-stats">' + act + ' activas - ' + lcos + ' cosechar - ' + lista.length + ' total</span></div><div class="h-chips">' + chips + '</div><div class="leg-row"><span class="leg"><span class="leg-dot" style="background:#95d5b2"></span>Creciendo</span><span class="leg"><span class="leg-dot" style="background:var(--am)"></span>Cosechar</span><span class="leg"><span class="leg-dot" style="background:#ddd"></span>Cosechada</span><span class="leg"><span class="leg-dot" style="background:var(--bg2);border:1px solid var(--bdr)"></span>Vacia</span></div>';
+// ── MAPA ──
+function mapa() {
+  var hs=[]; var seen={};
+  for(var i=0;i<D.camas.length;i++){ if(!seen[D.camas[i].h]){hs.push(D.camas[i].h);seen[D.camas[i].h]=1;} }
+  hs.sort();
+  var el=q('#camaBlocks'); el.innerHTML='';
+  if(!hs.length){el.innerHTML='<div class="emp">Sin datos de camas</div>';return;}
+  var NOM={H1:'Huerta 1',H2:'Huerta 2',H3:'Huerta 3',H4:'Huerta 4 — Maiz',H5:'Huerta 5'};
+  for(var j=0;j<hs.length;j++){
+    var hid=hs[j];
+    var lista=D.camas.filter(function(c){ return c.h===hid; });
+    var act=lista.filter(function(c){ return c.c&&c.e!=='Vacía'&&c.e!=='Cosechada'; }).length;
+    var lcos=lista.filter(function(c){ return c.e==='Lista para cosechar'; }).length;
+    var chips='';
+    for(var k=0;k<lista.length;k++){
+      var c=lista[k];
+      var cls='chip c-vac';
+      if(c.e==='Lista para cosechar') cls='chip c-list';
+      else if(c.e==='En crecimiento'||c.e==='Sembrada') cls='chip c-crec';
+      else if(c.e==='Cosechada') cls='chip c-cos';
+      chips+='<div class="'+cls+'" onclick="abrirCama(''+c.id+'')">'+
+        c.n+'<span class="ch-t">'+(c.c||'—')+'</span></div>';
+    }
+    var div=document.createElement('div'); div.className='hb';
+    div.innerHTML='<div class="hh" onclick="var b=this.nextElementSibling;b.style.display=b.style.display==='none'?'':' none'">'+
+      '<b>'+(NOM[hid]||hid)+'</b><span class="hstat">'+act+' activas · '+lcos+' cosechar · '+lista.length+' total</span></div>'+
+      '<div class="hchips">'+chips+'</div>'+
+      '<div class="legr">'+
+      '<span class="leg"><span class="ld" style="background:#95d5b2"></span>Crece</span>'+
+      '<span class="leg"><span class="ld" style="background:var(--am)"></span>Cosechar</span>'+
+      '<span class="leg"><span class="ld" style="background:#ddd"></span>Cosechada</span>'+
+      '<span class="leg"><span class="ld" style="background:var(--bg2);border:1px solid var(--bdr)"></span>Vacia</span>'+
+      '</div>';
     el.appendChild(div);
+  }
+}
+
+// ── EQUIPO ──
+function equipo() {
+  var el=q('#eqGrid'); el.innerHTML='';
+  for(var i=0;i<D.jovenes.length;i++){
+    var n=D.jovenes[i];
+    var ini=n.split(' ').map(function(w){ return w[0]; }).join('').toUpperCase().slice(0,2);
+    var u=D.ast[n];
+    var sub=u&&u.fecha?u.fecha+' '+u.asistencia:'Sin registros';
+    var div=document.createElement('div'); div.className='ecard';
+    (function(nom){ div.onclick=function(){ abrirJoven(nom); }; })(n);
+    div.innerHTML='<div class="eava" style="background:'+COLS[i%COLS.length]+'">'+ini+'</div>'+
+      '<div class="einf"><b>'+n.split(' ')[0]+'</b><span>'+sub+'</span></div>'+
+      '<span style="font-size:14px;margin-left:auto;color:var(--g3)">+</span>';
+    el.appendChild(div);
+  }
+}
+
+function sysInfo() {
+  var c=D.camas;
+  q('#sysInfo').innerHTML='Camas: <b>'+c.length+'</b> · Con cultivo: <b>'+
+    c.filter(function(x){ return x.c&&x.e!=='Vacía'; }).length+'</b> · Vacias: <b>'+
+    c.filter(function(x){ return x.e==='Vacía'; }).length+'</b><br>Participantes: <b>'+
+    D.jovenes.length+'</b> · Insumos: <b>'+D.inv.length+'</b>';
+}
+
+// ── ENVIO ──
+function enviar(e) {
+  e.preventDefault();
+  var btn=q('#rsbtn'); btn.textContent='Enviando...'; btn.disabled=true;
+  var fd=new FormData(q('#frm'));
+  var url=q('#urlIn').value;
+  var p={tipoRegistro:'', fecha:q('#fFecha').value, observaciones:q('#obs').value};
+
+  if (mod==='bit') {
+    p.tipoRegistro='Bitacora Diaria';
+    p.camaId=fd.get('camaId')||''; p.huerta=fd.get('huerta')||'';
+    p.cultivo=fd.get('cultivo')||''; p.origen=fd.get('origen')||'';
+    p.fase=fd.get('fase')||''; p.avance=fd.get('avance')||'';
+    p.altura=fd.get('altura')||''; p.estadoFitosan=fd.get('estadoFitosan')||'';
+    p.humedad=fd.get('humedad')||''; p.accion=fd.get('accion')||'';
+    p.responsable=fd.get('responsable')||''; p.alerta=fd.get('alerta')||'';
+  } else if (mod==='gest') {
+    p.tipoRegistro='Gestion Humana';
+    p.joven=fd.get('joven')||''; p.asistencia=fd.get('asistencia')||'';
+    p.camaAsignada=fd.get('camaAsignada')||''; p.tarea=fd.get('tarea')||'';
+    p.actitud=fd.get('actitud')||''; p.herramienta=fd.get('herramienta')||'';
+    p.estadoHerr=fd.get('estadoHerr')||''; p.insumoGH=fd.get('insumoGH')||'';
+    p.motivoAusencia=fd.get('motivoAusencia')||'';
+  } else if (mod==='riego') {
+    p.tipoRegistro='Riego_Fumigacion';
+    p.tipoOperacion=fd.get('tipoOperacion')||'';
+    p.huerta=fd.get('huertaRiego')||''; p.camaId=fd.get('camaIdRiego')||'';
+    p.cultivo=fd.get('cultivoRiego')||''; p.responsable=fd.get('responsableRiego')||'';
+    p.producto=fd.get('producto')||''; p.cantidad=fd.get('cantidad')||'';
+    p.unidad=fd.get('unidad')||''; p.tiempo=fd.get('tiempo')||'';
+    p.cobertura=fd.get('cobertura')||'';
+  } else if (mod==='cos') {
+    p.tipoRegistro='Cosechas';
+    p.camaId=fd.get('camaIdCosecha')||''; p.huerta=fd.get('huertaCosecha')||'';
+    p.cultivo=fd.get('cultivoCosecha')||''; p.cantidad=fd.get('cantidadCosecha')||'';
+    p.unidad=fd.get('unidadCosecha')||''; p.destino=fd.get('destino')||'';
+    p.calidad=fd.get('calidad')||''; p.responsable=fd.get('responsableCosecha')||'';
+  } else if (mod==='ins') {
+    p.tipoRegistro='Insumos';
+    p.insumo=fd.get('insumo')||''; p.tipoInsumo=fd.get('tipoInsumo')||'';
+    p.proveedor=fd.get('proveedor')||''; p.precio=fd.get('precio')||'';
+    p.unidad=fd.get('unidad')||''; p.cantEntrada=fd.get('cantEntrada')||'';
+    p.cantSalida=fd.get('cantSalida')||'';
+  }
+
+  if (!url) {
+    toast('Ve a Sistema y pega la URL del script', true);
+    btn.textContent='Registrar en Sistema'; btn.disabled=false; return;
+  }
+
+  fetch(url, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(p)
+  })
+  .then(function() {
+    toast('Registrado en Google Sheets');
+    addHist(p); limpiar();
+  })
+  .catch(function(err) {
+    toast('Error: ' + err.message, true);
+  })
+  .finally(function() {
+    btn.textContent='Registrar en Sistema'; btn.disabled=false;
   });
 }
 
-// ---- EQUIPO ----
-function buildEquipo() {
-  q('#equipoGrid').innerHTML = D.jovenes.map(function(n, i) {
-    var ini = n.split(' ').map(function(w){ return w[0]; }).join('').toUpperCase().slice(0,2);
-    var ult = D.asistencia[n];
-    var sub = ult && ult.fecha ? ult.fecha + ' - ' + ult.asistencia : 'Sin registros';
-    return '<div class="eq-card" onclick="irAFormEquipo(\'' + n + '\')"><div class="eq-ava" style="background:' + COLORES[i % COLORES.length] + '">' + ini + '</div><div class="eq-info"><strong>' + n.split(' ')[0] + '</strong><span>' + sub + '</span></div><span style="font-size:14px;margin-left:auto;color:var(--g3)">+</span></div>';
-  }).join('');
+function limpiar() {
+  q('#frm').reset();
+  q('#fFecha').valueAsDate=HOY;
+  var ids=['aBH','aBC','aBO','aCH','aCCu','aRC','aJU','aIC','aIS','aIP','aIU'];
+  for(var i=0;i<ids.length;i++) sa(ids[i],'');
 }
 
-function buildSysInfo() {
-  var c = D.camas;
-  q('#sysInfo').innerHTML = 'Camas: <strong>' + c.length + '</strong> - Con cultivo: <strong>' + c.filter(function(x){ return x.c && x.e !== 'Vacía'; }).length + '</strong> - Vacias: <strong>' + c.filter(function(x){ return x.e === 'Vacía'; }).length + '</strong><br>Participantes: <strong>' + D.jovenes.length + '</strong> - Insumos: <strong>' + D.inventario.length + '</strong><br>Fuente: <strong>' + (q('#cDot').classList.contains('on') ? 'Google Sheets OK' : 'Datos locales') + '</strong>';
+// ── HISTORIAL ──
+function addHist(p) {
+  hist.unshift(p);
+  var el=q('#hList'); el.innerHTML='';
+  var M={
+    'Bitacora Diaria':['background:#d8f3dc;color:#2d6a4f','Bitacora'],
+    'Gestion Humana': ['background:#e3f2fd;color:#1565c0','G.Humana'],
+    'Riego_Fumigacion':['background:#e0f7fa;color:#006064','Riego'],
+    'Cosechas':       ['background:#fff3e0;color:#9a4f1a','Cosecha'],
+    'Insumos':        ['background:#f3e5f5;color:#6a1b9a','Insumos']
+  };
+  for(var i=0;i<Math.min(hist.length,30);i++){
+    var r=hist[i]; var info=M[r.tipoRegistro]||['','Registro'];
+    var body='';
+    if(r.camaId) body+='Cama <b>'+r.camaId+'</b>';
+    if(r.cultivo) body+=' · '+r.cultivo;
+    if(r.joven) body+='<b>'+r.joven+'</b> · '+r.asistencia;
+    if(r.tipoOperacion) body+=' · '+r.tipoOperacion;
+    if(r.insumo) body+='Insumo: <b>'+r.insumo+'</b>';
+    if(r.cantidad) body+=' '+r.cantidad+(r.unidad?' '+r.unidad:'');
+    if(r.observaciones) body+=' — '+r.observaciones.slice(0,60);
+    var d=document.createElement('div'); d.className='hi';
+    d.innerHTML='<div class="hihd"><span class="himod" style="'+info[0]+'">'+info[1]+'</span>'+
+      '<span class="hifec">'+r.fecha+'</span></div>'+
+      '<div class="hibod">'+(body||'Registro guardado')+'</div>';
+    el.appendChild(d);
+  }
 }
 
-// ---- NAVEGACION ----
-function goTo(name) {
-  qa('.view').forEach(function(v){ v.classList.remove('on'); });
-  qa('.nb').forEach(function(b){ b.classList.remove('on'); });
-  q('#v-' + name).classList.add('on');
-  var idx = {panel:0,form:1,camas:2,equipo:3,historial:4}[name];
-  var nbs = qa('.nb');
-  if (idx != null && nbs[idx]) nbs[idx].classList.add('on');
+// ── CONEXION ──
+function probar() {
+  var dot=q('#cDot'), txt=q('#cTxt');
+  dot.className='cdot spin'; txt.textContent='Probando...';
+  var url=q('#urlIn').value.trim();
+  if(!url){toast('Pega la URL primero',true);dot.className='cdot off';return;}
+  localStorage.setItem('erp_url',url); API=url;
+  fetch(url+'?action=health',{cache:'no-cache'})
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d.status==='online'){
+        dot.className='cdot on';
+        txt.textContent='Conectado '+d.version+' '+hora();
+        toast('Servidor activo — cargando datos...');
+        syncDatos(false);
+      } else throw new Error('resp');
+    })
+    .catch(function(){
+      dot.className='cdot off';
+      txt.textContent='Sin conexion';
+      toast('No se pudo conectar. Verifica la URL y los permisos.', true);
+    });
+}
+
+// ── NAV ──
+function ir(name) {
+  var vs=document.querySelectorAll('.view');
+  for(var i=0;i<vs.length;i++) vs[i].classList.remove('on');
+  var nbs=document.querySelectorAll('.nb');
+  for(var i=0;i<nbs.length;i++) nbs[i].classList.remove('on');
+  q('#v-'+name).classList.add('on');
+  var idx={panel:0,form:1,camas:2,equipo:3,historial:4}[name];
+  if(idx!=null&&nbs[idx]) nbs[idx].classList.add('on');
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
 function setMod(m, btn) {
-  modActual = m;
-  qa('.mpk').forEach(function(b){ b.classList.remove('on'); });
-  if (btn) btn.classList.add('on');
-  qa('.fmod').forEach(function(f){ f.classList.remove('on'); });
-  q('#fm-' + m).classList.add('on');
+  mod=m;
+  var mpks=document.querySelectorAll('.mpk');
+  for(var i=0;i<mpks.length;i++) mpks[i].classList.remove('on');
+  if(btn) btn.classList.add('on');
+  var fmods=document.querySelectorAll('.fmod');
+  for(var i=0;i<fmods.length;i++) fmods[i].classList.remove('on');
+  q('#fm-'+m).classList.add('on');
 }
 
-function irAForm(cid) {
-  goTo('form');
-  setMod('bit', qa('.mpk')[0]);
-  setTimeout(function() {
-    var s = q('#sCB');
-    if (s) { s.value = cid; onCama(s, 'aBH', 'aBC', 'aBO'); }
+function abrirCama(cid) {
+  ir('form'); setMod('bit', document.querySelectorAll('.mpk')[0]);
+  setTimeout(function(){
+    var s=q('#sCB'); if(s){ s.value=cid; onCama(s,'aBH','aBC','aBO'); }
+  }, 80);
+}
+function abrirJoven(n) {
+  ir('form'); setMod('gest', document.querySelectorAll('.mpk')[1]);
+  setTimeout(function(){
+    var s=q('#sJ'); if(s){ s.value=n; onJoven(s); }
   }, 80);
 }
 
-function irAFormEquipo(n) {
-  goTo('form');
-  setMod('gest', qa('.mpk')[1]);
-  setTimeout(function() {
-    var s = q('#selJ');
-    if (s) { s.value = n; onJoven(s); }
-  }, 80);
-}
-
-// ---- ENVIO ----
-function enviar(e) {
-  e.preventDefault();
-  var btn = q('#sbtn');
-  btn.textContent = 'Enviando...';
-  btn.disabled = true;
-  var fd = new FormData(q('#erpForm'));
-  var url = q('#urlIn').value;
-  var p = {tipoRegistro:'', fecha:q('#fFecha').value, observaciones:q('#obs').value};
-
-  if (modActual === 'bit') {
-    p.tipoRegistro = 'Bitacora Diaria';
-    p.camaId       = fd.get('camaId') || '';
-    p.huerta       = fd.get('huerta') || '';
-    p.cultivo      = fd.get('cultivo') || '';
-    p.origen       = fd.get('origen') || '';
-    p.fase         = fd.get('fase') || '';
-    p.avance       = fd.get('avance') || '';
-    p.altura       = fd.get('altura') || '';
-    p.estadoFitosan= fd.get('estadoFitosan') || '';
-    p.humedad      = fd.get('humedad') || '';
-    p.accion       = fd.get('accion') || '';
-    p.responsable  = fd.get('responsable') || '';
-    p.alerta       = fd.get('alerta') || '';
-  } else if (modActual === 'gest') {
-    p.tipoRegistro  = 'Gestion Humana';
-    p.joven         = fd.get('joven') || '';
-    p.asistencia    = fd.get('asistencia') || '';
-    p.camaAsignada  = fd.get('camaAsignada') || '';
-    p.tarea         = fd.get('tarea') || '';
-    p.actitud       = fd.get('actitud') || '';
-    p.herramienta   = fd.get('herramienta') || '';
-    p.estadoHerr    = fd.get('estadoHerr') || '';
-    p.insumoGH      = fd.get('insumoGH') || '';
-    p.motivoAusencia= fd.get('motivoAusencia') || '';
-  } else if (modActual === 'riego') {
-    p.tipoRegistro = 'Riego_Fumigacion';
-    p.tipoOperacion= fd.get('tipoOperacion') || '';
-    p.huerta       = fd.get('huertaRiego') || '';
-    p.camaId       = fd.get('camaIdRiego') || '';
-    p.cultivo      = fd.get('cultivoRiego') || '';
-    p.responsable  = fd.get('responsableRiego') || '';
-    p.producto     = fd.get('producto') || '';
-    p.cantidad     = fd.get('cantidad') || '';
-    p.unidad       = fd.get('unidad') || '';
-    p.tiempo       = fd.get('tiempo') || '';
-    p.cobertura    = fd.get('cobertura') || '';
-  } else if (modActual === 'cos') {
-    p.tipoRegistro = 'Cosechas';
-    p.camaId       = fd.get('camaIdCosecha') || '';
-    p.huerta       = fd.get('huertaCosecha') || '';
-    p.cultivo      = fd.get('cultivoCosecha') || '';
-    p.cantidad     = fd.get('cantidadCosecha') || '';
-    p.unidad       = fd.get('unidadCosecha') || '';
-    p.destino      = fd.get('destino') || '';
-    p.calidad      = fd.get('calidad') || '';
-    p.responsable  = fd.get('responsableCosecha') || '';
-  } else if (modActual === 'ins') {
-    p.tipoRegistro = 'Insumos';
-    p.insumo       = fd.get('insumo') || '';
-    p.tipoInsumo   = fd.get('tipoInsumo') || '';
-    p.proveedor    = fd.get('proveedor') || '';
-    p.precio       = fd.get('precio') || '';
-    p.unidad       = fd.get('unidadInsumo') || '';
-    p.cantEntrada  = fd.get('cantEntrada') || '';
-    p.cantSalida   = fd.get('cantSalida') || '';
-  }
-
-  if (!url) {
-    showToast('Sin URL. Ve a Sistema y pega la URL del script.', true);
-    btn.textContent = 'Registrar en Sistema';
-    btn.disabled = false;
-    return;
-  }
-
-  fetch(url, {method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(p)})
-    .then(function() {
-      showToast('Registrado en Google Sheets');
-      addHist(p);
-      limpiar();
-    })
-    .catch(function(err) {
-      showToast('Error: ' + err.message, true);
-    })
-    .finally(function() {
-      btn.textContent = 'Registrar en Sistema';
-      btn.disabled = false;
-    });
-}
-
-function limpiar() {
-  q('#erpForm').reset();
-  q('#fFecha').valueAsDate = HOY;
-  ['aBH','aBC','aBO','aCH','aCCu','aRC','aJU','aIC','aIS','aIP','aIU'].forEach(function(id){ sa(id, ''); });
-}
-
-// ---- HISTORIAL ----
-function addHist(p) {
-  historial.unshift(p);
-  var el = q('#histList');
-  el.innerHTML = '';
-  var MST = {
-    'Bitacora Diaria': ['background:#d8f3dc;color:#2d6a4f','Bitacora'],
-    'Gestion Humana':  ['background:#e3f2fd;color:#1565c0','G.Humana'],
-    'Riego_Fumigacion':['background:#e0f7fa;color:#006064','Riego'],
-    'Cosechas':        ['background:#fff3e0;color:#9a4f1a','Cosecha'],
-    'Insumos':         ['background:#f3e5f5;color:#6a1b9a','Insumos']
-  };
-  historial.slice(0,30).forEach(function(r) {
-    var sty_lbl = MST[r.tipoRegistro] || ['','Registro'];
-    var body = '';
-    if (r.camaId)   body += 'Cama <strong>' + r.camaId + '</strong>';
-    if (r.cultivo)  body += ' - ' + r.cultivo;
-    if (r.joven)    body += 'Joven: <strong>' + r.joven + '</strong> - ' + r.asistencia;
-    if (r.tipoOperacion) body += ' - ' + r.tipoOperacion;
-    if (r.insumo)   body += 'Insumo: <strong>' + r.insumo + '</strong>';
-    if (r.cantidad) body += ' - ' + r.cantidad + ' ' + (r.unidad||'');
-    if (r.observaciones) body += '<br><em style="color:var(--txt3)">' + r.observaciones.slice(0,80) + '</em>';
-    var d = document.createElement('div');
-    d.className = 'hist-item';
-    d.innerHTML = '<div class="hist-hdr"><span class="hist-mod" style="' + sty_lbl[0] + '">' + sty_lbl[1] + '</span><span class="hist-fecha">' + r.fecha + '</span></div><div class="hist-body">' + (body || 'Registro guardado') + '</div>';
-    el.appendChild(d);
-  });
-}
-
-// ---- CONEXION ----
-function probar() {
-  var dot = q('#cDot'), txt = q('#cTxt');
-  dot.className = 'cdot test';
-  txt.textContent = 'Probando...';
-  var url = q('#urlIn').value.trim();
-  if (!url) { showToast('Ingresa la URL primero', true); dot.className = 'cdot off'; txt.textContent = 'Sin URL'; return; }
-  localStorage.setItem('erp_url', url);
-  API = url;
-  fetch(url + '?action=health', {cache:'no-cache'})
-    .then(function(r){ return r.json(); })
-    .then(function(d) {
-      if (d.status === 'online') {
-        dot.className = 'cdot on';
-        txt.textContent = 'Conectado - ' + d.version;
-        showToast('Conectado - cargando datos...');
-        sync(false);
-      } else { throw new Error('resp inesperada'); }
-    })
-    .catch(function() {
-      dot.className = 'cdot off';
-      txt.textContent = 'Sin conexion';
-      showToast('No se pudo conectar. Verifica URL y permisos', true);
-    });
-}
-
-// ---- UTILS ----
-function showToast(msg, err) {
-  var el = q('#toast');
-  el.textContent = msg;
-  el.style.background = err ? '#c0392b' : '#1a3d2b';
+// ── UTILS ──
+var _tt;
+function toast(msg, err) {
+  var el=q('#toast');
+  el.textContent=msg;
+  el.style.background=err?'#c0392b':'#1a3d2b';
   el.classList.add('on');
   clearTimeout(_tt);
-  _tt = setTimeout(function(){ el.classList.remove('on'); }, 3400);
+  _tt=setTimeout(function(){ el.classList.remove('on'); }, 3200);
 }
-function hora() { return new Date().getHours().toString().padStart(2,'0') + ':' + new Date().getMinutes().toString().padStart(2,'0'); }
-function q(s)  { return document.querySelector(s); }
-function qa(s) { return document.querySelectorAll(s); }
-
-init();
+function hora() {
+  return new Date().getHours().toString().padStart(2,'0')+':'+
+         new Date().getMinutes().toString().padStart(2,'0');
+}
+function q(s) { return document.querySelector(s); }
 </script>
 </body>
 </html>
