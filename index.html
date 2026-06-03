@@ -270,8 +270,8 @@ body{font-family:var(--f);background:var(--bg);color:var(--txt);min-height:100vh
               <option value="5">5 Excelente ⭐</option>
             </select></div>
         </div>
-        <div class="fl"><label>Tarea Asignada</label>
-          <input type="text" name="tarea" placeholder="Ej: Siembra maíz, deshierbe"></div>
+        <div class="fl"><label>Tarea / Actividad Asignada</label>
+          <select name="tarea" id="selTarea"><option value="">Seleccionar actividad...</option></select></div>
         <div class="r2">
           <div class="fl"><label>Herramienta</label>
             <input type="text" name="herramienta" placeholder="Ej: Pala"></div>
@@ -623,6 +623,7 @@ function poblarSelects() {
   llenarSel('selFase', FASES, null);
   llenarSel('selEF',   EST_FITO, null);
   llenarSel('selAcc',  ACCIONES, null);
+  llenarSel('selTarea',ACCIONES, 'Seleccionar actividad...');
   llenarSel('selDest', DESTINOS, null);
 
   var nomInsumos = INVENTARIO.map(function(i){ return i.nombre; });
@@ -1085,6 +1086,10 @@ function limpiar() {
   g('erpForm').reset();
   g('fFecha').valueAsDate = HOY;
   ['aBH','aBC','aBO','aCH','aCCu','aRC','aJU','aIS','aIP','aIU'].forEach(function(id){ sa(id,''); });
+  // Reset selects to first option
+  ['selTarea','selFase','selEF','selAcc','selDest'].forEach(function(id){
+    var s = document.getElementById(id); if(s) s.selectedIndex=0;
+  });
 }
 
 // ═══════════════════════════════════════════
