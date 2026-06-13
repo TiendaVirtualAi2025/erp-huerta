@@ -1,281 +1,1341 @@
-// ERP HUERTA - Apps Script V19 - PRODUCCION
-// Verificado contra sistema_huerta_integral_v6.xlsx
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>ERP Huerta</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--g1:#1a3d2b;--g2:#2d6a4f;--g3:#40916c;--g4:#52b788;--g6:#d8f3dc;--am:#e07a31;--amp:#fff3e0;--rd:#c0392b;--rdp:#fdecea;--bl:#1565c0;--blp:#e3f2fd;--bg:#f2efe8;--bg2:#e8e4db;--card:#fff;--txt:#1a1a1a;--t2:#555;--t3:#888;--bdr:#e0ddd5;--f:'Inter',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--f);background:var(--bg);color:var(--txt);min-height:100vh}
+.hdr{background:var(--g1);position:sticky;top:0;z-index:200}
+.hdr-t{max-width:500px;margin:0 auto;display:flex;align-items:center;padding:11px 14px;gap:8px}
+.hdr-t h1{flex:1;font-size:15px;font-weight:700;color:#fff}
+.hdr-t h1 span{font-size:10px;font-weight:400;opacity:.6;display:block;margin-top:1px}
+.sbtn2{background:none;border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.85);padding:5px 10px;border-radius:20px;font-family:var(--f);font-size:11px;font-weight:600;cursor:pointer}
+.cfg{background:none;border:none;color:rgba(255,255,255,.7);padding:5px;cursor:pointer;font-size:18px}
+.nav{background:var(--g2);border-top:1px solid rgba(255,255,255,.1)}
+.nav-i{max-width:500px;margin:0 auto;display:flex}
+.nb{flex:1;padding:9px 2px 8px;border:none;background:none;color:rgba(255,255,255,.5);font-family:var(--f);font-size:9px;font-weight:600;letter-spacing:.3px;text-transform:uppercase;cursor:pointer;border-bottom:2px solid transparent}
+.nb.on{color:#fff;border-bottom-color:var(--g4)}
+.wrap{max-width:500px;margin:0 auto;padding:12px 14px 90px}
+.view{display:none}.view.on{display:block}
+.toast{position:fixed;top:66px;left:50%;transform:translateX(-50%) translateY(-10px);background:var(--g1);color:#fff;padding:10px 20px;border-radius:30px;font-size:13px;font-weight:500;z-index:999;opacity:0;transition:all .25s;pointer-events:none;max-width:92vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.offbar{background:var(--am);color:#fff;font-size:12px;font-weight:600;text-align:center;padding:7px;display:none}
+.offbar.show{display:block}
+.krow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.kpi{background:var(--card);border-radius:10px;padding:12px 13px;border:1px solid var(--bdr);position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%}
+.kpi.g::before{background:var(--g3)}.kpi.a::before{background:var(--am)}.kpi.r::before{background:var(--rd)}.kpi.b::before{background:var(--bl)}
+.kl{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.4px}
+.kv{font-size:26px;font-weight:700;line-height:1;margin:3px 0 1px}
+.kpi.g .kv{color:var(--g2)}.kpi.a .kv{color:var(--am)}.kpi.r .kv{color:var(--rd)}.kpi.b .kv{color:var(--bl)}
+.ks{font-size:10px;color:var(--t3)}
+.sec{margin:15px 0 8px;font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.7px;display:flex;align-items:center;gap:6px}
+.sec::after{content:'';flex:1;height:1px;background:var(--bdr)}
+.ac{background:var(--card);border-radius:10px;border:1px solid var(--bdr);margin-bottom:7px;overflow:hidden;cursor:pointer}
+.ac-in{display:flex;align-items:center;gap:9px;padding:10px 12px}
+.ac-p{width:4px;flex-shrink:0;align-self:stretch;border-radius:2px;margin-right:9px}
+.ac-p.cr{background:var(--rd)}.ac-p.wa{background:var(--am)}.ac-p.ok{background:var(--g4)}.ac-p.in{background:var(--bl)}
+.ac-ico{font-size:17px;flex-shrink:0}
+.ac-b{flex:1;min-width:0}
+.ac-b strong{font-size:13px;font-weight:600;display:block}
+.ac-b span{font-size:11px;color:var(--t2);display:block;margin-top:1px;line-height:1.4}
+.ac-tag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;flex-shrink:0;align-self:flex-start}
+.tc{background:var(--rdp);color:var(--rd)}.tw{background:var(--amp);color:#9a4f1a}.tok{background:var(--g6);color:var(--g2)}.ti{background:var(--blp);color:var(--bl)}
+.tli{display:flex;gap:11px;position:relative}
+.tli::before{content:'';position:absolute;left:14px;top:28px;bottom:-7px;width:1px;background:var(--bdr)}
+.tli:last-child::before{display:none}
+.tld{width:29px;height:29px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;margin-top:8px;z-index:1}
+.tnow{background:var(--rdp);border:2px solid var(--rd)}.tsoon{background:var(--amp);border:2px solid var(--am)}.tlater{background:var(--g6);border:2px solid var(--g4)}
+.tlc{background:var(--card);border-radius:10px;border:1px solid var(--bdr);padding:9px 12px;flex:1;margin-bottom:7px}
+.tltp{display:flex;justify-content:space-between;align-items:flex-start}
+.tltp strong{font-size:13px;font-weight:600}
+.tldias{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px}
+.dn{background:var(--rdp);color:var(--rd)}.ds{background:var(--amp);color:#9a4f1a}.dl{background:var(--g6);color:var(--g2)}
+.tlsub{font-size:11px;color:var(--t2);margin-top:2px}
+.pb{height:4px;background:var(--bg2);border-radius:3px;margin-top:6px;overflow:hidden}
+.pf{height:100%;border-radius:3px;background:var(--g4)}
+.cc{background:var(--card);border-radius:10px;border:1px solid var(--bdr);padding:13px}
+.br{display:flex;align-items:center;gap:7px;margin-bottom:7px}.br:last-child{margin-bottom:0}
+.bl2{font-size:11px;font-weight:500;width:85px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bt{flex:1;height:9px;background:var(--bg2);border-radius:5px;overflow:hidden}
+.bf{height:100%;border-radius:5px;background:var(--g4)}
+.bn{font-size:11px;color:var(--t3);width:20px;text-align:right;flex-shrink:0}
+.ir{background:var(--card);border-radius:10px;border:1px solid var(--bdr);padding:10px 13px;margin-bottom:7px;display:flex;align-items:center;gap:10px}
+.iico{font-size:19px;flex-shrink:0}
+.ib{flex:1;min-width:0}.ib strong{font-size:13px;font-weight:600}.ib span{font-size:10.5px;color:var(--t2);display:block}
+.is{text-align:right;flex-shrink:0}.is .num{font-size:17px;font-weight:700}.is .uni{font-size:10px;color:var(--t3)}
+.sok .num{color:var(--g3)}.slow .num{color:var(--am)}.scrit .num{color:var(--rd)}
+.sbr{height:4px;background:var(--bg2);border-radius:2px;margin-top:4px;overflow:hidden}
+.sf{height:100%;border-radius:2px}.sok .sf{background:var(--g4)}.slow .sf{background:var(--am)}.scrit .sf{background:var(--rd)}
+.hb{background:var(--card);border-radius:10px;border:1px solid var(--bdr);margin-bottom:8px;overflow:hidden}
+.hh{padding:9px 13px;background:var(--bg);display:flex;justify-content:space-between;align-items:center;cursor:pointer;border-bottom:1px solid var(--bdr);user-select:none}
+.hh strong{font-size:13px;font-weight:600}.hs{font-size:11px;color:var(--t3)}
+.hch{padding:9px 11px;display:flex;flex-wrap:wrap;gap:5px}
+.chip{padding:5px 8px;border-radius:6px;font-size:10px;font-weight:600;cursor:pointer;border:1px solid transparent;min-width:42px}
+.chip:active{transform:scale(.92)}
+.cht{display:block;font-size:9px;font-weight:400;opacity:.75;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60px}
+.crec{background:#f0fff4;border-color:#95d5b2;color:var(--g2)}.clista{background:var(--amp);border-color:#f0b070;color:#7a3d10}.ccos{background:#f5f5f5;border-color:#ddd;color:#777}.cvac{background:var(--bg);border-color:var(--bdr);color:var(--t3)}.cprep{background:var(--blp);border-color:#90caf9;color:var(--bl)}
+.lr{display:flex;gap:10px;flex-wrap:wrap;padding:7px 11px 10px;border-top:1px solid var(--bdr)}
+.leg{font-size:10px;color:var(--t2);display:flex;align-items:center;gap:3px}
+.ld{width:7px;height:7px;border-radius:2px;flex-shrink:0}
+.eg{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.ec{background:var(--card);border-radius:10px;border:1px solid var(--bdr);padding:10px 11px;display:flex;align-items:center;gap:9px;cursor:pointer}
+.ec:active{transform:scale(.97)}
+.ea{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;color:#fff}
+.ei strong{font-size:12px;font-weight:600;display:block}.ei span{font-size:10px;color:var(--t3)}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:none;align-items:flex-end;justify-content:center}
+.modal-bg.show{display:flex}
+.modal{background:var(--card);border-radius:16px 16px 0 0;width:100%;max-width:500px;max-height:82vh;overflow-y:auto;padding:18px 16px 32px}
+.mhdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.mhdr h3{font-size:16px;font-weight:700}
+.mclose{background:none;border:none;font-size:22px;cursor:pointer;color:var(--t3)}
+.mact{display:block;width:100%;padding:12px;border:none;border-radius:10px;font-family:var(--f);font-size:13px;font-weight:600;cursor:pointer;margin-bottom:8px;text-align:left}
+.m-sem{background:var(--g6);color:var(--g2)}.m-cos{background:var(--amp);color:#9a4f1a}.m-des{background:var(--blp);color:var(--bl)}
+.mpk-w{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
+.mpk{padding:9px 7px;border:1.5px solid var(--bdr);border-radius:10px;background:var(--bg);font-family:var(--f);font-size:10px;font-weight:600;color:var(--t2);cursor:pointer;text-align:center;line-height:1.4}
+.mpk span{display:block;font-size:15px;margin-bottom:2px}
+.mpk.on{background:var(--g2);color:#fff;border-color:var(--g2)}
+.fc{background:var(--card);border-radius:10px;border:1px solid var(--bdr);padding:14px;margin-bottom:9px}
+.ftt{font-size:11px;font-weight:700;color:var(--g2);text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--bdr);padding-bottom:8px;margin-bottom:12px}
+.fm{display:none}.fm.on{display:block}
+.fl{margin-bottom:10px}.fl:last-child{margin-bottom:0}
+.fl label{display:block;font-size:11px;font-weight:600;color:var(--t2);margin-bottom:3px}
+.fl input,.fl select,.fl textarea{width:100%;padding:9px 11px;border:1.5px solid var(--bdr);border-radius:6px;font-family:var(--f);font-size:14px;color:var(--txt);background:var(--bg);-webkit-appearance:none;appearance:none}
+.fl input:focus,.fl select:focus,.fl textarea:focus{outline:none;border-color:var(--g3);background:#fff}
+.fl textarea{resize:none}
+.af{background:#f0fff4!important;color:var(--g2)!important;font-weight:600!important;border-color:#b7e4c7!important}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.r3{display:grid;grid-template-columns:2fr 1fr;gap:8px}
+.dr{background:var(--card);border-radius:10px;border:1px solid var(--bdr);padding:10px 13px;margin-bottom:9px;display:flex;align-items:center;gap:10px}
+.dr label{font-size:12px;font-weight:600;color:var(--t2);white-space:nowrap}
+.dr input{flex:1;padding:8px 10px;border:1.5px solid var(--bdr);border-radius:6px;font-family:var(--f);font-size:14px;background:var(--bg);color:var(--txt)}
+.sub{width:100%;background:var(--g2);color:#fff;border:none;padding:14px;border-radius:10px;font-family:var(--f);font-size:15px;font-weight:700;cursor:pointer;margin-top:4px}
+.sub:active{transform:scale(.99)}.sub:disabled{opacity:.55;cursor:not-allowed}
+.inp{background:rgba(82,183,136,.1);border:1.5px solid #95d5b2;border-radius:6px;padding:9px 11px}
+.out{background:rgba(192,57,43,.07);border:1.5px solid #e8a0a0;border-radius:6px;padding:9px 11px}
+.ibox{background:var(--g6);border-radius:8px;padding:9px 11px;margin-bottom:9px;font-size:12px;color:var(--g2);font-weight:500}
+.wbox{background:var(--amp);border-radius:8px;padding:9px 11px;margin-bottom:9px;font-size:12px;color:#9a4f1a;font-weight:500}
+.hi{background:var(--card);border-radius:10px;border:1px solid var(--bdr);margin-bottom:8px;overflow:hidden}
+.hih{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:var(--bg);border-bottom:1px solid var(--bdr)}
+.him{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px}
+.hif{font-size:10px;color:var(--t3);font-weight:500}
+.hib{padding:9px 12px;font-size:12.5px;line-height:1.55;color:var(--t2)}
+.hib strong{color:var(--txt);font-weight:600}
+.sysc{background:var(--card);border-radius:10px;border:1px solid var(--bdr);padding:15px;margin-bottom:9px}
+.sysc h3{font-size:14px;font-weight:700;margin-bottom:10px}
+.cbox{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:6px;background:var(--bg);margin-bottom:10px}
+.cdot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.cdot.on{background:var(--g4);box-shadow:0 0 0 3px rgba(82,183,136,.3)}.cdot.off{background:var(--bdr)}.cdot.test{background:var(--am);animation:pl .8s infinite}
+@keyframes pl{0%,100%{opacity:1}50%{opacity:.4}}
+.uin{width:100%;padding:8px 10px;border:1.5px solid var(--bdr);border-radius:6px;font-family:monospace;font-size:10px;background:var(--bg);margin-bottom:8px;color:var(--txt)}
+.tbtn{width:100%;padding:10px;background:var(--bg);border:1.5px solid var(--bdr);border-radius:6px;font-family:var(--f);font-size:13px;font-weight:600;color:var(--txt);cursor:pointer;margin-bottom:7px}
+.tbtn:hover{background:var(--g6);border-color:var(--g4);color:var(--g2)}
+.empty{text-align:center;padding:28px 20px;color:var(--t3);font-size:13px}
+</style>
+</head>
+<body>
+<div id="offbar" class="offbar">&#9888;&#65039; Sin conexi&#243;n &#8212; datos locales</div>
+<header class="hdr">
+  <div class="hdr-t">
+    <h1>&#127807; ERP Huerta <span>Finca San Jos&#233; &middot; Casa Restaurativa</span></h1>
+    <button class="sbtn2" onclick="sinc(true)">&#8635; Sync</button>
+    <button class="cfg" onclick="ir('sistema')">&#9881;</button>
+  </div>
+  <div class="nav"><div class="nav-i">
+    <button class="nb on" onclick="ir('panel')">Panel</button>
+    <button class="nb" onclick="ir('form')">Registrar</button>
+    <button class="nb" onclick="ir('camas')">Camas</button>
+    <button class="nb" onclick="ir('equipo')">Equipo</button>
+    <button class="nb" onclick="ir('historial')">Historial</button>
+  </div></div>
+</header>
+<div id="toast" class="toast"></div>
 
-var H={CFG:"Configuracion",BIT:"Bitacora Diaria",GH:"Gestion Humana",
-  RIE:"Control_Riego",FUM:"Control_Fumigacion",COS:"Cosechas",
-  INS:"Insumos",INV:"Inventario",SIE:"Base_Siembras"};
+<!-- MODAL CAMA -->
+<div id="modalBg" class="modal-bg" onclick="if(event.target===this)cModal()">
+  <div class="modal">
+    <div class="mhdr"><h3 id="mTit"></h3><button class="mclose" onclick="cModal()">&#10005;</button></div>
+    <div id="mEst" style="margin-bottom:10px"></div>
+    <div id="mPoli" style="margin-bottom:10px"></div>
+    <div id="mAcc"></div>
+    <div style="margin-top:14px">
+      <div style="font-size:11px;font-weight:700;color:var(--t2);margin-bottom:8px">HISTORIAL DE COSECHAS</div>
+      <div id="mHist"><div class="empty" style="padding:10px">Sin registros</div></div>
+    </div>
+  </div>
+</div>
 
-function doGet(e){
-  var a=(e&&e.parameter&&e.parameter.action)?e.parameter.action:"health";
-  try{
-    if(a==="health") return R({status:"online",version:"V19"});
-    if(a==="config") return R(leerConfig());
-    return R({status:"error",msg:"accion desconocida"});
-  }catch(err){return R({status:"error",msg:err.message});}
+<main class="wrap">
+<!-- PANEL -->
+<div id="v-panel" class="view on">
+  <div style="padding:13px 0 10px">
+    <div id="saludo" style="font-size:20px;font-weight:700"></div>
+    <div id="fechaTxt" style="font-size:12px;color:var(--t3);margin-top:2px"></div>
+    <div id="syncSt" style="font-size:11px;color:var(--t3);margin-top:2px"></div>
+  </div>
+  <div class="krow">
+    <div class="kpi g"><div class="kl">Camas Activas</div><div class="kv" id="kA">&#8212;</div><div class="ks">de <span id="kT">&#8212;</span> totales</div></div>
+    <div class="kpi a"><div class="kl">Listas Cosechar</div><div class="kv" id="kC">&#8212;</div><div class="ks">acci&#243;n requerida</div></div>
+    <div class="kpi r"><div class="kl">Vac&#237;as</div><div class="kv" id="kV">&#8212;</div><div class="ks">disponibles</div></div>
+    <div class="kpi b"><div class="kl">Equipo</div><div class="kv" id="kE">&#8212;</div><div class="ks">participantes</div></div>
+  </div>
+  <div class="sec">&#9888; Alertas</div><div id="alertas"></div>
+  <div class="sec">&#128197; Pr&#243;ximas Cosechas</div><div id="timeline"></div>
+  <div class="sec">&#128202; Cultivos</div><div class="cc" id="cultChart"></div>
+  <div class="sec">&#128230; Inventario</div><div id="stockList"></div>
+</div>
+
+<!-- FORM -->
+<div id="v-form" class="view">
+  <div class="mpk-w" style="margin-top:12px">
+    <button class="mpk on" onclick="setMod('bit',this)"><span>&#128203;</span>Bit&#225;cora<br>Diaria</button>
+    <button class="mpk" onclick="setMod('gest',this)"><span>&#128101;</span>Gesti&#243;n<br>Humana</button>
+    <button class="mpk" onclick="setMod('riego',this)"><span>&#128167;</span>Riego &amp;<br>Fumig.</button>
+    <button class="mpk" onclick="setMod('cos',this)"><span>&#129354;</span>Cosechas</button>
+    <button class="mpk" onclick="setMod('ins',this)"><span>&#128230;</span>Insumos</button>
+    <button class="mpk" onclick="setMod('siem',this)"><span>&#127807;</span>Nueva<br>Siembra</button>
+    <button class="mpk" onclick="setMod('newinv',this)"><span>&#128194;</span>Agregar<br>Inventario</button>
+  </div>
+  <div class="dr"><label>&#128197; Fecha</label><input type="date" id="fFecha"></div>
+  <form id="erpForm" onsubmit="enviar(event)">
+
+    <!-- BITACORA -->
+    <div id="fm-bit" class="fm on"><div class="fc">
+      <div class="ftt">&#128203; Bit&#225;cora Diaria</div>
+      <div class="r2">
+        <div class="fl"><label>Cama *</label>
+          <select name="camaId" id="sCB" onchange="onCama(this,'aBH','aBC','aBO')"><option value="">Seleccionar...</option></select></div>
+        <div class="fl"><label>Huerta</label><input id="aBH" name="huerta" class="af" readonly placeholder="Auto"></div>
+      </div>
+      <div class="fl"><label>Cultivo</label><input id="aBC" name="cultivo" class="af" readonly placeholder="Auto al elegir cama"></div>
+      <div id="bitPoliWrap" style="display:none"><div class="ibox" id="bitPoliInfo"></div></div>
+      <div class="r2">
+        <div class="fl"><label>Tipo Origen</label><input id="aBO" name="origen" class="af" readonly placeholder="Auto"></div>
+        <div class="fl"><label>Fase</label><select name="fase" id="selFase"></select></div>
+      </div>
+      <div class="r2">
+        <div class="fl"><label>Estado Fitosanitario</label><select name="estadoFitosan" id="selEF"></select></div>
+        <div class="fl"><label>Humedad Suelo</label>
+          <select name="humedad">
+            <option value="Optima">&#128167; &#211;ptima</option>
+            <option value="Seco">&#129393; Seco</option>
+            <option value="Saturado">&#127783;&#65039; Saturado</option>
+          </select></div>
+      </div>
+      <div class="r2">
+        <div class="fl"><label>% Avance</label><input type="number" name="avance" min="0" max="100" placeholder="0-100"></div>
+        <div class="fl"><label>Altura (cm)</label><input type="number" name="altura" step="0.1" placeholder="cm"></div>
+      </div>
+      <div class="fl"><label>Acci&#243;n Realizada</label>
+        <select name="accion" id="selAcc" onchange="onAccBit(this)"></select></div>
+      <div id="cosEnBit" style="display:none">
+        <div class="wbox">&#9888;&#65039; Tambi&#233;n se registrar&#225; en Cosechas</div>
+        <div class="r3">
+          <div class="fl"><label>Cantidad cosechada</label><input type="number" step="0.01" name="cantidadBit" placeholder="Ej: 2.5"></div>
+          <div class="fl"><label>Unidad</label>
+            <select name="unidadBit"><option value="kg">Kg</option><option value="gr">gr</option><option value="manojos">Manojos/Atados</option><option value="unidades">Unidades</option><option value="litros">Litros</option></select></div>
+        </div>
+        <div class="fl"><label>&#191;Qu&#233; pasa con la cama despu&#233;s de esto?</label>
+          <select name="quedaProductoBit">
+            <option value="si">&#127793; Sigue activa (queda producto / policultivo)</option>
+            <option value="no">&#9989; Cama libre (lista para preparar/resembrar/descansar)</option>
+          </select></div>
+      </div>
+      <div class="fl"><label>Responsable *</label><select name="responsable" id="selRB"><option value="">Seleccionar...</option></select></div>
+      <div class="fl"><label>&#9888;&#65039; Alerta</label><input type="text" name="alerta" placeholder="Ej: Presencia de babosas"></div>
+    </div></div>
+
+    <!-- GESTION HUMANA -->
+    <div id="fm-gest" class="fm"><div class="fc">
+      <div class="ftt">&#128101; Gesti&#243;n Humana</div>
+      <div class="fl"><label>Participante *</label>
+        <select name="joven" id="selJ" onchange="onJoven(this)"><option value="">Seleccionar...</option></select></div>
+      <div class="fl"><label>Asistencia</label>
+        <select name="asistencia" id="sAsist" onchange="toggleAsist()">
+          <option value="Presente">&#128994; Presente</option>
+          <option value="Ausente">&#128308; Ausente</option>
+        </select></div>
+      <div id="camposP">
+        <div class="fl"><label>&#218;ltimo registro</label><input id="aJU" class="af" readonly placeholder="Sin registros previos"></div>
+        <div class="r2">
+          <div class="fl"><label>Cama Asignada</label><select name="camaAsignada" id="selCGH"><option value="">Ninguna</option></select></div>
+          <div class="fl"><label>Desempe&#241;o (1-5)</label>
+            <select name="actitud">
+              <option value="1">1 Muy bajo</option><option value="2">2 Bajo</option>
+              <option value="3" selected>3 Regular</option><option value="4">4 Bueno</option><option value="5">5 Excelente</option>
+            </select></div>
+        </div>
+        <div class="fl"><label>Tarea / Actividad</label><select name="tarea" id="selTarea"><option value="">Seleccionar...</option></select></div>
+        <div class="r2">
+          <div class="fl"><label>Herramienta</label><input type="text" name="herramienta" placeholder="Ej: Pala, Rastrillo"></div>
+          <div class="fl"><label>Estado Herramienta</label>
+            <select name="estadoHerr"><option value="Buen Estado">&#128994; Buen Estado</option><option value="Danada">&#128308; Da&#241;ada</option></select></div>
+        </div>
+        <div class="fl"><label>Insumo Entregado</label><input type="text" name="insumoGH" placeholder="Ej: 2kg Compost"></div>
+      </div>
+      <div class="fl"><label>Motivo Ausencia</label>
+        <input type="text" name="motivoAusencia" id="motAus" style="display:none" placeholder="Si aplica"></div>
+    </div></div>
+
+    <!-- RIEGO -->
+    <div id="fm-riego" class="fm"><div class="fc">
+      <div class="ftt">&#128167; Riego y Fumigaci&#243;n</div>
+      <div class="fl"><label>Tipo Operaci&#243;n</label>
+        <select name="tipoOperacion">
+          <option value="Riego">&#128167; Riego</option>
+          <option value="Fumigacion Organica">&#127807; Fumigaci&#243;n Org&#225;nica</option>
+          <option value="Fertilizacion">&#129514; Fertilizaci&#243;n</option>
+          <option value="Control preventivo">&#128737; Control Preventivo</option>
+        </select></div>
+      <div class="r2">
+        <div class="fl"><label>Huerta</label>
+          <select name="huertaRiego" id="selHR" onchange="filtrarCamasR()">
+            <option value="">Todas</option>
+            <option value="H1">H1</option><option value="H2">H2</option>
+            <option value="H3">H3</option><option value="H4">H4</option><option value="H5">H5</option>
+          </select></div>
+        <div class="fl"><label>Cama</label>
+          <select name="camaIdRiego" id="selCR" onchange="onCamaR()"><option value="General">General</option></select></div>
+      </div>
+      <div class="fl"><label>Cultivo</label><input id="aRC" name="cultivoRiego" class="af" readonly placeholder="Auto al elegir cama"></div>
+      <div class="fl"><label>Responsable *</label><select name="responsableRiego" id="selRR"><option value="">Seleccionar...</option></select></div>
+      <div class="fl"><label>Producto / M&#233;todo</label><input type="text" name="producto" placeholder="Ej: Agua lluvia, Purin de ortiga"></div>
+      <div class="r3">
+        <div class="fl"><label>Cantidad</label><input type="number" step="0.01" name="cantidad" placeholder="N&#250;mero"></div>
+        <div class="fl"><label>Unidad</label><input type="text" name="unidad" placeholder="L, cc..."></div>
+      </div>
+      <div class="r2">
+        <div class="fl"><label>Tiempo (min)</label><input type="number" name="tiempo" placeholder="Duraci&#243;n"></div>
+        <div class="fl"><label>Cobertura</label><input type="text" name="cobertura" placeholder="Total, Foliar..."></div>
+      </div>
+    </div></div>
+
+    <!-- COSECHAS -->
+    <div id="fm-cos" class="fm"><div class="fc">
+      <div class="ftt">&#129354; Registro de Cosecha</div>
+      <div class="r2">
+        <div class="fl"><label>Cama *</label>
+          <select name="camaIdCosecha" id="sCC" onchange="onCamaCos(this)"><option value="">Seleccionar...</option></select></div>
+        <div class="fl"><label>Huerta</label><input id="aCH" name="huertaCosecha" class="af" readonly placeholder="Auto"></div>
+      </div>
+      <div class="fl"><label>Cultivo</label><input id="aCCu" name="cultivoCosecha" class="af" readonly placeholder="Auto al elegir cama"></div>
+      <div id="cosPoliWrap" style="display:none"><div class="wbox" id="cosPoliInfo"></div></div>
+      <div class="r3">
+        <div class="fl"><label>Cantidad *</label><input type="number" step="0.01" name="cantidad" placeholder="Ej: 2.5"></div>
+        <div class="fl"><label>Unidad</label>
+          <select name="unidad"><option value="kg">Kg</option><option value="gr">gr</option><option value="manojos">Manojos/Atados</option><option value="unidades">Unidades</option><option value="litros">Litros</option></select></div>
+      </div>
+      <div class="r2">
+        <div class="fl"><label>Destino</label><select name="destino" id="selDest"></select></div>
+        <div class="fl"><label>Calidad</label>
+          <select name="calidad">
+            <option value="Primera">&#10024; Primera</option><option value="Segunda">&#127823; Segunda</option><option value="Rechazo">&#127810; Rechazo</option>
+          </select></div>
+      </div>
+      <div class="fl"><label>Responsable</label><select name="responsableCosecha" id="selRC"><option value="">Seleccionar...</option></select></div>
+      <div class="fl"><label>¿Qué pasa con la cama después de esto?</label>
+        <select name="quedaProducto" id="selQuedaProd">
+          <option value="si">🌱 Sigue activa (queda producto / policultivo)</option>
+          <option value="no">✅ Cama libre (lista para preparar/resembrar/descansar)</option>
+        </select></div>
+    </div></div>
+
+    <!-- INSUMOS -->
+    <div id="fm-ins" class="fm"><div class="fc">
+      <div class="ftt">&#128230; Control de Insumos</div>
+      <div class="fl"><label>Insumo *</label>
+        <select name="insumo" id="selIns" onchange="onInsumo(this)"><option value="">Seleccionar...</option></select></div>
+      <div class="r2">
+        <div class="fl"><label>Categor&#237;a</label>
+          <select name="tipoInsumo" id="selTipoIns">
+            <option value="Semilla">&#127807; Semilla</option><option value="Plantula">&#127807; Pl&#225;ntula</option>
+            <option value="Abono organico">&#127810; Abono org&#225;nico</option><option value="Fertilizante">&#129514; Fertilizante</option>
+            <option value="Fitosanitario">&#128737; Fitosanitario</option><option value="Fungicida">&#128300; Fungicida</option>
+            <option value="Insecticida">&#128027; Insecticida</option><option value="Herramienta">&#128295; Herramienta</option>
+            <option value="Sustrato">&#129392; Sustrato</option><option value="Material">&#128230; Material</option><option value="Otro">Otro</option>
+          </select></div>
+        <div class="fl"><label>Stock Actual</label><input id="aIS" class="af" readonly placeholder="Auto"></div>
+      </div>
+      <div class="r2">
+        <div class="fl"><label>Precio ($)</label><input id="aIP" name="precio" class="af" readonly placeholder="Auto"></div>
+        <div class="fl"><label>Unidad</label><input id="aIU" name="unidad" class="af" readonly placeholder="Auto"></div>
+      </div>
+      <div class="fl"><label>Proveedor</label><input type="text" name="proveedor" placeholder="Ej: Ferreteria local"></div>
+      <div class="r2">
+        <div class="fl inp"><label style="color:var(--g2)">+ ENTRADA (+)</label>
+          <input type="number" step="0.01" name="cantEntrada" placeholder="Cantidad que entra" style="background:#fff"></div>
+        <div class="fl out"><label style="color:var(--rd)">- SALIDA (-)</label>
+          <input type="number" step="0.01" name="cantSalida" placeholder="Cantidad usada" style="background:#fff"></div>
+      </div>
+    </div></div>
+
+    <!-- NUEVA SIEMBRA -->
+    <div id="fm-siem" class="fm"><div class="fc">
+      <div class="ftt">&#127807; Nueva Siembra</div>
+      <div class="r2">
+        <div class="fl"><label>Cama *</label>
+          <select name="camaIdSiem" id="sCSiem" onchange="onCamaSiem(this)"><option value="">Seleccionar cama...</option></select></div>
+        <div class="fl"><label>Huerta</label><input id="aHSiem" name="huertaSiem" class="af" readonly placeholder="Auto"></div>
+      </div>
+      <div id="siemPoliWrap" style="display:none"><div class="wbox" id="siemPoliInfo"></div></div>
+      <div id="siemRotWrap" style="display:none"><div class="ibox" id="siemRotInfo"></div></div>
+      <div class="fl"><label>Cultivo *</label>
+        <select name="cultivoSiem" id="selCSiem" onchange="onCultivoSiem(this)"><option value="">Seleccionar cultivo...</option></select></div>
+      <div class="r2">
+        <div class="fl"><label>Variedad</label><input type="text" name="variedadSiem" placeholder="Ej: Criolla, Hibrido"></div>
+        <div class="fl"><label>Tipo Siembra</label>
+          <select name="tipoSemillaSiem">
+            <option value="Semilla directa">&#127820; Semilla directa</option>
+            <option value="Plantula propia">&#127807; Pl&#225;ntula propia</option>
+            <option value="Plantula comprada">&#128722; Pl&#225;ntula comprada</option>
+            <option value="Trasplante">&#9851;&#65039; Trasplante</option>
+          </select></div>
+      </div>
+      <div class="r3">
+        <div class="fl"><label>Cantidad</label><input type="number" step="0.01" name="cantidadSiem" placeholder="Ej: 50"></div>
+        <div class="fl"><label>Unidad</label><input type="text" name="unidadSiem" placeholder="Semillas, kg"></div>
+      </div>
+      <div class="r2">
+        <div class="fl"><label>Ciclo estimado</label><input id="aCicloSiem" name="cicloMinSiem" class="af" readonly placeholder="Auto segun cultivo"></div>
+        <div class="fl"><label>Cosecha estimada</label><input id="aFCos" class="af" readonly placeholder="Auto calculada"></div>
+      </div>
+      <div class="fl"><label>Responsable</label><select name="responsableSiem" id="selRSiem"><option value="">Seleccionar...</option></select></div>
+    </div></div>
+
+    <!-- AGREGAR INVENTARIO -->
+    <div id="fm-newinv" class="fm"><div class="fc">
+      <div class="ftt">&#128194; Agregar al Inventario</div>
+      <div class="ibox">Si el insumo ya existe actualiza su stock. Si es nuevo lo crea.</div>
+      <div class="fl"><label>Nombre del Insumo *</label><input type="text" name="invNombre" placeholder="Ej: Compost, Aceite Neem"></div>
+      <div class="r2">
+        <div class="fl"><label>Categor&#237;a</label>
+          <select name="invCategoria">
+            <option value="Fertilizante">&#127807; Fertilizante</option><option value="Biologico">&#129404; Biol&#243;gico</option>
+            <option value="Semilla">&#127807; Semilla</option><option value="Herramienta">&#128295; Herramienta</option>
+            <option value="Sustrato">&#129392; Sustrato</option><option value="Material">&#128230; Material</option><option value="Otro">Otro</option>
+          </select></div>
+        <div class="fl"><label>Unidad</label><input type="text" name="invUnidad" placeholder="kg, L, Unidad"></div>
+      </div>
+      <div class="r2">
+        <div class="fl"><label>Stock Actual</label><input type="number" step="0.01" name="invStock" placeholder="Cantidad disponible"></div>
+        <div class="fl"><label>Stock M&#237;nimo</label><input type="number" step="0.01" name="invMinimo" placeholder="Alerta si baja de..."></div>
+      </div>
+      <div class="fl"><label>Precio Unitario ($)</label><input type="number" step="0.01" name="invPrecio" placeholder="Costo por unidad"></div>
+    </div></div>
+
+    <div class="fc">
+      <div class="fl"><label>Observaciones</label>
+        <textarea id="obs" name="observaciones" rows="3" placeholder="Notas de la jornada..."></textarea></div>
+    </div>
+    <button type="submit" id="btnSub" class="sub">&#128228; Registrar en Sistema</button>
+  </form>
+</div>
+
+<!-- CAMAS -->
+<div id="v-camas" class="view">
+  <div class="sec" style="margin-top:12px">&#128506; Estado por Huerta</div>
+  <div id="camaBlocks"></div>
+</div>
+
+<!-- EQUIPO -->
+<div id="v-equipo" class="view">
+  <div class="sec" style="margin-top:12px">&#128101; Equipo</div>
+  <div class="eg" id="equipoGrid"></div>
+</div>
+
+<!-- HISTORIAL -->
+<div id="v-historial" class="view">
+  <div class="sec" style="margin-top:12px">Registros de esta sesi&#243;n</div>
+  <div id="histList"><div class="empty">Sin registros a&#250;n.</div></div>
+</div>
+
+<!-- SISTEMA -->
+<div id="v-sistema" class="view">
+  <div class="sec" style="margin-top:12px">Configuraci&#243;n</div>
+  <div class="sysc">
+    <h3>&#128279; Conexi&#243;n Google Sheets</h3>
+    <div class="cbox"><div id="cDot" class="cdot off"></div>
+      <span id="cTxt" style="font-size:13px;font-weight:500">Sin verificar</span></div>
+    <label style="font-size:11px;font-weight:600;color:var(--t2);display:block;margin-bottom:4px">URL del Apps Script:</label>
+    <input id="urlIn" type="url" class="uin" placeholder="https://script.google.com/macros/s/.../exec">
+    <button class="tbtn" onclick="probar()">&#128269; Probar Conexi&#243;n</button>
+    <button class="tbtn" onclick="sinc(true)">&#8635; Recargar desde Sheets</button>
+  </div>
+  <div class="sysc"><h3>&#8505;&#65039; Estado del Sistema</h3>
+    <div id="sysInfo" style="font-size:13px;color:var(--t2);line-height:1.9"></div></div>
+</div>
+</main>
+
+<script>
+// ============================================================
+// VARIABLES GLOBALES
+// ============================================================
+var API = localStorage.getItem('erp_url') || '';
+var CAMAS = [], CIDX = {}, JOVENES = [], FASES = [], EFITO = [], ACCIONES = [], DESTINOS = [], CICLOS = {}, INV = [], ASIST = {}, SIEM = {};
+var MOD = 'bit', HIST = [], HOY = new Date();
+var COLS = ['#2d6a4f','#1565c0','#e65100','#6a1b9a','#880e4f','#006064','#4e342e','#37474f'];
+
+// ============================================================
+// DATOS FALLBACK
+// ============================================================
+var CB = [
+  {id:"H1-C01",h:"H1",n:1,c:"Arracacha",o:"Plantula propia",e:"Sembrada"},
+  {id:"H1-C02",h:"H1",n:2,c:"Arracacha y ajo",o:"Plantula propia",e:"Cosechada"},
+  {id:"H1-C03",h:"H1",n:3,c:"Ajo",o:"Semilla",e:"En crecimiento"},
+  {id:"H1-C04",h:"H1",n:4,c:"Cebolla larga y ajo",o:"Trasplante",e:"En crecimiento"},
+  {id:"H1-C05",h:"H1",n:5,c:"Cebolla larga",o:"Trasplante",e:"En crecimiento"},
+  {id:"H1-C06",h:"H1",n:6,c:"Cebolla larga",o:"Trasplante",e:"En crecimiento"},
+  {id:"H1-C07",h:"H1",n:7,c:"Cebolla larga",o:"Trasplante",e:"En crecimiento"},
+  {id:"H1-C08",h:"H1",n:8,c:"Cebolla larga",o:"Trasplante",e:"En crecimiento"},
+  {id:"H1-C09",h:"H1",n:9,c:"Cebolla larga",o:"Plantula comprada",e:"En crecimiento"},
+  {id:"H1-C10",h:"H1",n:10,c:"Cebolla larga",o:"Plantula comprada",e:"Cosechada"},
+  {id:"H1-C11",h:"H1",n:11,c:"",o:"",e:"Vacia"},
+  {id:"H1-C12",h:"H1",n:12,c:"",o:"",e:"Vacia"},
+  {id:"H1-C13",h:"H1",n:13,c:"Mostaza",o:"Plantula comprada",e:"Lista para cosechar"},
+  {id:"H1-C14",h:"H1",n:14,c:"Aji peruano",o:"Plantula comprada",e:"En crecimiento"},
+  {id:"H1-C15",h:"H1",n:15,c:"Espinaca",o:"Plantula comprada",e:"Cosechada"},
+  {id:"H1-C16",h:"H1",n:16,c:"",o:"",e:"Vacia"},
+  {id:"H1-C17",h:"H1",n:17,c:"Arveja",o:"Plantula comprada",e:"Cosechada"},
+  {id:"H1-C18",h:"H1",n:18,c:"Maiz y arveja",o:"Plantula comprada",e:"En crecimiento"},
+  {id:"H1-C19",h:"H1",n:19,c:"Perejil",o:"",e:"Lista para cosechar"},
+  {id:"H1-C20",h:"H1",n:20,c:"Cebolla larga y tomillo",o:"",e:"En crecimiento"},
+  {id:"H1-C21",h:"H1",n:21,c:"Tomillo",o:"",e:"En crecimiento"},
+  {id:"H1-C22",h:"H1",n:22,c:"Arveja",o:"",e:"En crecimiento"},
+  {id:"H1-C23",h:"H1",n:23,c:"Coliflor",o:"",e:"Cosechada"},
+  {id:"H1-C24",h:"H1",n:24,c:"Auyama",o:"",e:"En crecimiento"},
+  {id:"H1-C25",h:"H1",n:25,c:"Pimenton",o:"",e:"En crecimiento"},
+  {id:"H1-C26",h:"H1",n:26,c:"",o:"",e:"Vacia"},
+  {id:"H1-C27",h:"H1",n:27,c:"Platano",o:"",e:"En crecimiento"},
+  {id:"H1-C28",h:"H1",n:28,c:"",o:"",e:"Vacia"},
+  {id:"H1-C29",h:"H1",n:29,c:"Maiz",o:"",e:"En crecimiento"},
+  {id:"H1-C30",h:"H1",n:30,c:"Arveja",o:"",e:"En crecimiento"},
+  {id:"H1-C31",h:"H1",n:31,c:"Maiz y limoncillo",o:"",e:"En crecimiento"},
+  {id:"H1-C32",h:"H1",n:32,c:"Maiz",o:"",e:"En crecimiento"},
+  {id:"H1-C33",h:"H1",n:33,c:"Maiz",o:"",e:"En crecimiento"},
+  {id:"H1-C34",h:"H1",n:34,c:"Repollo",o:"",e:"Vacia"},
+  {id:"H1-C35",h:"H1",n:35,c:"Acelga",o:"",e:"Vacia"},
+  {id:"H1-C36",h:"H1",n:36,c:"Auyama",o:"",e:"En crecimiento"},
+  {id:"H1-C37",h:"H1",n:37,c:"Brocoli",o:"",e:"En crecimiento"},
+  {id:"H1-C38",h:"H1",n:38,c:"Lulo",o:"",e:"En crecimiento"},
+  {id:"H1-C39",h:"H1",n:39,c:"Ruda",o:"",e:"En crecimiento"},
+  {id:"H1-C40",h:"H1",n:40,c:"Romero",o:"",e:"En crecimiento"},
+  {id:"H1-C41",h:"H1",n:41,c:"Platano",o:"",e:"En crecimiento"},
+  {id:"H1-C42",h:"H1",n:42,c:"Arveja",o:"",e:"En crecimiento"},
+  {id:"H1-C43",h:"H1",n:43,c:"Arveja",o:"",e:"En crecimiento"},
+  {id:"H1-C44",h:"H1",n:44,c:"",o:"",e:"Vacia"},
+  {id:"H1-C45",h:"H1",n:45,c:"",o:"",e:"Vacia"},
+  {id:"H1-C46",h:"H1",n:46,c:"",o:"",e:"Vacia"},
+  {id:"H1-C47",h:"H1",n:47,c:"",o:"",e:"Vacia"},
+  {id:"H1-C48",h:"H1",n:48,c:"Maiz",o:"",e:"En crecimiento"},
+  {id:"H1-C49",h:"H1",n:49,c:"",o:"",e:"Vacia"},
+  {id:"H1-C50",h:"H1",n:50,c:"",o:"",e:"Vacia"},
+  {id:"H1-C51",h:"H1",n:51,c:"Limoncillo",o:"",e:"En crecimiento"},
+  {id:"H1-C52",h:"H1",n:52,c:"",o:"",e:"Vacia"},
+  {id:"H1-C53",h:"H1",n:53,c:"",o:"",e:"Vacia"},
+  {id:"H1-C54",h:"H1",n:54,c:"",o:"",e:"Vacia"},
+  {id:"H1-C55",h:"H1",n:55,c:"",o:"",e:"Vacia"},
+  {id:"H1-C56",h:"H1",n:56,c:"Cebolla grande",o:"",e:"En crecimiento"},
+  {id:"H1-C57",h:"H1",n:57,c:"Chile",o:"",e:"En crecimiento"},
+  {id:"H1-C58",h:"H1",n:58,c:"",o:"",e:"Vacia"},
+  {id:"H1-C59",h:"H1",n:59,c:"",o:"",e:"Vacia"},
+  {id:"H2-C01",h:"H2",n:1,c:"",o:"",e:"Vacia"},{id:"H2-C02",h:"H2",n:2,c:"",o:"",e:"Vacia"},
+  {id:"H2-C03",h:"H2",n:3,c:"",o:"",e:"Vacia"},{id:"H2-C04",h:"H2",n:4,c:"",o:"",e:"Vacia"},
+  {id:"H2-C05",h:"H2",n:5,c:"",o:"",e:"Vacia"},{id:"H2-C06",h:"H2",n:6,c:"",o:"",e:"Vacia"},
+  {id:"H2-C07",h:"H2",n:7,c:"",o:"",e:"Vacia"},{id:"H2-C08",h:"H2",n:8,c:"",o:"",e:"Vacia"},
+  {id:"H2-C09",h:"H2",n:9,c:"",o:"",e:"Vacia"},{id:"H2-C10",h:"H2",n:10,c:"",o:"",e:"Vacia"},
+  {id:"H2-C11",h:"H2",n:11,c:"",o:"",e:"Vacia"},{id:"H2-C12",h:"H2",n:12,c:"",o:"",e:"Vacia"},
+  {id:"H2-C13",h:"H2",n:13,c:"",o:"",e:"Vacia"},{id:"H2-C14",h:"H2",n:14,c:"",o:"",e:"Vacia"},
+  {id:"H2-C15",h:"H2",n:15,c:"",o:"",e:"Vacia"},{id:"H2-C16",h:"H2",n:16,c:"",o:"",e:"Vacia"},
+  {id:"H2-C17",h:"H2",n:17,c:"",o:"",e:"Vacia"},{id:"H2-C18",h:"H2",n:18,c:"",o:"",e:"Vacia"},
+  {id:"H2-C19",h:"H2",n:19,c:"",o:"",e:"Vacia"},{id:"H2-C20",h:"H2",n:20,c:"",o:"",e:"Vacia"},
+  {id:"H2-C21",h:"H2",n:21,c:"",o:"",e:"Vacia"},{id:"H2-C22",h:"H2",n:22,c:"",o:"",e:"Vacia"},
+  {id:"H2-C23",h:"H2",n:23,c:"",o:"",e:"Vacia"},{id:"H2-C24",h:"H2",n:24,c:"",o:"",e:"Vacia"},
+  {id:"H2-C25",h:"H2",n:25,c:"",o:"",e:"Vacia"},{id:"H2-C26",h:"H2",n:26,c:"",o:"",e:"Vacia"},
+  {id:"H2-C27",h:"H2",n:27,c:"",o:"",e:"Vacia"},{id:"H2-C28",h:"H2",n:28,c:"",o:"",e:"Vacia"},
+  {id:"H2-C29",h:"H2",n:29,c:"",o:"",e:"Vacia"},{id:"H2-C30",h:"H2",n:30,c:"",o:"",e:"Vacia"},
+  {id:"H3-C01",h:"H3",n:1,c:"Limoncillo",o:"",e:"En crecimiento"},
+  {id:"H3-C02",h:"H3",n:2,c:"",o:"",e:"Vacia"},{id:"H3-C03",h:"H3",n:3,c:"",o:"",e:"Vacia"},
+  {id:"H3-C04",h:"H3",n:4,c:"Lechuga",o:"",e:"Lista para cosechar"},
+  {id:"H3-C05",h:"H3",n:5,c:"Lechuga",o:"",e:"Lista para cosechar"},
+  {id:"H3-C06",h:"H3",n:6,c:"Lechuga",o:"",e:"En crecimiento"},
+  {id:"H3-C07",h:"H3",n:7,c:"Col rizada",o:"",e:"Lista para cosechar"},
+  {id:"H3-C08",h:"H3",n:8,c:"Cebolla larga",o:"",e:"Cosechada"},
+  {id:"H3-C09",h:"H3",n:9,c:"Cebolla larga",o:"",e:"Cosechada"},
+  {id:"H3-C10",h:"H3",n:10,c:"Cebolla larga",o:"",e:"Cosechada"},
+  {id:"H3-C11",h:"H3",n:11,c:"Cebolla larga",o:"",e:"Cosechada"},
+  {id:"H3-C12",h:"H3",n:12,c:"",o:"",e:"Vacia"},
+  {id:"H3-C13",h:"H3",n:13,c:"Menta",o:"",e:"En crecimiento"},
+  {id:"H3-C14",h:"H3",n:14,c:"Menta",o:"",e:"En crecimiento"},
+  {id:"H3-C15",h:"H3",n:15,c:"",o:"",e:"Vacia"},{id:"H3-C16",h:"H3",n:16,c:"",o:"",e:"Vacia"},
+  {id:"H3-C17",h:"H3",n:17,c:"",o:"",e:"Vacia"},{id:"H3-C18",h:"H3",n:18,c:"",o:"",e:"Vacia"},
+  {id:"H3-C19",h:"H3",n:19,c:"Manzanilla",o:"",e:"En crecimiento"},
+  {id:"H3-C20",h:"H3",n:20,c:"Col rizada",o:"",e:"En crecimiento"},
+  {id:"H3-C21",h:"H3",n:21,c:"Col rizada",o:"",e:"En crecimiento"},
+  {id:"H3-C22",h:"H3",n:22,c:"",o:"",e:"Vacia"},{id:"H3-C23",h:"H3",n:23,c:"",o:"",e:"Vacia"},
+  {id:"H3-C24",h:"H3",n:24,c:"",o:"",e:"Vacia"},{id:"H3-C25",h:"H3",n:25,c:"",o:"",e:"Vacia"},
+  {id:"H3-C26",h:"H3",n:26,c:"",o:"",e:"Vacia"},
+  {id:"H3-C27",h:"H3",n:27,c:"Menta",o:"",e:"En crecimiento"},
+  {id:"H3-C28",h:"H3",n:28,c:"Menta",o:"",e:"Vacia"},
+  {id:"H3-C29",h:"H3",n:29,c:"",o:"",e:"Vacia"},
+  {id:"H3-C30",h:"H3",n:30,c:"No identificada",o:"",e:"Vacia"},
+  {id:"H3-C31",h:"H3",n:31,c:"No identificada",o:"",e:"Vacia"},
+  {id:"H3-C32",h:"H3",n:32,c:"Pasto",o:"",e:"En crecimiento"},
+  {id:"H3-C33",h:"H3",n:33,c:"Pasto",o:"",e:"En crecimiento"},
+  {id:"H3-C34",h:"H3",n:34,c:"Pasto",o:"",e:"En crecimiento"},
+  {id:"H3-C35",h:"H3",n:35,c:"",o:"",e:"Vacia"},{id:"H3-C36",h:"H3",n:36,c:"",o:"",e:"Vacia"},
+  {id:"H3-C37",h:"H3",n:37,c:"",o:"",e:"Vacia"},{id:"H3-C38",h:"H3",n:38,c:"",o:"",e:"Vacia"},
+  {id:"H3-C39",h:"H3",n:39,c:"",o:"",e:"Vacia"},{id:"H3-C40",h:"H3",n:40,c:"",o:"",e:"Vacia"},
+  {id:"H3-C41",h:"H3",n:41,c:"",o:"",e:"Vacia"},{id:"H3-C42",h:"H3",n:42,c:"",o:"",e:"Vacia"},
+  {id:"H3-C43",h:"H3",n:43,c:"",o:"",e:"Vacia"},{id:"H3-C44",h:"H3",n:44,c:"",o:"",e:"Vacia"},
+  {id:"H3-C45",h:"H3",n:45,c:"",o:"",e:"Vacia"},{id:"H3-C46",h:"H3",n:46,c:"",o:"",e:"Vacia"},
+  {id:"H3-C47",h:"H3",n:47,c:"",o:"",e:"Vacia"},{id:"H3-C48",h:"H3",n:48,c:"",o:"",e:"Vacia"},
+  {id:"H3-C49",h:"H3",n:49,c:"",o:"",e:"Vacia"},{id:"H3-C50",h:"H3",n:50,c:"",o:"",e:"Vacia"},
+  {id:"H4-C01",h:"H4",n:1,c:"Maiz",o:"Semilla",e:"En crecimiento"},
+  {id:"H4-C02",h:"H4",n:2,c:"Maiz",o:"Semilla",e:"En crecimiento"},
+  {id:"H4-C03",h:"H4",n:3,c:"Maiz",o:"Semilla",e:"En crecimiento"},
+  {id:"H4-C04",h:"H4",n:4,c:"Maiz",o:"Semilla",e:"En crecimiento"},
+  {id:"H4-C05",h:"H4",n:5,c:"Maiz",o:"Semilla",e:"En crecimiento"},
+  {id:"H4-C06",h:"H4",n:6,c:"Maiz",o:"Semilla",e:"En crecimiento"},
+  {id:"H4-C07",h:"H4",n:7,c:"Maiz",o:"Semilla",e:"En crecimiento"},
+  {id:"H4-C08",h:"H4",n:8,c:"Maiz",o:"Semilla",e:"En crecimiento"},
+  {id:"H4-C09",h:"H4",n:9,c:"",o:"",e:"Vacia"},
+  {id:"H4-C10",h:"H4",n:10,c:"",o:"",e:"Vacia"},
+  {id:"H5-C01",h:"H5",n:1,c:"",o:"",e:"Vacia"},{id:"H5-C02",h:"H5",n:2,c:"",o:"",e:"Vacia"},
+  {id:"H5-C03",h:"H5",n:3,c:"",o:"",e:"Vacia"},{id:"H5-C04",h:"H5",n:4,c:"",o:"",e:"Vacia"},
+  {id:"H5-C05",h:"H5",n:5,c:"",o:"",e:"Vacia"},{id:"H5-C06",h:"H5",n:6,c:"",o:"",e:"Vacia"},
+  {id:"H5-C07",h:"H5",n:7,c:"",o:"",e:"Vacia"}
+];
+
+var JB = ["Juan Jose Gallego","Jose Daniel","Jhon Esteban Henao","Hernan","Participante 5","Participante 6"];
+var FB = ["Preparacion suelo","Siembra","Germinacion","Crecimiento","Floracion","Produccion","Cosecha"];
+var EB = ["Saludable","Alerta","Plaga","Enfermedad","Estres hidrico"];
+var AB = ["Riego manual","Riego goteo","Fertiliz. organica","Fertiliz. quimica","Control plagas","Poda","Trasplante","Deshierbe","Cosecha","Abono compost","Fumigacion"];
+var DB = ["Consumo interno","Donacion","Venta","Almacenamiento","Semillero"];
+var CIC = {
+  "Cilantro":{min:25,max:40},"Lechuga":{min:45,max:60},"Tomate":{min:70,max:90},
+  "Espinaca":{min:40,max:50},"Rabano":{min:25,max:30},"Albahaca":{min:30,max:45},
+  "Pepino":{min:55,max:65},"Zanahoria":{min:70,max:80},"Cebolla larga":{min:90,max:120},
+  "Perejil":{min:60,max:75},"Acelga":{min:50,max:60},"Repollo":{min:80,max:100},
+  "Habichuela":{min:55,max:70},"Maiz":{min:90,max:110}
+};
+
+// ============================================================
+// INIT
+// ============================================================
+function init() {
+  var h = HOY.getHours();
+  g('saludo').textContent = (h < 12 ? 'Buenos dias' : h < 19 ? 'Buenas tardes' : 'Buenas noches') + ', Jhon!';
+  var dias = ['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'];
+  var mes = ['enero','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  g('fechaTxt').textContent = dias[HOY.getDay()] + ', ' + HOY.getDate() + ' de ' + mes[HOY.getMonth()];
+  g('fFecha').valueAsDate = HOY;
+  g('urlIn').value = API;
+  aplicar({camas:CB,jovenes:JB,fases:FB,estadosFito:EB,acciones:AB,destinos:DB,ciclos:CIC,inventario:[],asistencia:{},siembrasActivas:{}});
+  if (API) sinc(false);
+  // Sincronizacion automatica para mapa de camas en tiempo real (cada 60s)
+  setInterval(function() {
+    if (API && document.visibilityState === 'visible') sinc(false);
+  }, 60000);
 }
 
-function doPost(e){
-  try{
-    if(!e||!e.postData||!e.postData.contents) return R({status:"error",msg:"Sin datos"});
-    var p=JSON.parse(e.postData.contents),t=p.tipoRegistro;
-    if(t==="Bitacora Diaria") grabarBitacora(p);
-    else if(t==="Gestion Humana") grabarGestion(p);
-    else if(t==="Riego_Fumigacion") grabarRiego(p);
-    else if(t==="Cosechas") grabarCosecha(p);
-    else if(t==="Insumos") grabarInsumo(p);
-    else if(t==="Siembra") grabarSiembra(p);
-    else if(t==="Inventario") grabarInventario(p);
-    else return R({status:"error",msg:"tipo desconocido: "+t});
-    return R({status:"ok",tipo:t,ts:new Date().toISOString()});
-  }catch(err){return R({status:"error",msg:err.message});}
+// ============================================================
+// SYNC
+// ============================================================
+function sinc(manual) {
+  if (!API) { if (manual) toast('Configura la URL en Sistema', 1); return; }
+  g('syncSt').textContent = 'Sincronizando...';
+  fetch(API + '?action=config', {cache:'no-cache'})
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.status === 'ok' && d.camas && d.camas.length) {
+        localStorage.setItem('erp_cfg', JSON.stringify(d));
+        localStorage.setItem('erp_ts', Date.now() + '');
+        aplicar(d);
+        g('syncSt').textContent = 'Actualizado ' + hora();
+        g('offbar').classList.remove('show');
+        g('cDot').className = 'cdot on';
+        g('cTxt').textContent = 'Conectado - ' + hora();
+        if (manual) toast('Datos sincronizados desde Google Sheets');
+      } else throw new Error('sin datos');
+    })
+    .catch(function() {
+      g('offbar').classList.add('show');
+      g('syncSt').textContent = 'Sin conexion - datos locales';
+      if (manual) toast('No se pudo conectar', 1);
+    });
 }
 
-function leerConfig(){
-  var ss=SpreadsheetApp.getActiveSpreadsheet();
-  // CAMAS A4:H300 - A=ID|B=Huerta|C=Num|D=Cultivo|E=Origen|F=FechaSiembra|G=Estado|H=Obs
-  var dc=ss.getSheetByName(H.CFG).getRange("A4:H300").getValues();
-  var camas=[];
-  for(var i=0;i<dc.length;i++){
-    var id=s(dc[i][0]);
-    if(!id||id.indexOf("-C")<0) continue;
-    camas.push({id:id,huerta:s(dc[i][1]),num:Number(dc[i][2])||0,
-      cultivo:s(dc[i][3]),origen:s(dc[i][4]),
-      fechaSiembra:dc[i][5]?toISO(dc[i][5]):"",
-      estado:s(dc[i][6])||"Vacía"});
+// ============================================================
+// APLICAR DATOS
+// ============================================================
+function aplicar(d) {
+  CAMAS = norm(d.camas || CB);
+  JOVENES = (d.jovenes || JB).filter(Boolean);
+  FASES = (d.fases || FB).filter(Boolean);
+  EFITO = (d.estadosFito || EB).filter(Boolean);
+  ACCIONES = (d.acciones || AB).filter(Boolean);
+  DESTINOS = (d.destinos || DB).filter(Boolean);
+  CICLOS = Object.assign({}, CIC, d.ciclos || {});
+  INV = d.inventario || [];
+  ASIST = d.asistencia || {};
+  SIEM = d.siembrasActivas || {};
+  CIDX = {};
+  CAMAS.forEach(function(c) { CIDX[c.id] = c; });
+  render();
+}
+
+function norm(arr) {
+  return arr.map(function(c) {
+    return {
+      id: c.id || '', h: c.h || c.huerta || '', n: c.n || c.num || 0,
+      c: c.c || c.cultivo || '', o: c.o || c.origen || '',
+      e: normE(c.e || c.estado), fs: c.fs || c.fechaSiembra || ''
+    };
+  });
+}
+function normE(e) {
+  var s = (e || '').trim();
+  // Normaliza variantes con/sin tilde y vacios -> siempre 'Vacia'
+  var sinTilde = s.normalize ? s.normalize('NFD').replace(/[\u0300-\u036f]/g, '') : s;
+  if (sinTilde.toLowerCase() === 'vacia' || s === '') return 'Vacia';
+  return s;
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function render() {
+  poblar(); buildKPIs(); buildAlertas(); buildTimeline(); buildChart(); buildStock(); buildCamas(); buildEquipo(); buildSysInfo();
+}
+
+function poblar() {
+  var act = CAMAS.filter(function(c) { return c.c && c.e !== 'Vacia'; });
+  var tod = CAMAS;
+  var jc = JOVENES.concat(['Jhon (Instructor)']);
+  llenarCamas('sCB', act, 'Seleccionar...');
+  llenarCamas('sCC', act, 'Seleccionar...');
+  llenarCamas('sCSiem', tod, 'Seleccionar cama...');
+  llenarCamas('selCGH', tod, 'Ninguna');
+  llenarCamas('selCR', tod, 'General');
+  llenarSel('selRB', jc, 'Seleccionar...');
+  llenarSel('selRR', jc, 'Seleccionar...');
+  llenarSel('selRC', jc, 'Seleccionar...');
+  llenarSel('selRSiem', jc, 'Seleccionar...');
+  llenarSel('selJ', JOVENES, 'Seleccionar...');
+  llenarSel('selFase', FASES, null);
+  llenarSel('selEF', EFITO, null);
+  llenarSel('selAcc', ACCIONES, null);
+  llenarSel('selTarea', ACCIONES, 'Seleccionar...');
+  llenarSel('selDest', DESTINOS, null);
+  var inoms = INV.map(function(i) { return i.nombre; });
+  llenarSel('selIns', inoms, 'Seleccionar insumo...');
+  var cults = Object.keys(CICLOS).sort();
+  llenarSel('selCSiem', cults, 'Seleccionar cultivo...');
+  filtrarCamasR();
+}
+
+function llenarCamas(id, lista, pfx) {
+  var s = g(id); if (!s) return;
+  var old = s.value;
+  s.innerHTML = pfx ? '<option value="">' + pfx + '</option>' : '';
+  lista.forEach(function(c) { s.appendChild(new Option(c.id + (c.c ? ' - ' + c.c : ' (vacia)'), c.id)); });
+  if (old) s.value = old;
+}
+function llenarSel(id, lista, pfx) {
+  var s = g(id); if (!s) return;
+  var old = s.value;
+  s.innerHTML = pfx ? '<option value="">' + pfx + '</option>' : '';
+  lista.forEach(function(v) { if (v) s.appendChild(new Option(v, v)); });
+  if (old) s.value = old;
+}
+
+// ============================================================
+// AUTORRELLENO
+// ============================================================
+function onCama(sel, hId, cId, oId) {
+  var c = CIDX[sel.value];
+  sa(hId, c ? 'Huerta ' + c.h.replace('H','') : '');
+  sa(cId, c ? c.c : '');
+  if (oId) sa(oId, c ? c.o : '');
+  var siem = SIEM[sel.value] || [];
+  var wid = sel.id === 'sCB' ? 'bitPoliWrap' : 'siemPoliWrap';
+  var iid = sel.id === 'sCB' ? 'bitPoliInfo' : 'siemPoliInfo';
+  var wrap = g(wid), info = g(iid);
+  if (siem.length && wrap && info) {
+    info.textContent = 'Policultivos activos: ' + siem.map(function(s) { return s.cultivo; }).join(' / ');
+    wrap.style.display = '';
+  } else if (wrap) wrap.style.display = 'none';
+}
+
+function onCamaCos(sel) {
+  var c = CIDX[sel.value];
+  sa('aCH', c ? 'Huerta ' + c.h.replace('H','') : '');
+  sa('aCCu', c ? c.c : '');
+  var siem = SIEM[sel.value] || [];
+  var wrap = g('cosPoliWrap'), info = g('cosPoliInfo');
+  if (siem.length > 1 && wrap && info) {
+    info.textContent = 'Esta cama tiene policultivos: ' + siem.map(function(s) { return s.cultivo; }).join(' / ') + '. Que cultivo estas cosechando?';
+    wrap.style.display = '';
+    sa('aCCu', '');
+  } else if (wrap) wrap.style.display = 'none';
+}
+
+function onCamaSiem(sel) {
+  var c = CIDX[sel.value];
+  sa('aHSiem', c ? 'Huerta ' + c.h.replace('H','') : '');
+  var siem = SIEM[sel.value] || [];
+  var pw = g('siemPoliWrap'), pi = g('siemPoliInfo');
+  if (siem.length && pw && pi) {
+    pi.textContent = 'Ya tiene: ' + siem.map(function(s) { return s.cultivo; }).join(' / ');
+    pw.style.display = '';
+  } else if (pw) pw.style.display = 'none';
+  if (c && c.c) {
+    var sug = rotacion(c.c);
+    var rw = g('siemRotWrap'), ri = g('siemRotInfo');
+    if (sug && rw && ri) { ri.textContent = sug; rw.style.display = ''; }
   }
-  // LISTAS J4:O30 - J=Jovenes|K=Fases|L=EstFito|M=libre|N=Acciones|O=Destinos
-  var dl=ss.getSheetByName(H.CFG).getRange("J4:O30").getValues();
-  var jovenes=[],fases=[],efito=[],acciones=[],destinos=[];
-  for(var j=0;j<dl.length;j++){
-    var jv=s(dl[j][0]),fa=s(dl[j][1]),ef=s(dl[j][2]),ac=s(dl[j][4]),de=s(dl[j][5]);
-    if(jv&&jv.indexOf("👥")<0) jovenes.push(jv);
-    if(fa&&fa.indexOf("🔄")<0) fases.push(fa);
-    if(ef&&ef.indexOf("📊")<0) efito.push(ef);
-    if(ac&&ac.indexOf("🔧")<0) acciones.push(ac);
-    if(de&&de.indexOf("📦")<0) destinos.push(de);
-  }
-  // CICLOS P4:U30
-  var dci=ss.getSheetByName(H.CFG).getRange("P4:U30").getValues();
-  var ciclos={};
-  for(var k=0;k<dci.length;k++){
-    var cu=s(dci[k][0]);
-    if(!cu||cu==="Cultivo") continue;
-    ciclos[cu]={min:Number(dci[k][1])||60,max:Number(dci[k][2])||90};
-  }
-  // INVENTARIO
-  var inventario=[];
-  try{
-    var hi=ss.getSheetByName(H.INV),di=hi.getDataRange().getValues();
-    for(var m=1;m<di.length;m++){
-      if(!s(di[m][1])) continue;
-      inventario.push({id:s(di[m][0]),nombre:s(di[m][1]),categoria:s(di[m][2]),
-        unidad:s(di[m][3]),stock:Number(di[m][4])||0,
-        minimo:Number(di[m][5])||0,precio:Number(di[m][6])||0});
-    }
-  }catch(e2){}
-  // ULTIMA ASISTENCIA
-  var asistencia={};
-  try{
-    var hg=ss.getSheetByName(H.GH),lr=hg.getLastRow();
-    if(lr>=4){
-      var dag=hg.getRange("A4:F"+lr).getValues();
-      for(var n=0;n<dag.length;n++){
-        var jov=s(dag[n][1]);
-        if(!jov||jov==="Joven") continue;
-        if(dag[n][0]){
-          asistencia[jov]={fecha:toISO(dag[n][0]),asistencia:s(dag[n][2]),actitud:s(dag[n][5])};
-        }
-      }
-    }
-  }catch(e3){}
-  // SIEMBRAS ACTIVAS (policultivos)
-  var siembras={};
-  try{
-    var hs=ss.getSheetByName(H.SIE),us=hs.getLastRow();
-    if(us>1){
-      var ds=hs.getRange("A2:K"+us).getValues();
-      for(var sb=0;sb<ds.length;sb++){
-        var cid=s(ds[sb][3]),est=s(ds[sb][10]);
-        if(!cid||est==="Cosechado") continue;
-        if(!siembras[cid]) siembras[cid]=[];
-        siembras[cid].push({id:s(ds[sb][0]),fechaSiembra:ds[sb][1]?toISO(ds[sb][1]):"",
-          cultivo:s(ds[sb][4]),variedad:s(ds[sb][5]),
-          fechaCosecha:ds[sb][9]?toISO(ds[sb][9]):"",estado:est});
-      }
-    }
-  }catch(e4){}
-  return{status:"ok",ts:new Date().toISOString(),camas:camas,jovenes:jovenes,
-    fases:fases,estadosFito:efito,acciones:acciones,destinos:destinos,
-    ciclos:ciclos,inventario:inventario,asistencia:asistencia,siembrasActivas:siembras};
 }
 
-// GRABADO - columnas exactas verificadas
-function grabarBitacora(p){
-  var f=siguienteFila(H.BIT),h=ss().getSheetByName(H.BIT);
-  var v=[fecha(p.fecha),s(p.camaId),s(p.huerta),s(p.cultivo),s(p.origen),
-    s(p.fase),"","",n(p.avance),n(p.altura),s(p.estadoFitosan),s(p.humedad),
-    s(p.accion),s(p.responsable),s(p.alerta),s(p.observaciones)];
-  for(var i=0;i<v.length;i++) h.getRange(f,i+1).setValue(v[i]);
-  // Si accion es Cosecha, grabar tambien en hoja Cosechas
-  if(s(p.accion).toLowerCase()==="cosecha"&&s(p.camaId)){
-    grabarCosecha({fecha:p.fecha,camaId:p.camaId,huerta:p.huerta,cultivo:p.cultivo,
-      cantidad:p.cantidadBit||"",unidad:p.unidadBit||"",
-      destino:"Consumo interno",calidad:"",responsable:p.responsable,
-      observaciones:"Desde Bitácora"});
+function onCultivoSiem(sel) {
+  var ci = CICLOS[sel.value];
+  if (ci) {
+    sa('aCicloSiem', ci.min + ' - ' + ci.max + ' dias');
+    var f = g('fFecha') ? g('fFecha').value : '';
+    if (f) {
+      var d = new Date(f);
+      d.setDate(d.getDate() + ci.min);
+      sa('aFCos', d.toISOString().slice(0,10));
+    }
+  } else { sa('aCicloSiem',''); sa('aFCos',''); }
+}
+
+function onCamaR() {
+  var c = CIDX[g('selCR').value];
+  sa('aRC', c ? c.c : '');
+}
+
+function filtrarCamasR() {
+  var hid = g('selHR').value;
+  var lista = hid ? CAMAS.filter(function(c) { return c.h === hid; }) : CAMAS;
+  var s = g('selCR'); if (!s) return;
+  var old = s.value;
+  s.innerHTML = '<option value="General">General</option>';
+  lista.forEach(function(c) { s.appendChild(new Option(c.id + (c.c ? ' - ' + c.c : ' (vacia)'), c.id)); });
+  if (old) s.value = old;
+}
+
+function onJoven(sel) {
+  var ult = ASIST[sel.value];
+  sa('aJU', ult && ult.fecha ? ult.fecha + ' - ' + ult.asistencia + (ult.actitud ? ' - ' + ult.actitud + '/5' : '') : 'Sin registros previos');
+}
+
+function onInsumo(sel) {
+  var inv = null;
+  for (var i = 0; i < INV.length; i++) { if (INV[i].nombre === sel.value) { inv = INV[i]; break; } }
+  sa('aIS', inv ? inv.stock + ' ' + inv.unidad : '');
+  sa('aIP', inv ? '$' + inv.precio : '');
+  sa('aIU', inv ? inv.unidad : '');
+  if (inv && inv.categoria) {
+    var ts = g('selTipoIns');
+    if (ts) { for (var j = 0; j < ts.options.length; j++) { if (ts.options[j].value.toLowerCase() === inv.categoria.toLowerCase()) { ts.selectedIndex = j; break; } } }
   }
 }
 
-function grabarGestion(p){
-  var f=siguienteFila(H.GH),h=ss().getSheetByName(H.GH);
-  var v=[fecha(p.fecha),s(p.joven),s(p.asistencia),s(p.camaAsignada),s(p.tarea),
-    n(p.actitud),ind(p.actitud),s(p.herramienta),s(p.estadoHerr),
-    s(p.insumoGH),s(p.motivoAusencia)||s(p.observaciones)];
-  for(var i=0;i<v.length;i++) h.getRange(f,i+1).setValue(v[i]);
+function onAccBit(sel) {
+  g('cosEnBit').style.display = sel.value.toLowerCase() === 'cosecha' ? '' : 'none';
 }
 
-function grabarRiego(p){
-  var tipo=s(p.tipoOperacion).toLowerCase();
-  var esFumig=tipo.indexOf("fumig")>=0||tipo.indexOf("ertil")>=0||tipo.indexOf("control")>=0;
-  if(esFumig){
-    var ff=siguienteFila(H.FUM),hf=ss().getSheetByName(H.FUM);
-    var vf=[fecha(p.fecha),s(p.huerta),s(p.camaId),s(p.producto),s(p.tipoOperacion),
-      n(p.cantidad)+(p.unidad?" "+s(p.unidad):""),s(p.cobertura),s(p.responsable),s(p.observaciones)];
-    for(var i=0;i<vf.length;i++) hf.getRange(ff,i+1).setValue(vf[i]);
-  }else{
-    var fr=siguienteFila(H.RIE),hr=ss().getSheetByName(H.RIE);
-    var vr=[fecha(p.fecha),s(p.huerta),s(p.camaId),s(p.producto)||"Riego",
-      n(p.tiempo),n(p.cantidad),s(p.responsable),s(p.observaciones)];
-    for(var i=0;i<vr.length;i++) hr.getRange(fr,i+1).setValue(vr[i]);
+function toggleAsist() {
+  var v = g('sAsist').value;
+  g('camposP').style.display = v === 'Presente' ? '' : 'none';
+  g('motAus').style.display = v === 'Ausente' ? '' : 'none';
+}
+
+// ============================================================
+// ROTACION
+// ============================================================
+var FAM = {
+  'Maiz':'Graminea','Arroz':'Graminea','Trigo':'Graminea',
+  'Frijol':'Leguminosa','Arveja':'Leguminosa','Habichuela':'Leguminosa',
+  'Tomate':'Solanacea','Papa':'Solanacea','Pimenton':'Solanacea','Aji':'Solanacea',
+  'Cebolla larga':'Aliacea','Cebolla':'Aliacea','Ajo':'Aliacea',
+  'Zanahoria':'Umbelifera','Cilantro':'Umbelifera','Perejil':'Umbelifera',
+  'Lechuga':'Compuesta','Brocoli':'Crucifera','Repollo':'Crucifera','Coliflor':'Crucifera',
+  'Acelga':'Quenopodiiacea','Espinaca':'Quenopodiiacea'
+};
+var ROT = {
+  'Graminea':'Leguminosa - fija nitrogeno despues de gramineas',
+  'Leguminosa':'Solanacea o crucifera - aprovecha el nitrogeno fijado',
+  'Solanacea':'Graminea o leguminosa - descanso para evitar plagas',
+  'Aliacea':'Cucurbitacea o leguminosa',
+  'Umbelifera':'Leguminosa o aliacea',
+  'Crucifera':'Leguminosa o graminea - no repetir consecutivas',
+  'Compuesta':'Flexible - cualquier familia'
+};
+function rotacion(cult) {
+  var k = cult.split(' y ')[0].split(' /')[0].trim();
+  var fam = FAM[k];
+  return fam ? 'Familia anterior: ' + fam + ' - Sembrar: ' + (ROT[fam] || 'rotar con otra familia') : 'Varia el tipo de planta para mejor salud del suelo';
+}
+
+// ============================================================
+// KPIs
+// ============================================================
+function buildKPIs() {
+  var c = CAMAS;
+  g('kA').textContent = c.filter(function(x) { return x.c && x.e !== 'Vacia' && x.e !== 'Cosechada' && x.e !== 'Lista para preparar'; }).length || '0';
+  g('kT').textContent = c.length || '0';
+  g('kC').textContent = c.filter(function(x) { return x.e === 'Lista para cosechar'; }).length || '0';
+  g('kV').textContent = c.filter(function(x) { return x.e === 'Vacia' || x.e === 'Lista para preparar'; }).length || '0';
+  g('kE').textContent = JOVENES.length || '0';
+}
+
+// ============================================================
+// ALERTAS
+// ============================================================
+function buildAlertas() {
+  var el = g('alertas'), al = [];
+  var listas = CAMAS.filter(function(x) { return x.e === 'Lista para cosechar'; });
+  if (listas.length) al.push({p:'cr',ico:'&#129354;',tag:'tc',lbl:'URGENTE',
+    t: listas.length + ' camas listas para cosechar',
+    s: listas.slice(0,5).map(function(x) { return x.id + '(' + x.c + ')'; }).join(' - ')});
+  var vacH5 = CAMAS.filter(function(x) { return x.h === 'H5' && x.e === 'Vacia'; }).length;
+  if (vacH5) al.push({p:'in',ico:'&#127807;',tag:'ti',lbl:'OPORTUNIDAD',
+    t: 'H5 - ' + vacH5 + ' camas disponibles', s:'Cilantro (25-40d), lechuga (45-60d)'});
+  var prep = CAMAS.filter(function(x) { return x.e === 'Lista para preparar'; });
+  if (prep.length) al.push({p:'in',ico:'&#128203;',tag:'ti',lbl:'PREPARAR',
+    t: prep.length + ' camas listas para preparar/resembrar',
+    s: prep.slice(0,5).map(function(x) { return x.id; }).join(' - ')});
+  var bajos = INV.filter(function(i) { return Number(i.stock) <= Number(i.minimo || 0); });
+  if (bajos.length) al.push({p:'wa',ico:'&#128230;',tag:'tw',lbl:'STOCK BAJO',
+    t: 'Bajo minimo: ' + bajos.map(function(i) { return i.nombre; }).join(', '), s:'Realizar pedido pronto'});
+  var maizH4 = CAMAS.filter(function(x) { return x.h === 'H4' && x.c && x.c.toLowerCase().indexOf('maiz') >= 0; });
+  if (maizH4.length) al.push({p:'wa',ico:'&#127805;',tag:'tw',lbl:'H4 MAIZ',
+    t: maizH4.length + ' camas de maiz en seguimiento', s:'Ciclo 90-110 dias'});
+  var dS = HOY.getDay();
+  var planes = [null,
+    {d:'Lunes',a:'Campo: riego, siembra, labores'},
+    {d:'Martes',a:'Campo: seguimiento y cosecha'},
+    {d:'Miercoles',a:'Gestion: sistema + recorrido'},
+    {d:'Jueves',a:'Gestion: reporte + planificacion'},
+    {d:'Viernes',a:'Campo: mantenimiento y evaluacion'}
+  ];
+  var pl = planes[dS];
+  if (pl) al.push({p:'in',ico:'&#128197;',tag:'ti',lbl:'HOY', t: pl.d + ' - ' + pl.a, s:'Plan Fase 1'});
+  el.innerHTML = '';
+  if (!al.length) {
+    el.innerHTML = '<div class="ac"><div class="ac-in"><div class="ac-p ok"></div><div class="ac-ico">&#10003;</div><div class="ac-b"><strong>Sin alertas criticas</strong><span>Todo en orden</span></div></div></div>';
+    return;
   }
+  al.forEach(function(a) {
+    var d = document.createElement('div');
+    d.className = 'ac';
+    d.innerHTML = '<div class="ac-in"><div class="ac-p ' + a.p + '"></div><div class="ac-ico">' + a.ico + '</div><div class="ac-b"><strong>' + a.t + '</strong><span>' + a.s + '</span></div><div class="ac-tag ' + a.tag + '">' + a.lbl + '</div></div>';
+    el.appendChild(d);
+  });
 }
 
-function grabarCosecha(p){
-  var f=siguienteFila(H.COS),h=ss().getSheetByName(H.COS);
-  var v=[fecha(p.fecha),s(p.camaId),s(p.huerta),s(p.cultivo),
-    n(p.cantidad),s(p.unidad),s(p.destino),s(p.calidad)];
-  for(var i=0;i<v.length;i++) h.getRange(f,i+1).setValue(v[i]);
-  
-  // Cambiar estado solo si NO es Cosecha Parcial
-  if(s(p.camaId) && s(p.tipoCosecha) !== "Parcial"){
-    setCamaEstado(s(p.camaId),"Cosechada");
-    setCamasCosechadasSiembras(s(p.camaId));
+// ============================================================
+// TIMELINE
+// ============================================================
+function buildTimeline() {
+  var el = g('timeline'), items = [];
+  CAMAS.forEach(function(c) {
+    if (!c.c) return;
+    if (c.e === 'Lista para cosechar') { items.push({id:c.id,cult:c.c,dr:0,av:100,t:'tnow'}); return; }
+    if (c.e !== 'En crecimiento' && c.e !== 'Sembrada') return;
+    var k = c.c.split(' y ')[0].split(' /')[0].trim();
+    var ci = CICLOS[k] || CICLOS[c.c] || {min:60,max:90};
+    var dt = 30;
+    if (c.fs) { var fs = new Date(c.fs); if (!isNaN(fs)) dt = Math.max(0, Math.floor((HOY - fs) / 86400000)); }
+    var dr = Math.max(0, ci.min - dt), av = Math.min(100, Math.round(dt / ci.min * 100));
+    items.push({id:c.id,cult:c.c,dr:dr,av:av,t:dr===0?'tnow':dr<=14?'tsoon':'tlater'});
+  });
+  items.sort(function(a,b) { return a.dr - b.dr; });
+  el.innerHTML = '';
+  if (!items.length) { el.innerHTML = '<div class="empty">Conecta con Sheets para ver el timeline</div>'; return; }
+  items.slice(0,8).forEach(function(it) {
+    var lbl = it.dr === 0 ? 'YA!' : it.dr <= 7 ? 'Esta semana' : '~' + it.dr + 'd';
+    var dc = it.dr === 0 ? 'dn' : it.dr <= 14 ? 'ds' : 'dl';
+    var em = it.dr === 0 ? '&#129385;' : it.dr <= 7 ? '&#8987;' : '&#127807;';
+    el.innerHTML += '<div class="tli"><div class="tld ' + it.t + '">' + em + '</div><div class="tlc"><div class="tltp"><strong>' + it.cult + '</strong><span class="tldias ' + dc + '">' + lbl + '</span></div><div class="tlsub">' + it.id + ' - ' + it.av + '%</div><div class="pb"><div class="pf" style="width:' + it.av + '%"></div></div></div></div>';
+  });
+}
+
+// ============================================================
+// CHART CULTIVOS
+// ============================================================
+function buildChart() {
+  var counts = {};
+  CAMAS.forEach(function(c) {
+    if (c.c && c.e === 'En crecimiento') {
+      var k = c.c.split(' y ')[0].split(' /')[0].trim();
+      counts[k] = (counts[k] || 0) + 1;
+    }
+  });
+  var s = Object.keys(counts).map(function(k) { return [k,counts[k]]; }).sort(function(a,b) { return b[1]-a[1]; }).slice(0,8);
+  var max = s.length ? s[0][1] : 1;
+  var el = g('cultChart');
+  if (!s.length) { el.innerHTML = '<div class="empty">Sin datos</div>'; return; }
+  el.innerHTML = s.map(function(x) {
+    return '<div class="br"><div class="bl2">' + x[0] + '</div><div class="bt"><div class="bf" style="width:' + Math.round(x[1]/max*100) + '%"></div></div><div class="bn">' + x[1] + '</div></div>';
+  }).join('');
+}
+
+// ============================================================
+// STOCK
+// ============================================================
+function buildStock() {
+  var ICO = {Fertilizante:'&#127807;',Biologico:'&#129404;',Semilla:'&#127807;',Herramienta:'&#128295;',Sustrato:'&#129392;',Material:'&#128230;'};
+  var el = g('stockList');
+  if (!INV.length) { el.innerHTML = '<div class="empty">Sin inventario cargado</div>'; return; }
+  el.innerHTML = INV.map(function(i) {
+    var st = Number(i.stock) || 0, mn = Number(i.minimo) || 1;
+    var pct = Math.min(100, Math.round(st / (mn * 3) * 100));
+    var cls = st <= mn ? (st <= mn * 0.5 ? 'scrit' : 'slow') : 'sok';
+    var lbl = st <= mn ? (st <= mn * 0.5 ? 'CRITICO' : 'BAJO') : 'OK';
+    return '<div class="ir"><div class="iico">' + (ICO[i.categoria] || '&#128230;') + '</div><div class="ib"><strong>' + i.nombre + '</strong><span>' + (i.categoria || '') + ' - Min:' + mn + ' ' + i.unidad + ' - $' + (i.precio || 0) + '</span><div class="sbr ' + cls + '"><div class="sf" style="width:' + pct + '%"></div></div></div><div class="is ' + cls + '"><div class="num">' + st + '</div><div class="uni">' + i.unidad + '</div><div style="font-size:10px;font-weight:700;margin-top:2px">' + lbl + '</div></div></div>';
+  }).join('');
+}
+
+// ============================================================
+// MAPA DE CAMAS — FIX PRINCIPAL: sin comillas simples en onclick
+// ============================================================
+function buildCamas() {
+  var huertas = {};
+  CAMAS.forEach(function(c) {
+    var h = c.h || c.id.split('-')[0];
+    if (!c.h) c.h = h;
+    if (!huertas[h]) huertas[h] = [];
+    huertas[h].push(c);
+  });
+  var NOM = {H1:'Huerta 1',H2:'Huerta 2',H3:'Huerta 3',H4:'Huerta 4 - Maiz',H5:'Huerta 5'};
+  var el = g('camaBlocks');
+  el.innerHTML = '';
+
+  Object.keys(huertas).sort().forEach(function(hid) {
+    var lista = huertas[hid];
+    var act = lista.filter(function(c) { return c.c && c.e !== 'Vacia' && c.e !== 'Cosechada'; }).length;
+    var lcos = lista.filter(function(c) { return c.e === 'Lista para cosechar'; }).length;
+
+    var div = document.createElement('div');
+    div.className = 'hb';
+
+    // HEADER con toggle — usando addEventListener en lugar de onclick inline
+    var header = document.createElement('div');
+    header.className = 'hh';
+    header.innerHTML = '<strong>&#127807; ' + (NOM[hid] || hid) + '</strong><span class="hs">' + act + ' activas - ' + lcos + ' cosechar - ' + lista.length + ' total</span>';
+    header.addEventListener('click', function() {
+      var body = this.nextElementSibling;
+      body.style.display = body.style.display === 'none' ? 'block' : 'none';
+    });
+
+    // CHIPS
+    var chipsDiv = document.createElement('div');
+    chipsDiv.className = 'hch';
+    lista.forEach(function(c) {
+      var cls = 'chip cvac';
+      if (c.e === 'Lista para cosechar') cls = 'chip clista';
+      else if (c.e === 'En crecimiento' || c.e === 'Sembrada') cls = 'chip crec';
+      else if (c.e === 'Cosechada') cls = 'chip ccos';
+      else if (c.e === 'Lista para preparar') cls = 'chip cprep';
+      var siem = SIEM[c.id] || [];
+      var chip = document.createElement('div');
+      chip.className = cls;
+      chip.title = c.id + ': ' + (c.c || 'Vacia') + ' - ' + c.e;
+      chip.innerHTML = c.n + (siem.length > 1 ? '&#127807;' : '') + '<span class="cht">' + (c.c || '-') + '</span>';
+      // FIX: usar closure para capturar c.id correctamente
+      (function(cid) {
+        chip.addEventListener('click', function() { abrirModal(cid); });
+      })(c.id);
+      chipsDiv.appendChild(chip);
+    });
+
+    // LEYENDA
+    var legDiv = document.createElement('div');
+    legDiv.className = 'lr';
+    legDiv.innerHTML = '<span class="leg"><span class="ld" style="background:#95d5b2"></span>Creciendo</span><span class="leg"><span class="ld" style="background:var(--am)"></span>Cosechar</span><span class="leg"><span class="ld" style="background:#ddd"></span>Cosechada</span><span class="leg"><span class="ld" style="background:var(--blp);border:1px solid #90caf9"></span>Para preparar</span><span class="leg"><span class="ld" style="background:var(--bg2);border:1px solid var(--bdr)"></span>Vacia</span>';
+
+    div.appendChild(header);
+    div.appendChild(chipsDiv);
+    div.appendChild(legDiv);
+    el.appendChild(div);
+  });
+}
+
+// ============================================================
+// MODAL CAMA — FIX: sin comillas simples en onclick inline
+// ============================================================
+function abrirModal(cid) {
+  var c = CIDX[cid]; if (!c) return;
+  g('mTit').textContent = c.id + ' - ' + (c.c || 'Vacia');
+  var estMap = {
+    'Vacia':'background:var(--bg2);color:var(--t3)',
+    'En crecimiento':'background:var(--g6);color:var(--g2)',
+    'Lista para cosechar':'background:var(--amp);color:#9a4f1a',
+    'Cosechada':'background:#f5f5f5;color:#777',
+    'Sembrada':'background:var(--g6);color:var(--g2)',
+    'Lista para preparar':'background:var(--blp);color:var(--bl)'
+  };
+  g('mEst').innerHTML = '<span style="display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;' + (estMap[c.e] || 'background:var(--bg2)') + '">' + c.e + '</span>';
+
+  var siem = SIEM[cid] || [];
+  if (siem.length) {
+    var poliHtml = '<div style="font-size:11px;font-weight:700;color:var(--t2);margin-bottom:6px">CULTIVOS ACTIVOS</div>';
+    siem.forEach(function(s) {
+      poliHtml += '<div style="padding:6px 0;border-bottom:1px solid var(--bdr);font-size:12px"><strong>' + s.cultivo + '</strong>' + (s.variedad ? ' (' + s.variedad + ')' : '') + '<br><span style="color:var(--t3)">Sembrado: ' + s.fechaSiembra + (s.fechaCosecha ? ' - Cosecha est: ' + s.fechaCosecha : '') + '</span></div>';
+    });
+    g('mPoli').innerHTML = poliHtml;
+  } else g('mPoli').innerHTML = '';
+
+  // ACCIONES del modal — usar addEventListener
+  var accDiv = document.createElement('div');
+  accDiv.innerHTML = '<div style="font-size:11px;font-weight:700;color:var(--t2);margin-bottom:8px">ACCIONES</div>';
+
+  var btnSiem = document.createElement('button');
+  btnSiem.className = 'mact m-sem';
+  btnSiem.textContent = 'Sembrar en esta cama';
+  btnSiem.addEventListener('click', function() { irSiembra(cid); });
+  accDiv.appendChild(btnSiem);
+
+  if (c.c) {
+    var btnCos = document.createElement('button');
+    btnCos.className = 'mact m-cos';
+    btnCos.textContent = 'Registrar cosecha';
+    btnCos.addEventListener('click', function() { irCosechar(cid); });
+    accDiv.appendChild(btnCos);
   }
+
+  var btnCerrar = document.createElement('button');
+  btnCerrar.className = 'mact m-des';
+  btnCerrar.textContent = 'Cerrar';
+  btnCerrar.addEventListener('click', function() { cModal(); });
+  accDiv.appendChild(btnCerrar);
+
+  g('mAcc').innerHTML = '';
+  g('mAcc').appendChild(accDiv);
+  g('mHist').innerHTML = '<div class="empty" style="padding:10px">Sincroniza con Sheets para ver historial</div>';
+  g('modalBg').classList.add('show');
+  document.body.style.overflow = 'hidden';
 }
 
-function grabarInsumo(p){
-  var ent=n(p.cantEntrada),sal=n(p.cantSalida);
-  var f=siguienteFila(H.INS),h=ss().getSheetByName(H.INS);
-  var v=[fecha(p.fecha),s(p.insumo),s(p.tipoInsumo),s(p.proveedor),
-    n(p.precio),ent,sal,"",s(p.unidad),"",""];
-  for(var i=0;i<v.length;i++) h.getRange(f,i+1).setValue(v[i]);
-  if(ent>0||sal>0) updateStock(s(p.insumo),ent-sal);
+function cModal() {
+  g('modalBg').classList.remove('show');
+  document.body.style.overflow = '';
 }
 
-function grabarSiembra(p){
-  var hs=ss().getSheetByName(H.SIE),lr=siguienteFila(H.SIE);
-  var id="SBR-"+new Date().getTime();
-  var fce="";
-  if(p.cicloMin&&s(p.fecha)){
-    var d=new Date(s(p.fecha));d.setDate(d.getDate()+n(p.cicloMin));
-    fce=Utilities.formatDate(d,Session.getScriptTimeZone(),"yyyy-MM-dd");
+function irSiembra(cid) {
+  cModal(); ir('form'); setMod('siem', document.querySelectorAll('.mpk')[5]);
+  setTimeout(function() { var s = g('sCSiem'); if (s) { s.value = cid; onCamaSiem(s); } }, 80);
+}
+function irCosechar(cid) {
+  cModal(); ir('form'); setMod('cos', document.querySelectorAll('.mpk')[3]);
+  setTimeout(function() { var s = g('sCC'); if (s) { s.value = cid; onCamaCos(s); } }, 80);
+}
+
+// ============================================================
+// EQUIPO — FIX: sin comillas simples en onclick inline
+// ============================================================
+function buildEquipo() {
+  var grid = g('equipoGrid');
+  grid.innerHTML = '';
+  JOVENES.forEach(function(n, i) {
+    var ini = n.split(' ').map(function(w) { return w[0]; }).join('').toUpperCase().slice(0,2);
+    var ult = ASIST[n];
+    var sub = ult && ult.fecha ? ult.fecha + ' - ' + ult.asistencia : 'Sin registros';
+    var card = document.createElement('div');
+    card.className = 'ec';
+    card.innerHTML = '<div class="ea" style="background:' + COLS[i % COLS.length] + '">' + ini + '</div><div class="ei"><strong>' + n.split(' ')[0] + '</strong><span>' + sub + '</span></div><span style="font-size:14px;margin-left:auto;color:var(--g3)">+</span>';
+    (function(nombre) {
+      card.addEventListener('click', function() { irEquipo(nombre); });
+    })(n);
+    grid.appendChild(card);
+  });
+}
+
+function irEquipo(n) {
+  ir('form'); setMod('gest', document.querySelectorAll('.mpk')[1]);
+  setTimeout(function() { var s = g('selJ'); if (s) { s.value = n; onJoven(s); } }, 80);
+}
+
+function buildSysInfo() {
+  var c = CAMAS;
+  g('sysInfo').innerHTML = 'Camas: <strong>' + c.length + '</strong> - Con cultivo: <strong>' + c.filter(function(x) { return x.c && x.e !== 'Vacia'; }).length + '</strong> - Vacias: <strong>' + c.filter(function(x) { return x.e === 'Vacia'; }).length + '</strong><br>Participantes: <strong>' + JOVENES.length + '</strong> - Insumos: <strong>' + INV.length + '</strong><br>Fuente: <strong>' + (g('cDot').classList.contains('on') ? 'Google Sheets OK' : 'Datos locales') + '</strong>';
+}
+
+// ============================================================
+// NAVEGACION
+// ============================================================
+function ir(name) {
+  document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('on'); });
+  document.querySelectorAll('.nb').forEach(function(b) { b.classList.remove('on'); });
+  g('v-' + name).classList.add('on');
+  var idx = {panel:0,form:1,camas:2,equipo:3,historial:4}[name];
+  var nbs = document.querySelectorAll('.nb');
+  if (idx != null && nbs[idx]) nbs[idx].classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function setMod(m, btn) {
+  MOD = m;
+  document.querySelectorAll('.mpk').forEach(function(b) { b.classList.remove('on'); });
+  if (btn) btn.classList.add('on');
+  document.querySelectorAll('.fm').forEach(function(f) { f.classList.remove('on'); });
+  g('fm-' + m).classList.add('on');
+}
+
+// ============================================================
+// ENVIO
+// ============================================================
+function enviar(e) {
+  e.preventDefault();
+  var btn = g('btnSub'); btn.textContent = 'Enviando...'; btn.disabled = true;
+  var fd = new FormData(g('erpForm'));
+  var url = g('urlIn').value;
+  var p = {tipoRegistro:'', fecha:g('fFecha').value, observaciones:g('obs').value};
+
+  if (MOD === 'bit') {
+    p.tipoRegistro = 'Bitacora Diaria';
+    p.camaId = fd.get('camaId')||''; p.huerta = fd.get('huerta')||'';
+    p.cultivo = fd.get('cultivo')||''; p.origen = fd.get('origen')||'';
+    p.fase = fd.get('fase')||''; p.avance = fd.get('avance')||'';
+    p.altura = fd.get('altura')||''; p.estadoFitosan = fd.get('estadoFitosan')||'';
+    p.humedad = fd.get('humedad')||''; p.accion = fd.get('accion')||'';
+    p.responsable = fd.get('responsable')||''; p.alerta = fd.get('alerta')||'';
+    p.cantidadBit = fd.get('cantidadBit')||''; p.unidadBit = fd.get('unidadBit')||'';
+  } else if (MOD === 'gest') {
+    p.tipoRegistro = 'Gestion Humana';
+    p.joven = fd.get('joven')||''; p.asistencia = fd.get('asistencia')||'';
+    p.camaAsignada = fd.get('camaAsignada')||''; p.tarea = fd.get('tarea')||'';
+    p.actitud = fd.get('actitud')||''; p.herramienta = fd.get('herramienta')||'';
+    p.estadoHerr = fd.get('estadoHerr')||''; p.insumoGH = fd.get('insumoGH')||'';
+    p.motivoAusencia = fd.get('motivoAusencia')||'';
+  } else if (MOD === 'riego') {
+    p.tipoRegistro = 'Riego_Fumigacion';
+    p.huerta = fd.get('huertaRiego')||''; p.camaId = fd.get('camaIdRiego')||'';
+    p.cultivo = fd.get('cultivoRiego')||''; p.responsable = fd.get('responsableRiego')||'';
+    p.tipoOperacion = fd.get('tipoOperacion')||''; p.producto = fd.get('producto')||'';
+    p.cantidad = fd.get('cantidad')||''; p.unidad = fd.get('unidad')||'';
+    p.tiempo = fd.get('tiempo')||''; p.cobertura = fd.get('cobertura')||'';
+  } else if (MOD === 'cos') {
+    p.tipoRegistro = 'Cosechas';
+    p.camaId = fd.get('camaIdCosecha')||''; p.huerta = fd.get('huertaCosecha')||'';
+    p.cultivo = fd.get('cultivoCosecha')||''; p.cantidad = fd.get('cantidad')||'';
+    p.unidad = fd.get('unidad')||''; p.destino = fd.get('destino')||'';
+    p.calidad = fd.get('calidad')||''; p.responsable = fd.get('responsableCosecha')||'';
+    p.quedaProducto = fd.get('quedaProducto')||'si';
+  } else if (MOD === 'ins') {
+    p.tipoRegistro = 'Insumos';
+    p.insumo = fd.get('insumo')||''; p.tipoInsumo = fd.get('tipoInsumo')||'';
+    p.proveedor = fd.get('proveedor')||''; p.precio = fd.get('precio')||'';
+    p.unidad = fd.get('unidad')||''; p.cantEntrada = fd.get('cantEntrada')||'';
+    p.cantSalida = fd.get('cantSalida')||'';
+  } else if (MOD === 'siem') {
+    p.tipoRegistro = 'Siembra';
+    p.camaId = fd.get('camaIdSiem')||''; p.huerta = fd.get('huertaSiem')||'';
+    p.cultivo = fd.get('cultivoSiem')||''; p.variedad = fd.get('variedadSiem')||'';
+    p.tipoSemilla = fd.get('tipoSemillaSiem')||''; p.cantidad = fd.get('cantidadSiem')||'';
+    p.unidad = fd.get('unidadSiem')||''; p.cicloMin = fd.get('cicloMinSiem')||'';
+    p.responsable = fd.get('responsableSiem')||'';
+  } else if (MOD === 'newinv') {
+    p.tipoRegistro = 'Inventario';
+    p.nombre = fd.get('invNombre')||''; p.categoria = fd.get('invCategoria')||'';
+    p.unidad = fd.get('invUnidad')||''; p.stock = fd.get('invStock')||'';
+    p.minimo = fd.get('invMinimo')||''; p.precio = fd.get('invPrecio')||'';
   }
-  var v=[id,fecha(p.fecha),s(p.huerta),s(p.camaId),s(p.cultivo),
-    s(p.variedad),s(p.tipoSemilla),n(p.cantidad),"",fce,"Activo"];
-  for(var i=0;i<v.length;i++) hs.getRange(lr,i+1).setValue(v[i]);
-  setCamaCultivo(s(p.camaId),s(p.cultivo),fecha(p.fecha));
-  setCamaEstado(s(p.camaId),"En crecimiento");
+
+  if (!url) { toast('Configura la URL en Sistema', 1); btn.textContent = 'Registrar en Sistema'; btn.disabled = false; return; }
+
+  fetch(url, {method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(p)})
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.status === 'ok') { toast('Guardado en Google Sheets'); addHist(p); limpiar(); }
+      else toast('Error: ' + (d.msg || 'desconocido'), 1);
+    })
+    .catch(function() {
+      fetch(url, {method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(p)})
+        .then(function() { toast('Enviado a Google Sheets'); addHist(p); limpiar(); })
+        .catch(function(e2) { toast('Error: ' + e2.message, 1); });
+    })
+    .finally(function() { btn.textContent = 'Registrar en Sistema'; btn.disabled = false; });
 }
 
-function grabarInventario(p){
-  var h=ss().getSheetByName(H.INV),data=h.getDataRange().getValues();
-  for(var i=1;i<data.length;i++){
-    if(s(data[i][1]).toLowerCase()===s(p.nombre).toLowerCase()){
-      h.getRange(i+1,5).setValue(Math.max(0,(Number(data[i][4])||0)+n(p.stock)));
-      if(p.minimo) h.getRange(i+1,6).setValue(n(p.minimo));
-      if(p.precio) h.getRange(i+1,7).setValue(n(p.precio));
-      return;
-    }
-  }
-  var lr=siguienteFila(H.INV);
-  var id="INS"+String(lr).padStart(3,"0");
-  var v=[id,s(p.nombre),s(p.categoria),s(p.unidad),n(p.stock),n(p.minimo),n(p.precio),"","OK"];
-  for(var i=0;i<v.length;i++) h.getRange(lr,i+1).setValue(v[i]);
+function limpiar() {
+  g('erpForm').reset(); g('fFecha').valueAsDate = HOY; g('obs').value = '';
+  ['aBH','aBC','aBO','aCH','aCCu','aRC','aJU','aIS','aIP','aIU','aHSiem','aCicloSiem','aFCos'].forEach(function(id) { sa(id,''); });
+  g('cosEnBit').style.display = 'none';
+  ['bitPoliWrap','cosPoliWrap','siemPoliWrap','siemRotWrap'].forEach(function(id) { var e = g(id); if (e) e.style.display = 'none'; });
 }
 
-// HELPERS
-function setCamaEstado(camaId,estado){
-  try{
-    var data=ss().getSheetByName(H.CFG).getRange("A4:G300").getValues();
-    for(var i=0;i<data.length;i++){
-      if(s(data[i][0])===camaId){
-        ss().getSheetByName(H.CFG).getRange(i+4,7).setValue(estado);return;
-      }
-    }
-  }catch(e){}
+// ============================================================
+// HISTORIAL
+// ============================================================
+function addHist(p) {
+  HIST.unshift(p);
+  var el = g('histList'); el.innerHTML = '';
+  var MST = {
+    'Bitacora Diaria':['background:#d8f3dc;color:#2d6a4f','Bitacora'],
+    'Gestion Humana':['background:#e3f2fd;color:#1565c0','G.Humana'],
+    'Riego_Fumigacion':['background:#e0f7fa;color:#006064','Riego'],
+    'Cosechas':['background:#fff3e0;color:#9a4f1a','Cosecha'],
+    'Insumos':['background:#f3e5f5;color:#6a1b9a','Insumos'],
+    'Siembra':['background:#f0fff4;color:#2d6a4f','Siembra'],
+    'Inventario':['background:#e8f5e9;color:#1b5e20','Inventario']
+  };
+  HIST.slice(0,30).forEach(function(r) {
+    var info = MST[r.tipoRegistro] || ['','Registro'];
+    var body = '';
+    if (r.camaId) body += 'Cama <strong>' + r.camaId + '</strong>';
+    if (r.cultivo) body += ' - ' + r.cultivo;
+    if (r.joven) body += '<strong>' + r.joven + '</strong> - ' + r.asistencia;
+    if (r.tipoOperacion) body += ' - ' + r.tipoOperacion;
+    if (r.insumo) body += '<strong>' + r.insumo + '</strong>';
+    if (r.nombre) body += 'Inventario: <strong>' + r.nombre + '</strong>';
+    if (r.cantidad) body += ' - ' + r.cantidad + ' ' + (r.unidad || '');
+    if (r.observaciones) body += '<br><em style="color:var(--t3)">' + r.observaciones.slice(0,60) + '</em>';
+    var d = document.createElement('div');
+    d.className = 'hi';
+    d.innerHTML = '<div class="hih"><span class="him" style="' + info[0] + '">' + info[1] + '</span><span class="hif">' + r.fecha + '</span></div><div class="hib">' + (body || 'Registro guardado') + '</div>';
+    el.appendChild(d);
+  });
 }
 
-function setCamaCultivo(camaId,cultivo,fechaSiem){
-  try{
-    var cfg=ss().getSheetByName(H.CFG),data=cfg.getRange("A4:G300").getValues();
-    for(var i=0;i<data.length;i++){
-      if(s(data[i][0])===camaId){
-        var act=s(data[i][3]);
-        var nuevo=(!act||act==="")?cultivo:(act.indexOf(cultivo)<0?act+" / "+cultivo:act);
-        cfg.getRange(i+4,4).setValue(nuevo);
-        if(fechaSiem) cfg.getRange(i+4,6).setValue(fechaSiem);
-        return;
-      }
-    }
-  }catch(e){}
+// ============================================================
+// PROBAR CONEXION
+// ============================================================
+function probar() {
+  var dot = g('cDot'), txt = g('cTxt');
+  dot.className = 'cdot test'; txt.textContent = 'Probando...';
+  var url = g('urlIn').value.trim();
+  if (!url) { toast('Ingresa la URL primero', 1); dot.className = 'cdot off'; txt.textContent = 'Sin URL'; return; }
+  localStorage.setItem('erp_url', url); API = url;
+  fetch(url + '?action=health', {cache:'no-cache'})
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.status === 'online') {
+        dot.className = 'cdot on'; txt.textContent = 'Conectado - ' + d.version;
+        toast('Conectado - cargando datos...'); sinc(false);
+      } else throw new Error('resp inesperada');
+    })
+    .catch(function() { dot.className = 'cdot off'; txt.textContent = 'Sin conexion'; toast('No se pudo conectar', 1); });
 }
 
-function setCamasCosechadasSiembras(camaId){
-  try{
-    var hs=ss().getSheetByName(H.SIE),lr=hs.getLastRow();
-    if(lr<2) return;
-    var data=hs.getRange("A2:K"+lr).getValues();
-    for(var i=0;i<data.length;i++){
-      if(s(data[i][3])===camaId&&s(data[i][10])!=="Cosechado"){
-        hs.getRange(i+2,11).setValue("Cosechado");
-      }
-    }
-  }catch(e){}
+// ============================================================
+// UTILS
+// ============================================================
+function g(id) { return document.getElementById(id); }
+function sa(id, v) { var e = g(id); if (e) e.value = v || ''; }
+function hora() { return new Date().getHours().toString().padStart(2,'0') + ':' + new Date().getMinutes().toString().padStart(2,'0'); }
+var _tt;
+function toast(msg, err) {
+  var el = g('toast'); el.textContent = msg; el.style.background = err ? '#c0392b' : '#1a3d2b';
+  el.classList.add('show'); clearTimeout(_tt); _tt = setTimeout(function() { el.classList.remove('show'); }, 3400);
 }
 
-function updateStock(nombre,delta){
-  if(!nombre||!delta) return;
-  try{
-    var h=ss().getSheetByName(H.INV),data=h.getDataRange().getValues();
-    for(var i=1;i<data.length;i++){
-      if(s(data[i][1]).toLowerCase()===nombre.toLowerCase()){
-        h.getRange(i+1,5).setValue(Math.max(0,(Number(data[i][4])||0)+delta));return;
-      }
-    }
-  }catch(e){}
-}
-
-// SOLUCION: Encuentra la siguiente fila vacía real sin confundirse con validaciones de datos
-function siguienteFila(nombre){
-  var h=ss().getSheetByName(nombre);
-  var colA=h.getRange("A1:A1000").getValues();
-  for(var r=0;r<colA.length;r++){
-    var v=colA[r][0];
-    if(!v || String(v).trim() === ""){
-      return r+1;
-    }
-  }
-  return h.getLastRow()+1;
-}
-
-function ss(){return SpreadsheetApp.getActiveSpreadsheet();}
-function s(v){return(v===null||v===undefined)?"":String(v).trim();}
-function n(v){var x=Number(v);return isNaN(x)?0:x;}
-function hoy(){return Utilities.formatDate(new Date(),Session.getScriptTimeZone(),"yyyy-MM-dd");}
-function fecha(f){var d=s(f);return(d&&d.match(/^\d{4}-\d{2}-\d{2}$/))?d:hoy();}
-function toISO(v){
-  if(typeof v==="number"&&v>40000) return Utilities.formatDate(new Date((v-25569)*86400000),"UTC","yyyy-MM-dd");
-  if(v instanceof Date) return Utilities.formatDate(v,Session.getScriptTimeZone(),"yyyy-MM-dd");
-  return s(v).slice(0,10);
-}
-function ind(v){var x=Number(v);return x>=5?"Excelente":x>=4?"Bueno":x>=3?"Regular":x>=2?"Bajo":"Muy bajo";}
-function R(obj){return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);}
+init();
+</script>
+</body>
+</html>
